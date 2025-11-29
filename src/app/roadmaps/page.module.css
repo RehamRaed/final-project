@@ -19,3 +19,8 @@
     align-items: center;
     flex-wrap: wrap;
 }
+.link{
+    font-size: var(--font-lg);
+    color: var(--color-accent);
+    text-decoration: underline;
+}
