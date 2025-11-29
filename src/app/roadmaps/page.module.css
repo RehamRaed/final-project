@@ -1,0 +1,21 @@
+.pageContainer{
+    padding: 100px;
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+    
+}
+
+.title{
+    color: var(--color-text-primary);
+}
+
+.roadmapsContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    align-items: center;
+    flex-wrap: wrap;
+}
