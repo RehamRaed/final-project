@@ -8,10 +8,13 @@
     font-family: var(--font-family-base);
     display: flex;
     flex-direction: column;
-    gap:30px
+    gap:30px;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .cardContanier:hover{
-    background-color: var(--color-accent);
-    color: var(--color-bg);
+    /* background-color: var(--color-accent); */
+    /* color: var(--color-bg); */
+    transform: translateY(-4px);
 }
