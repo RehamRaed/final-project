@@ -2,9 +2,23 @@
     padding: 100px;
     display: flex;
     flex-direction: column;
-    gap:30px
+    gap:50px
 }
 
-.title{
+.myCoursesContainer{
+    display: flex;
+    float: row;
+    gap:20px;
+    overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on mobile */
+}
 
+/* Optional: hide scrollbar in WebKit (Chrome, Safari) */
+.myCoursesContainer::-webkit-scrollbar {
+  height: 6px;
+}
+
+
+.myCoursesContainer::-webkit-scrollbar-track {
+  background: transparent;
 }
