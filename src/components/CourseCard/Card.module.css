@@ -1,0 +1,17 @@
+.cardContanier{
+    border: solid 1px var(--color-border);
+    padding: 30px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    max-width: 300px;
+    flex-shrink: 0;
+    font-family: var(--font-family-base);
+    display: flex;
+    flex-direction: column;
+    gap:30px
+}
+
+.cardContanier:hover{
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+}
