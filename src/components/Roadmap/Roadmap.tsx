@@ -32,10 +32,10 @@ export default function RoadmapCard({ roadmap, onSelect, isSelected = false}: Ro
 
         <div className={styles.linkContainer}>
             <Link
-            href={`/roadmaps/${roadmap.id}`}
-            className={styles.link}
+              href={`/roadmaps/${roadmap.id}`}
+              className={styles.link}
             >
-            Learn More
+              Learn More
             </Link>
         </div>
         </div>
