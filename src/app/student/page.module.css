@@ -1,0 +1,10 @@
+.studentHomePageContainer{
+    padding: 100px;
+    display: flex;
+    flex-direction: column;
+    gap:30px
+}
+
+.title{
+
+}
