@@ -1,0 +1,36 @@
+.roadmapContainer{
+    background-color:var(--color-primary);
+    box-shadow: var( --shadow-lg);
+    padding: 20px;
+    width: 300px;
+    height: 300px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap:15px;
+
+    border-radius: 50%;
+    font-family: var(--font-family-base);
+
+    color:var(--color-bg);
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.selected {
+  border: 5px solid var(--color-accent); /* primary color */
+}
+.roadmapContainer:hover{
+    transform: translateY(-4px);
+}
+
+.link{
+    text-decoration: underline;
+    color:var(--color-bg)
+}
+
+.icon{
+    font-size: var(--font-4xl);
+}
