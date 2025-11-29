@@ -1,5 +1,6 @@
 import '@/app/globals.css';
 import { AuthProvider } from '@/components/SessionProvider';
+import "../styles/theme.css"
 
 export const metadata = {
     title: 'Final Project App',
