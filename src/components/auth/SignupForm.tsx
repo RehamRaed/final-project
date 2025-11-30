@@ -1,67 +1,121 @@
-"use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { SignupSchema, SignupType } from "@/lib/validation";
+'use client'
+import { useState } from 'react'
+import Link from 'next/link'
+import { supabase } from '@/lib/supabaseClient'
+import { SignupSchema, SignupType } from '@/lib/validation'
 
-export default function SignupForm() {
-  const router = useRouter();
-  const [formData, setFormData] = useState<SignupType>({ email: "", password: "" });
-  const [errors, setErrors] = useState<Partial<SignupType>>({});
-  const [loading, setLoading] = useState(false);
+export default function SignUpForm() {
+  const [form, setForm] = useState<SignupType>({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  })
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('')
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: undefined });
-  };
+  const handleChange = (field: keyof SignupType, value: string) => {
+    setForm(prev => ({ ...prev, [field]: value }))
+  }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    const validation = SignupSchema.safeParse(formData);
-    if (!validation.success) {
-      const newErrors: Partial<SignupType> = {};
-      validation.error.issues.forEach((issue) => {
-        newErrors[issue.path[0] as keyof SignupType] = issue.message;
-      });
-      setErrors(newErrors);
-      setLoading(false);
-      return;
+  const handleSignUp = async () => {
+    try {
+      const parsed = SignupSchema.parse(form)
+      setLoading(true)
+      const { error } = await supabase.auth.signUp({
+        email: parsed.email,
+        password: parsed.password,
+        options: { data: { full_name: parsed.name } }
+      })
+      setLoading(false)
+      if (error) setMessage(error.message)
+      else window.location.href = '/roadmaps'
+    } catch (err: any) {
+      if (err?.issues?.length) {
+        setMessage(err.issues[0].message)
+      } else if (err?.message) {
+        setMessage(err.message)
+      }
     }
+  }
 
-    await new Promise((res) => setTimeout(res, 1000));
-    router.push("/login?message=AccountCreated");
-  };
+  const handleGoogleSignIn = async () => {
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: process.env.NEXT_PUBLIC_APP_URL }
+    })
+    setLoading(false)
+    if (error) setMessage(error.message)
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="card max-w-md mx-auto mt-20 space-y-3 text-center">
+      <h2 className="text-2xl font-bold" style={{  color: "var(--color-primary)" }}>
+        Create Account
+      </h2>
+
       <input
-        name="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
+        type="text"
+        placeholder="Full Name"
+        value={form.name}
+        onChange={e => handleChange('name', e.target.value)}
+        className="border p-3 w-full rounded focus:ring-2 focus:outline-none"
+        style={{ borderColor: "var(--color-border)" }}
       />
-      {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+
       <input
-        name="password"
+        type="email"
+        placeholder="Email"
+        value={form.email}
+        onChange={e => handleChange('email', e.target.value)}
+        className="border p-3 w-full rounded focus:ring-2 focus:outline-none"
+        style={{ borderColor: "var(--color-border)" }}
+      />
+
+      <input
         type="password"
         placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
+        value={form.password}
+        onChange={e => handleChange('password', e.target.value)}
+        className="border p-3 w-full rounded focus:ring-2 focus:outline-none"
+        style={{ borderColor: "var(--color-border)" }}
       />
-      {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+
+      <input
+        type="password"
+        placeholder="Confirm Password"
+        value={form.confirmPassword}
+        onChange={e => handleChange('confirmPassword', e.target.value)}
+        className="border p-3 w-full rounded focus:ring-2 focus:outline-none"
+        style={{ borderColor: "var(--color-border)" }}
+      />
+
+      <div className="h-4 text-red-500 text-sm">{message}</div>
+
       <button
+        onClick={handleSignUp}
         disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+        className="btn btn-primary w-full"
+        style={{ backgroundColor: "var(--color-primary)" }}
       >
-        {loading ? "Creating account..." : "Sign up"}
+        {loading ? 'Signing Up...' : 'Sign Up'}
       </button>
-      <p className="text-center text-sm mt-2">
-        Already have an account? <Link href="/login" className="text-blue-500">Login</Link>
+
+      <button
+        onClick={handleGoogleSignIn}
+        disabled={loading}
+        className="btn btn-secondary w-full"
+      >
+        Continue with Google
+      </button>
+
+      <p className="text-secondary text-sm">
+        Already have an account?
+        <Link href="/auth/login" className="ml-1 font-semibold">
+          Sign In
+        </Link>
       </p>
-    </form>
-  );
+    </div>
+  )
 }

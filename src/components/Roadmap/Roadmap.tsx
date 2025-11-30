@@ -6,7 +6,7 @@ type Roadmap = {
   id: number;
   title: string;
   description: string;
-  icon?: string; // optional
+  icon?: string; 
 };
 
 type RoadmapCardProps = {
@@ -23,7 +23,6 @@ export default function RoadmapCard({ roadmap, onSelect, isSelected = false}: Ro
         >
             
         <div className={styles.icon}>
-            {/* <img src={roadmap.icon} alt={roadmap.title}/> */}
             {roadmap.icon}
         </div>
 

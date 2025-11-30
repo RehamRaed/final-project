@@ -10,10 +10,9 @@
     float: row;
     gap:20px;
     overflow-x: auto;
-  -webkit-overflow-scrolling: touch; /* smooth scrolling on mobile */
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Optional: hide scrollbar in WebKit (Chrome, Safari) */
 .myCoursesContainer::-webkit-scrollbar {
   height: 6px;
 }
