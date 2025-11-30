@@ -1,4 +1,4 @@
-import Header from "@/components/Header/Header";
+import PrimarySearchAppBar from "@/components/Header/Header";
 import Link from "next/link";
 import styles from "./page.module.css"
 import Title from "@/components/Title/title";
@@ -49,7 +49,7 @@ type studentHomePageProps ={
 }
 export default function StudentHomePage({studentName="Basma", selectedRoadmap}:studentHomePageProps){
     return(<div >
-        <Header/>
+        <PrimarySearchAppBar/>
         <div className={styles.studentHomePageContainer}>
 
         <h1 className={styles.title}>Welcome, {studentName}!</h1>
@@ -59,12 +59,12 @@ export default function StudentHomePage({studentName="Basma", selectedRoadmap}:s
 
         <Title title="My Courses:"/>
         <div className={styles.myCoursesContainer}>
-            {mockCourses.map((course) => <CourseCard course={course}/>)}
+            {mockCourses.map((course) => <CourseCard key={course.id} course={course}/>)}
         </div>
         
         <Title title="Suggested Courses:"/>
         <div className={styles.myCoursesContainer}>
-            {mockCourses.map((course) => <CourseCard course={course}/>)}
+            {mockCourses.map((course) => <CourseCard key={course.id} course={course}/>)}
         </div>
       </div>
     </div>)
