@@ -1,17 +1,13 @@
 import '@/app/globals.css';
-import { AuthProvider } from '@/components/SessionProvider';
-import "../styles/theme.css"
+import { AuthProvider } from "@/components/SessionProvider";
+import "../styles/theme.css";
 
 export const metadata = {
-    title: 'Final Project App',
-    description: 'Roadmap selection and user authentication project.',
+  title: 'Final Project App',
+  description: 'Roadmap selection and user authentication project.',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr">
       <body>
