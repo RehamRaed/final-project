@@ -20,7 +20,7 @@
 }
 
 .selected {
-  border: 5px solid var(--color-accent); /* primary color */
+  border: 5px solid var(--color-accent); 
 }
 .roadmapContainer:hover{
     transform: translateY(-4px);
