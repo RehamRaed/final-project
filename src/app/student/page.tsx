@@ -49,7 +49,10 @@ type studentHomePageProps ={
 }
 export default function StudentHomePage({studentName="Basma", selectedRoadmap}:studentHomePageProps){
     return(<div >
+      <div style={{zIndex: 50, position: "fixed", top: 0, left: 0, width:"100%"}} >
         <PrimarySearchAppBar/>
+      </div>
+        
         <div className={styles.studentHomePageContainer}>
 
         <h1 className={styles.title}>Welcome, {studentName}!</h1>
