@@ -1,0 +1,47 @@
+.roadmapContainer{
+    padding: 50px 100px 100px 100px;
+    display: flex;
+    flex-direction: column;
+    gap:50px;
+}
+.headerContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.roadmapCardContainer{
+    border: solid 1px var(--color-border);
+    padding: 30px;
+    border-radius: var(--radius-md);
+    background-color: var(--color-card-bg);
+    display: flex;
+    flex-direction: column;
+    gap:20px
+    
+}
+.titleContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progressBar{
+    background-color: var(--color-border);
+    width: inherit;
+    height: 10px;
+    border-radius: var(--radius-md);
+}
+
+.progress{
+    background-color: var(--color-accent);
+    height: 10px;
+    border-radius: var(--radius-md);
+}
+
+.pathContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
