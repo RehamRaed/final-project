@@ -1,7 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 export default function ProfileRoadmap() {
+  const router = useRouter();
   return (
+    
     <div
       className="p-6 rounded-xl shadow-md border "
       style={{
@@ -35,6 +39,13 @@ export default function ProfileRoadmap() {
           style={{ backgroundColor: "var(--color-secondary)", color: "#fff" }}
         >
           Change Roadmap
+        </button>
+        <button
+          className="px-4 py-2 font-semibold rounded-lg transition text-sm"
+          style={{ backgroundColor: "var(--color-accent)", color: "#fff" }}
+          onClick={()=>{router.push('/myroadmap')}}
+        >
+          My Current Roadmap
         </button>
       </div>
     </div>
