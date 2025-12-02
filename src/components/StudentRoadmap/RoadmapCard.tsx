@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation"
 import ProgressBar from "./ProgressBar"
 import styles from "./StudentRoadmap.module.css"
 
@@ -11,7 +12,16 @@ type roadmapCardProp ={
     }
 }
 export default function RoadmapCard({course}:roadmapCardProp){
-    return(<div className={styles.roadmapCardContainer}>
+    const router = useRouter();
+
+    function handleRoadmapCardOnClick(){
+        console.log("pressed")
+        router.push(`/course/${course.id}`)
+        
+      }
+    return(<div 
+        className={styles.roadmapCardContainer} 
+        onClick={handleRoadmapCardOnClick}>
         <div className={styles.titleContainer}>
             <h3>{course.title}</h3>
             <p>{course.status}</p>

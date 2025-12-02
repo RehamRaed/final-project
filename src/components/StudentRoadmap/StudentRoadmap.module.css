@@ -1,5 +1,5 @@
 .roadmapContainer{
-    padding: 50px 100px 100px 100px;
+    padding: 100px;
     display: flex;
     flex-direction: column;
     gap:50px;
@@ -17,8 +17,17 @@
     background-color: var(--color-card-bg);
     display: flex;
     flex-direction: column;
-    gap:20px
+    gap:20px;
     
+    /* transition: transform 0.3s ease, box-shadow 0.3s ease; */
+}
+
+.roadmapCardContainer:hover{
+    /* background-color: var(--color-accent); */
+    /* color: var(--color-bg); */
+    /* transform: translateY(-4px); */
+    background-color: rgba(59, 130, 246, .1)
+    /* opacity: 50%; */
 }
 .titleContainer{
     display: flex;
