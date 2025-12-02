@@ -67,6 +67,7 @@ export default function Header() {
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
+     router.push('/myroadmap');
   };
 
   const handleMobileMenuClose = () => {
@@ -92,6 +93,7 @@ export default function Header() {
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMenuOpen}
       onClose={handleMenuClose}
+      
     >
       <MenuItem onClick={handleProfileRedirect}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My Courses</MenuItem>
