@@ -3,7 +3,9 @@ import MyRoadmap from "@/components/StudentRoadmap/StudentRoadmap";
 
 export default function Page() {
   return <>
-    <Header/>
+    <div style={{zIndex: 50, position: "fixed", top: 0, left: 0, width:"100%"}} >
+      <Header/>
+    </div>
     <MyRoadmap/>
   </>;
 }

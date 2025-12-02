@@ -1,8 +1,8 @@
-import PrimarySearchAppBar from "@/components/Header/Header";
 import Link from "next/link";
 import styles from "./page.module.css"
 import Title from "@/components/Title/title";
 import CourseCard from "@/components/CourseCard/Card";
+import Header from "@/components/Header/Header";
 
 const mockCourses = [
   {
@@ -50,7 +50,7 @@ type studentHomePageProps ={
 export default function StudentHomePage({studentName="Basma", selectedRoadmap}:studentHomePageProps){
     return(<div >
       <div style={{zIndex: 50, position: "fixed", top: 0, left: 0, width:"100%"}} >
-        <PrimarySearchAppBar/>
+        <Header/>
       </div>
         
         <div className={styles.studentHomePageContainer}>

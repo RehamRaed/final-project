@@ -1,11 +1,10 @@
-'use client'
 import { useState } from "react";
-import Button from "../Button/Button";
 import Title from "../Title/title";
-import RoadmapCard from "./RoadmapCard";
-import styles from "./StudentRoadmap.module.css"
-
-const courses = [
+import styles from "./Course.module.css"
+import LessonCard from "./LessonCard";
+export default function Course({id}:{id:number}){
+    {console.log(id)}
+    const courses = [
   {
     id: 1,
     title: "HTML Basics",
@@ -22,6 +21,8 @@ const courses = [
         order: 1,
         created_at: "2025-01-01 10:00:00",
         updated_at: "2025-01-01 10:00:00",
+        timeRequired: 70,
+        status: "Completed",
       },
       {
         id: 2,
@@ -32,6 +33,8 @@ const courses = [
         order: 2,
         created_at: "2025-01-01 10:10:00",
         updated_at: "2025-01-01 10:10:00",
+        timeRequired: 10,
+        status: "In Progress",
       },
       {
         id: 3,
@@ -42,6 +45,8 @@ const courses = [
         order: 3,
         created_at: "2025-01-01 10:20:00",
         updated_at: "2025-01-01 10:20:00",
+        timeRequired: 40,
+        status: "Not Started",
       },
       {
         id: 4,
@@ -52,6 +57,8 @@ const courses = [
         order: 4,
         created_at: "2025-01-01 10:30:00",
         updated_at: "2025-01-01 10:30:00",
+        timeRequired: 90,
+        status: "Not Started",
       },
       {
         id: 5,
@@ -62,6 +69,8 @@ const courses = [
         order: 5,
         created_at: "2025-01-01 10:40:00",
         updated_at: "2025-01-01 10:40:00",
+        timeRequired: 20,
+        status: "Not Started",
       },
       {
         id: 6,
@@ -72,6 +81,8 @@ const courses = [
         order: 6,
         created_at: "2025-01-01 10:50:00",
         updated_at: "2025-01-01 10:50:00",
+        timeRequired: 10,
+        status: "Not Started",
       },
       {
         id: 7,
@@ -82,6 +93,8 @@ const courses = [
         order: 7,
         created_at: "2025-01-01 11:00:00",
         updated_at: "2025-01-01 11:00:00",
+        timeRequired: 50,
+        status: "Not Started",
       },
       {
         id: 8,
@@ -92,6 +105,8 @@ const courses = [
         order: 8,
         created_at: "2025-01-01 11:10:00",
         updated_at: "2025-01-01 11:10:00",
+        timeRequired: 70,
+        status: "Not Started",
       },
       {
         id: 9,
@@ -102,6 +117,8 @@ const courses = [
         order: 9,
         created_at: "2025-01-01 11:20:00",
         updated_at: "2025-01-01 11:20:00",
+        timeRequired: 700,
+        status: "Not Started",
       },
       {
         id: 10,
@@ -112,6 +129,8 @@ const courses = [
         order: 10,
         created_at: "2025-01-01 11:30:00",
         updated_at: "2025-01-01 11:30:00",
+        timeRequired: 70,
+        status: "Not Started",
       },
     ],
   },
@@ -154,36 +173,15 @@ const courses = [
 ];
 
 
-type myRoadmapProps ={
-}
-
-
-
-export default function MyRoadmap(){
-  
-    const [done, setDone] = useState(false);
-    const [myCourses, setMyCourses] = useState(courses);
-    function handleDoneCourses(){
-        setDone(!done)
-        if(!done)
-            setMyCourses(courses.filter((course)=> course.status == "completed"))
-        else
-        setMyCourses(courses)
-    }
+    const course = courses.find((course)=> course.id == id)
+    console.log(course)
     
-    {console.log(myCourses)}
-    return(<div className={styles.roadmapContainer}>
-        <div className={styles.headerContainer}>
-            <Title title={done ? "My Roadmap / Done Courses" : "My Roadmap"} />
-            <Button
-                title={done ? "All Courses" : "Done Courses"}
-                bgcolor="--color-accent"
-                // toggle the done state on click
-                onClick={handleDoneCourses}
-            />
-        </div>
-        
-        {myCourses.map((course) => <RoadmapCard key={course.id} course={course}/>)}
-        
+
+    return(<div className={styles.courseLessonsContainer}>
+    
+    {course && <Title title={course?.title}/>}
+    <div>
+        {course?.lessons.map((lesson) => <LessonCard key={lesson.id} lesson={lesson} />)}
+    </div>
     </div>)
 }
