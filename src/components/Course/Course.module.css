@@ -5,6 +5,12 @@
     gap:50px
 }
 
+.statusLine{
+    /* background-color: var(--color-accent); */
+    height: inherit;
+    width: 0.2%;
+    /* border: solid 1px var(--color-border); */
+}
 .lessonCardContainer{
     border: solid 1px var(--color-border);
     background-color: var(--color-card-bg);
@@ -12,7 +18,8 @@
 
     display: flex;
     flex-direction: column;
-    gap:20px
+    gap:20px;
+    width: 99.8%;
 }
 
 .img{
