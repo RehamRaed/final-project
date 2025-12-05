@@ -1,0 +1,22 @@
+.lessonContainer{
+    padding: 100px;
+    display: flex;
+    flex-direction: column;
+    gap:20px;
+
+}
+
+.contentContainer{
+    border: solid 2px;
+    /* border-color: var(--color-accent); */
+    padding: 50px;
+    background-color: var(--color-card-bg);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap:40px
+}
+.content{
+    width: inherit;
+    text-wrap: wrap;
+}
