@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Title from "../Title/title";
 import styles from "./Course.module.css"
 import LessonCard from "./LessonCard";
@@ -176,7 +175,9 @@ export default function Course({id}:{id:number}){
     const course = courses.find((course)=> course.id == id)
     console.log(course)
     
-
+    if(!course){
+      return(<p>An error occuered can't find course!</p>)
+    }
     return(<div className={styles.courseLessonsContainer}>
     
     {course && <Title title={course?.title}/>}

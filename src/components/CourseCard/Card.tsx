@@ -1,3 +1,5 @@
+'use client'
+import { useRouter } from "next/navigation"
 import styles from "./Card.module.css"
 
 type cardProps ={
@@ -7,8 +9,17 @@ type cardProps ={
         description: string
     }
 }
+
+
 export default function CourseCard({course}:cardProps){
-    return(<div className={styles.cardContanier}>
+    const router = useRouter();
+    function handleRoadmapCardOnClick(){
+    router.push(`/course/${course.id}`)
+
+}
+    return(<div 
+        className={styles.cardContanier}
+        onClick={handleRoadmapCardOnClick}>
         <h1 className={styles.title}>{course.title}</h1>
         <p className={styles.description}>{course.description}</p>
     </div>)
