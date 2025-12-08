@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation"
 import ProgressBar from "./ProgressBar"
 import styles from "./StudentRoadmap.module.css"
+import Button from "../Button/Button"
 
 type roadmapCardProp ={
     course:{
@@ -19,14 +20,28 @@ export default function RoadmapCard({course}:roadmapCardProp){
         router.push(`/course/${course.id}`)
         
       }
+
     return(<div 
         className={styles.roadmapCardContainer} 
         onClick={handleRoadmapCardOnClick}>
         <div className={styles.titleContainer}>
-            <h3>{course.title}</h3>
-            <p>{course.status}</p>
+            <p>COURSE</p>
+            <h1>{course.title}</h1>
+            <p className={styles.statusp}>{course.description}</p>
+            {/* <p className={styles.statusp}>({course.status})</p> */}
         </div>
-        <p>{course.description}</p>
-        <ProgressBar donePersantage={course.donePercentage}/>
+        <div className={styles.lessonDetails}>
+            <div className={styles.lessonDetailsToppers}>
+                <p>CHAPTER 3</p>
+                <div style={{width:"40%"}}>
+                    <ProgressBar donePersantage={course.donePercentage}/>
+                </div>
+            </div>
+            <h1 className={styles.chapterTitle}>Working with Text Elements</h1>
+            <div style={{display:"flex", justifyContent:"flex-end"}}>
+                <Button title="Continue" bgcolor="--color-primary" onClick={handleRoadmapCardOnClick}/>
+            </div>
+        </div>
+        
     </div>)
 }
