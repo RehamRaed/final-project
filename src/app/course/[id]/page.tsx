@@ -7,9 +7,6 @@ export default function CoursePage(){
     const params = useParams();
     const pramId = Number(params.id);
     return(<div>
-        <div style={{zIndex: 50, position: "fixed", top: 0, left: 0, width:"100%"}} >
-            <Header/>
-        </div>
         <Course id={pramId}/>
     </div>)
 }
