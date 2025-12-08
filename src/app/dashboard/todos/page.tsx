@@ -33,7 +33,7 @@ export default function ToDoListPage() {
   };
 
   return (
-    <div className="mx-auto px-4 space-y-5">
+    <div style={{paddingTop:"100px"}} className="mx-auto px-4 space-y-5">
       <ToDoPageTop remainingTasks={inProgress.length} />
       <AddTask onAdd={handleAddTask} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
