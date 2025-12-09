@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 export default function CoursePage(){
     const params = useParams();
     const pramId = Number(params.id);
-    return(<div>
+    return(<div style={{padding:"100px"}}>
         <Course id={pramId}/>
     </div>)
 }
