@@ -44,7 +44,9 @@ export default function LessonCard ({lesson}: lessonCardProps){
         <div className={styles.lessonCardTitle}>
             <div style={{display:"flex", flexDirection:"column", gap:"5px"}}>
                 <div style={{display:"flex", flexDirection:"row", gap:"5px"}}>
-                    <h4> {lesson.title} </h4>
+                    <Link style={{color:"var(--color-text-primary)"}} href={`/lesson/${lesson.id}`} >
+                        <h4> {lesson.title} </h4>
+                    </Link>
                     {handleStatusText()}
                 </div>
                 <TimeNeeded minutes={lesson.timeRequired}/>
