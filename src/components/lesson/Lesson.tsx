@@ -5,6 +5,7 @@ import styles from "./Lesson.module.css"
 import Link from "next/link"
 import Button from "../Button/Button"
 import { useState } from "react"
+import Course from "../Course/Course"
 
 const lesson = {
         id: 1,
@@ -25,9 +26,11 @@ const lesson = {
 export default function Lesson({id}:{id:number}){
     
     const [status, setStatus] = useState(lesson.status)
+    const [bgcolor, setBgColor]= useState("--color-accent")
     function handleMarkDone(){
         checkBorderColor()
         setStatus("Completed")
+        setBgColor("--color-text-primary")
         //more to send status to db
     }
     function checkBorderColor(){
@@ -42,20 +45,17 @@ export default function Lesson({id}:{id:number}){
     
     checkBorderColor()
     return(<div className={styles.lessonContainer}>
-        <Link
-            className="flex items-center gap-1 font-semibold transition duration-150"
-            style={{ color: 'var(--color-primary)' }}
-            href={`/course/${lesson.course_id}`}
-        >
-            <ArrowLeft size={20} /> Back 
-        </Link>
+        <div className={styles.courseContainer}>
+            <Course id={lesson.course_id}/>
+        </div>
         <div style={{borderColor:`var(${borderColor})`}} className={styles.contentContainer}>
+            
             <div className={styles.toppers}>
                 <div>
                     <Title title={lesson.title}/>
                     <nav style={{display:"flex", alignItems:"center", color:"var(--color-text-secondary)"}}>(<TimeNeeded minutes={lesson.timeRequired}/>)</nav>
                 </div>
-                <Button title="Mark Done" bgcolor="--color-accent" onClick={handleMarkDone}/>
+                <Button title="Mark Done" bgcolor={bgcolor} onClick={handleMarkDone}/>
             </div>
             <article className={styles.content}>
                 {lesson.content}

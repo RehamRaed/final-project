@@ -181,7 +181,7 @@ export default function Course({id}:{id:number}){
     return(<div className={styles.courseLessonsContainer}>
     
     {course && <Title title={course?.title}/>}
-    <div>
+    <div className={styles.lessons}>
         {course?.lessons.map((lesson) => <LessonCard key={lesson.id} lesson={lesson} />)}
     </div>
     </div>)
