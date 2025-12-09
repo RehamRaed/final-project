@@ -1,11 +1,12 @@
 .lessonContainer{
     padding: 100px;
     display: flex;
-    flex-direction: column;
-    gap:20px;
-
+    flex-direction: row;
+    gap:50px;
 }
-
+.courseContainer{
+    width: 30%;
+}
 .contentContainer{
     border: solid 2px;
     /* border-color: var(--color-accent); */
@@ -14,10 +15,12 @@
     border-radius: 8px;
     display: flex;
     flex-direction: column;
-    gap:40px
+    gap:40px;
+    margin-top: 85px;
+    width: 70%;
 }
 .content{
-    width: inherit;
+    width: 90ch;
     text-wrap: wrap;
 }
 
