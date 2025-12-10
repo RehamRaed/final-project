@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabaseClient'
-import { LoginSchema, LoginType } from '@/lib/validation'
+import { supabase } from '@/lib/supabase/client'
+import { LoginSchema, LoginType } from '@/lib/validators'
 
 export default function SignInForm() {
   const [form, setForm] = useState<LoginType>({ email: '', password: '' })

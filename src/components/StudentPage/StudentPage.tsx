@@ -1,15 +1,10 @@
-'use client';
-import styles from "./StudentPage.module.css"
-import Title from "@/components/Title/title";
-import CourseCard from "@/components/CourseCard/Card";
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import SelectedRoadmapCard from "@/components/StudentRoadmap/SelectedRoadmapCard";
+import CourseCard from "@/components/StudentPage/CourseCard";
 import MiniToDoCard from "@/components/ToDos/MiniToDoCard";
 import { ToDoItem } from "@/types/todo";
-
-
-type StudentHomePageProps = {
-  studentName?: string,
-  selectedRoadmap?: string,
-}
 
 const mockTasks: ToDoItem[] = [
   { id: 1, task: "Complete Next.js Setup Module", status: 'In Progress' },
@@ -20,91 +15,62 @@ const mockTasks: ToDoItem[] = [
 ];
 
 const mockCourses = [
-  {
-    id: 1,
-    title: "HTML & CSS Basics",
-    description: "Learn the building blocks of the web.",
-    icon: "🌐",
-  },
-  {
-    id: 2,
-    title: "JavaScript Fundamentals",
-    description: "Understand the core of web programming.",
-    icon: "⚡",
-  },
-  {
-    id: 3,
-    title: "React for Beginners",
-    description: "Build interactive UIs using React.",
-    icon: "⚛️",
-  },
-  {
-    id: 4,
-    title: "Node.js & Express",
-    description: "Create backend servers and APIs.",
-    icon: "🛠️",
-  },
-  {
-    id: 5,
-    title: "Node.js & Express",
-    description: "Create backend servers and APIs.",
-    icon: "🛠️",
-  },
-  {
-    id: 6,
-    title: "Node.js & Express",
-    description: "Create backend servers and APIs.",
-    icon: "🛠️",
-  },
+  { id: 1, title: "HTML & CSS Basics", description: "Learn the building blocks of the web.", icon: "🌐" },
+  { id: 2, title: "JavaScript Fundamentals", description: "Understand the core of web programming.", icon: "⚡" },
+  { id: 3, title: "React for Beginners", description: "Build interactive UIs using React.", icon: "⚛️" },
+  { id: 4, title: "Node.js & Express", description: "Create backend servers and APIs.", icon: "🛠️" },
 ];
 
-
-
-export default function StudentHomePage({
-  studentName = "Basma",
-  selectedRoadmap = "Full-Stack Developer Path"
-}: StudentHomePageProps) {
-
-  const hasRoadmap = !!selectedRoadmap;
+export default function StudentHomePage() {
+  const params = useSearchParams();
+  const selectedTitle = params.get("title") || "No roadmap selected";
+  const selectedIcon = params.get("icon") || "cloud";
 
   return (
     <div className="bg-bg min-h-screen pt-[90px]">
-
       <div className="max-w-[1400px] mx-auto px-4 py-8 space-y-10">
 
+        {/* Welcome + Selected Roadmap */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
           <div className="lg:col-span-2 p-6 bg-card-bg rounded-xl shadow-md border border-border space-y-4">
             <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary">
-              Welcome, <span className="text-primary">{studentName}!</span>
+              Welcome, <span className="text-primary">Student!</span>
             </h1>
-            <p className="text-text-secondary text-lg font-medium">
+            <p className="text-text-secondary text-sm font-medium">
               Every step you take brings you closer to mastering your roadmap ✨
             </p>
 
-            <div className="mt-4 p-4 rounded-lg border-l-4 border-primary bg-primary/10">
-              <p className="text-text-primary font-semibold">
-                Current Roadmap: 
-                <span className="ml-2 font-bold">{hasRoadmap ? selectedRoadmap : "No roadmap selected yet"}</span>
-              </p>
+            <div className="mt-4">
+              <SelectedRoadmapCard
+                title={selectedTitle}
+                description="This is your current roadmap. Keep progressing!"
+                color="var(--primary)"
+              />
             </div>
           </div>
 
           <div className="lg:col-span-1">
             <MiniToDoCard tasks={mockTasks} />
           </div>
-
         </div>
 
-        <Title title="My Courses:"/>
-        <div className={styles.myCoursesContainer}>
-            {mockCourses.map((course) => <CourseCard key={course.id} course={course}/>)}
+        {/* My Courses */}
+        <h2 className="text-2xl font-bold text-primary">My Courses:</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {mockCourses.map((course) => (
+            <CourseCard key={course.id} course={course} />
+          ))}
         </div>
-        
-        <Title title="Suggested Courses:"/>
-        <div className={styles.myCoursesContainer}>
-            {mockCourses.map((course) => <CourseCard key={course.id} course={course}/>)}
+
+        {/* Suggested Courses */}
+        <h2 className="text-2xl font-bold text-primary">Suggested Courses:</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {mockCourses.map((course) => (
+            <CourseCard key={course.id} course={course} />
+          ))}
         </div>
+
       </div>
-    </div>)
+    </div>
+  );
 }
