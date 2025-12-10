@@ -1,5 +1,5 @@
 .courseLessonsContainer{
-    padding: 100px;
+    /* padding: 100px; */
     display: flex;
     flex-direction: column;
     gap:50px
@@ -10,6 +10,10 @@
     height: inherit;
     width: 0.2%;
     /* border: solid 1px var(--color-border); */
+}
+.lessons{
+    overflow-y:scroll; 
+    height: 700px;
 }
 .lessonCardContainer{
     border: solid 1px var(--color-border);
