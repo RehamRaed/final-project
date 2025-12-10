@@ -4,7 +4,7 @@ import '@/app/globals.css';
 import { AuthProvider } from "@/components/SessionProvider";
 import "../styles/theme.css";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import Header from '@/components/Header/Header';
 import { usePathname } from "next/navigation";

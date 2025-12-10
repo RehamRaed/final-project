@@ -1,12 +1,20 @@
-'use client'
-import Course from "@/components/Course/Course";
-import Header from "@/components/Header/Header";
-import { useParams } from "next/navigation";
+'use client';
 
-export default function CoursePage(){
-    const params = useParams();
-    const pramId = Number(params.id);
-    return(<div>
-        <Course id={pramId}/>
-    </div>)
+import Course from "@/components/Course/Course";
+import { useParams } from "next/navigation";
+import React from "react";
+
+export default function CoursePage() {
+  const params = useParams();
+  const id = Number(params.id);
+
+  if (!id || Number.isNaN(id)) {
+    return <div className="p-8">Course id invalid</div>;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <Course id={id} />
+    </div>
+  );
 }
