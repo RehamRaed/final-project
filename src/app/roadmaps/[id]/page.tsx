@@ -1,43 +1,54 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import styles from "./page.module.css"
-const roadmaps = [
-  { id: 1, title: "Frontend", description: "Learn HTML, CSS, JS, React", icon: "🌐", details: "Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools.Frontend roadmap includes mastering HTML, CSS, JS, React, and related tools." },
-  { id: 2, title: "Backend", description: "Servers, APIs, Databases", icon: "🛠️", details: "Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more. Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more.Backend roadmap includes Node.js, Express, databases, APIs, authentication, and more." },
-];
 
-export default function RoadmapDetailsPage() {
-  const params = useParams();
-  const pramId = Number(params.id);
+export default function RoadmapDetails() {
+  const { id } = useParams();
+  const [roadmap, setRoadmap] = useState<any>(null);
 
-  const roadmap = roadmaps.find((roadmap) => roadmap.id === pramId);
+  useEffect(() => {
+    async function load() {
+      const res = await fetch(`/api/roadmaps/${id}`);
+      const json = await res.json();
+      setRoadmap(json.data);
+    }
+    load();
+  }, [id]);
 
-  if (!roadmap) {
-    return <div>Sorry! Cannot Find Roadmap</div>;
-  }
+  if (!roadmap) return <p className="p-6 text-text-secondary text-center">Loading...</p>;
 
   return (
-    <div className={styles.roadmapDetailsContainer}>
-      {/* <img className={styles.roadmapIcon} src={roadmap.img} alt={roadmap.title}/> */}
-      <div className={styles.roadmapTitleContainer}>
-        <h1 className={styles.roadmapTitle}>{roadmap.icon}</h1>
-        <h1 className={styles.roadmapTitle}>
-          {roadmap.title} Roadmap
-        </h1>
-      </div>
-      <p className={styles.details}>
-        {roadmap.details}
-      </p>
+    <div className="p-6 max-w-5xl mx-auto">
+      <Link href="/roadmaps" className="text-primary hover:underline font-medium">
+        ← Back
+      </Link>
 
-      <div className={styles.links}>
-        <Link href="/roadmaps" className={styles.link}>
-          Back to Roadmaps
-        </Link>
-        <Link href="/student" className={styles.link}>
-          Continue with {roadmap.title}
-        </Link>
+      <div className="relative mt-6 p-8 bg-card-bg border border-border rounded-2xl shadow-lg">
+        <div
+          className="absolute left-0 top-0 h-full w-2 rounded-l-2xl"
+          style={{ backgroundColor: roadmap.color ?? "var(--primary)" }}
+        />
+
+        <div className="flex items-center gap-4 mb-4">
+          <div className="text-6xl">{roadmap.icon}</div>
+          <h1 className="text-4xl font-bold text-primary">{roadmap.title}</h1>
+        </div>
+
+        <p className="text-text-secondary mt-2">{roadmap.description}</p>
+
+        <h3 className="text-2xl font-semibold mt-8 mb-4 text-primary">Courses</h3>
+        <ul className="space-y-3">
+          {roadmap.courses?.map((c: any, i: number) => (
+            <li
+              key={i}
+              className="p-4 border border-border rounded-xl bg-bg text-text-primary hover:bg-primary/5 transition-colors duration-300"
+            >
+              {c.course.title}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

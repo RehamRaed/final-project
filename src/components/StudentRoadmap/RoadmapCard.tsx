@@ -1,47 +1,26 @@
-import { useRouter } from "next/navigation"
-import ProgressBar from "./ProgressBar"
-import styles from "./StudentRoadmap.module.css"
-import Button from "../Button/Button"
+"use client";
 
-type roadmapCardProp ={
-    course:{
-        id: number,
-        title: string,
-        description: string,
-        status: string,
-        donePercentage: number
-    }
-}
-export default function RoadmapCard({course}:roadmapCardProp){
-    const router = useRouter();
+type RoadmapCardProps = {
+  roadmap: {
+    id: string;
+    title: string;
+    description: string;
+    icon?: string;
+  };
+  isSelected: boolean;
+  onSelect: () => void;
+};
 
-    function handleRoadmapCardOnClick(){
-        console.log("pressed")
-        router.push(`/course/${course.id}`)
-        
-      }
-
-    return(<div 
-        className={styles.roadmapCardContainer} 
-        onClick={handleRoadmapCardOnClick}>
-        <div className={styles.titleContainer}>
-            <p>COURSE</p>
-            <h1>{course.title}</h1>
-            <p className={styles.statusp}>{course.description}</p>
-            {/* <p className={styles.statusp}>({course.status})</p> */}
-        </div>
-        <div className={styles.lessonDetails}>
-            <div className={styles.lessonDetailsToppers}>
-                <p>CHAPTER 3</p>
-                <div style={{width:"40%"}}>
-                    <ProgressBar donePersantage={course.donePercentage}/>
-                </div>
-            </div>
-            <h1 className={styles.chapterTitle}>Working with Text Elements</h1>
-            <div style={{display:"flex", justifyContent:"flex-end"}}>
-                <Button title="Continue" bgcolor="--color-primary" onClick={handleRoadmapCardOnClick}/>
-            </div>
-        </div>
-        
-    </div>)
+export default function RoadmapCard({ roadmap, isSelected, onSelect }: RoadmapCardProps) {
+  return (
+    <div
+      className={`border rounded-xl p-6 cursor-pointer shadow-md hover:shadow-lg transition ${
+        isSelected ? "border-blue-600 bg-blue-50" : "border-gray-300 bg-white"
+      }`}
+      onClick={onSelect}
+    >
+      <h2 className="text-xl font-semibold mb-2">{roadmap.title}</h2>
+      <p className="text-gray-500">{roadmap.description}</p>
+    </div>
+  );
 }

@@ -1,28 +1,14 @@
-import styles from "./Course.module.css"
-export default function TimeNeeded ({minutes}:{minutes: number}){
+// components/Course/TimeNeeded.tsx
+import React from "react";
 
-    let finalTime = ""
-    function caculateTime (){
-        let hours = 0
-        let minutesLeft = minutes;
+export default function TimeNeeded({ minutes }: { minutes: number }) {
+  function format(mins: number) {
+    if (!mins || mins <= 0) return "0 minutes";
+    if (mins < 60) return `${mins} minutes`;
+    const hours = Math.floor(mins / 60);
+    const rem = mins % 60;
+    return rem === 0 ? `${hours} hours` : `${hours}h ${rem}m`;
+  }
 
-        
-        if (minutes < 60){
-            finalTime = minutes + " minutes"
-            return finalTime
-        }
-
-        while(minutesLeft > 60){
-            minutesLeft -= 60;
-            hours += 1; 
-        }
-        finalTime = hours + " hours " + minutesLeft + " minutes"
-        return finalTime;
-    }
-    caculateTime()
-    return(<div className={styles.time}>
-        <p>{finalTime}</p>
-    </div>
-
-    )
+  return <div className="text-sm text-gray-500 mt-1">{format(minutes)}</div>;
 }

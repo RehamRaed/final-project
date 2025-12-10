@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabaseClient'
-import { SignupSchema, SignupType } from '@/lib/validation'
+import { supabase } from '@/lib/supabase/client'
+import { SignupSchema, SignupType } from '@/lib/validators'
 
 export default function SignUpForm() {
   const [form, setForm] = useState<SignupType>({
@@ -38,6 +38,8 @@ export default function SignUpForm() {
       }
     }
   }
+
+  
 
   const handleGoogleSignIn = async () => {
     setLoading(true)
