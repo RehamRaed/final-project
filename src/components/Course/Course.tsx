@@ -23,7 +23,7 @@ type CourseType = {
   lessons?: Lesson[];
 };
 
-export default function Course({ id }: { id: number }) {
+export default function Course({ id }: { id: string }) {
   const [course, setCourse] = useState<CourseType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,8 +69,9 @@ export default function Course({ id }: { id: number }) {
   if (loading) return <div className="p-8"><LoadingSpinner /> Loading...</div>;
   if (error) return <div className="p-8 text-red-600">Error: {error}</div>;
   if (!course) return <div className="p-8">الكورس غير موجود</div>;
-
+{console.log(course.title)}
   return (
+    
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-xl shadow p-6 mb-6">
         <Title title={course.title} />

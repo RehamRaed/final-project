@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 interface Course {
   course_id: string;
   title: string;
@@ -12,6 +13,11 @@ interface Props {
 }
 
 export default function CourseCard({ course }: Props) {
+  const router = useRouter();
+  function handleContinue(){
+    console.log("handle contiue clicked")
+    router.push(`/courses/${course.course_id}`);
+  }
   return (
     <div className="flex flex-col md:flex-row gap-4 rounded-xl shadow-md bg-white overflow-hidden hover:shadow-lg transition cursor-pointer">
       <div
@@ -36,7 +42,7 @@ export default function CourseCard({ course }: Props) {
         </h3>
 
         <div className="flex justify-end">
-          <Button title="Continue" />
+          <Button title="Continue" onClick={handleContinue}/>
         </div>
       </div>
     </div>
