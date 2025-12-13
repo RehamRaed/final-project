@@ -2,16 +2,16 @@
 
 import Link from "next/link";
 import styles from "./Roadmap.module.css"
-type Roadmap = {
-  id: number;
+interface Roadmap {
+  id: string;
   title: string;
   description: string;
-  icon?: string; 
-};
+  icon?: string;
+}
 
 type RoadmapCardProps = {
   roadmap: Roadmap;
-  onSelect: (id: number) => void;
+  onSelect: (id: string) => void;
   isSelected?: boolean;
 };
 
@@ -22,9 +22,9 @@ export default function RoadmapCard({ roadmap, onSelect, isSelected = false}: Ro
             onClick={() => onSelect(roadmap.id)}
         >
             
-        <div className={styles.icon}>
+        {/* <div className={styles.icon}>
             {roadmap.icon}
-        </div>
+        </div> */}
 
         <h2 className={styles.title}>{roadmap.title}</h2>
         <p className={styles.description}>{roadmap.description}</p>

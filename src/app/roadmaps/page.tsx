@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import RoadmapCard from "@/components/StudentRoadmap/RoadmapCard";
+import RoadmapCard from "../../components/Roadmap/Roadmap";
 
 interface Roadmap {
   id: string;
