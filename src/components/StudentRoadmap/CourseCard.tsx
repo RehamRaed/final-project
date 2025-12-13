@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Button from "../Button/Button";
 interface Course {
   course_id: string;
   title: string;
@@ -62,24 +63,3 @@ const ProgressBar = ({ donePercentage }: { donePercentage: number }) => (
     </p>
   </div>
 );
-
-const Button = ({
-  title,
-  onClick,
-  bgcolor,
-}: {
-  title: string;
-  onClick?: () => void;
-  bgcolor?: string;
-}) => {
-  const bg = bgcolor || "var(--primary)";
-  return (
-    <button
-      onClick={onClick}
-      style={{ backgroundColor: bg }}
-      className="text-white px-4 py-2 rounded-lg hover:opacity-90 transition"
-    >
-      {title}
-    </button>
-  );
-};
