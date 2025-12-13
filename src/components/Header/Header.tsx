@@ -153,9 +153,9 @@ export default function Header() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
+          {/* <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
             <MenuIcon />
-          </IconButton>
+          </IconButton> */}
 
           <Link href="/student" passHref>
             <Typography
@@ -178,10 +178,10 @@ export default function Header() {
             </SearchIconWrapper>
             <StyledInputBase placeholder="Search…" inputProps={{ 'aria-label': 'search' }} />
           </Search>
-
+{/* 
           <IconButton size="large" edge="start" color="inherit" aria-label="filter" sx={{ mr: 2 }}>
             <TuneIcon />
-          </IconButton>
+          </IconButton> */}
 
           <Box sx={{ flexGrow: 1 }} />
 
