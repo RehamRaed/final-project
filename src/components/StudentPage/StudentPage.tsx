@@ -11,13 +11,14 @@ const mockTasks: ToDoItem[] = [
   { id: 2, task: "Read Tailwind CSS Documentation", status: 'In Progress' },
   { id: 3, task: "Watch Redux Toolkit Lecture", status: 'In Progress' },
   { id: 4, task: "Practice TypeScript Interfaces", status: 'Done' },
-  { id: 5, task: "Design Database Schema", status: 'In Progress' },
 ];
 
 const mockCourses = [
   { id: 1, title: "HTML & CSS Basics", description: "Learn the building blocks of the web.", icon: "🌐" },
   { id: 2, title: "JavaScript Fundamentals", description: "Understand the core of web programming.", icon: "⚡" },
   { id: 3, title: "React for Beginners", description: "Build interactive UIs using React.", icon: "⚛️" },
+  { id: 4, title: "Node.js & Express", description: "Create backend servers and APIs.", icon: "🛠️" },
+  { id: 4, title: "Node.js & Express", description: "Create backend servers and APIs.", icon: "🛠️" },
   { id: 4, title: "Node.js & Express", description: "Create backend servers and APIs.", icon: "🛠️" },
 ];
 
@@ -56,18 +57,25 @@ export default function StudentHomePage() {
 
         {/* My Courses */}
         <h2 className="text-2xl font-bold text-primary">My Courses:</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {mockCourses.map((course) => (
-            <CourseCard key={course.id} course={course} />
-          ))}
+          <div className="overflow-x-auto scroll-smooth p-2 scrollbar-hide">
+          <div className="flex gap-4 w-max">
+            {mockCourses.map((course) => (
+              <div key={course.id} className="flex-shrink-0 w-64 sm:w-72 lg:w-80">
+                <CourseCard course={course} />
+              </div>
+            ))}
+          </div>
         </div>
-
         {/* Suggested Courses */}
         <h2 className="text-2xl font-bold text-primary">Suggested Courses:</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {mockCourses.map((course) => (
-            <CourseCard key={course.id} course={course} />
-          ))}
+        <div className="overflow-x-auto scroll-smooth p-2 scrollbar-hide">
+          <div className="flex gap-4 w-max">
+            {mockCourses.map((course) => (
+              <div key={course.id} className="flex-shrink-0 w-64 sm:w-72 lg:w-80">
+                <CourseCard course={course} />
+              </div>
+            ))}
+          </div>
         </div>
 
       </div>

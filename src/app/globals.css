@@ -11,7 +11,13 @@
   --border: #D1D5DB;
   --primary-hover :#2a73ea;
 }
-
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none; /* Firefox */
+}
 @theme{
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
