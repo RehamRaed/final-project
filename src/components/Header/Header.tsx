@@ -62,6 +62,7 @@ interface HeaderProps {
   tags?: Tag[] | null;
 }
 
+
 interface Course {
   course_id: string;
   title: string;
