@@ -6,4 +6,5 @@ export interface Lesson {
   duration: number;
   content: string;
   status: 'Not Started' | 'In Progress' | 'Completed';
+  video_url?: string;
 }
