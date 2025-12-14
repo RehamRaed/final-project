@@ -1,22 +1,34 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import LessonSidebar from '@/components/lesson/LessonSidebar';
-import LessonDetail from '@/components/lesson/LessonDetail';
+"use client";
+
+import { useEffect, useState } from "react";
+
+import { useParams } from "next/navigation";
+
+import LessonSidebar from "@/components/lesson/LessonSidebar";
+
+import LessonDetail from "@/components/lesson/LessonDetail";
 
 interface Lesson {
   id: string;
+
   course_id: string;
+
   title: string;
+
   description: string;
+
   duration: number;
-  status: 'Not Started' | 'In Progress' | 'Completed';
+
+  status: "Not Started" | "In Progress" | "Completed";
 }
 
 export default function LessonsPage() {
   const { courseId } = useParams();
+
   const [lessons, setLessons] = useState<Lesson[]>([]);
+
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,27 +36,37 @@ export default function LessonsPage() {
 
     const fetchLessons = async () => {
       setLoading(true);
+
       try {
-        const { supabase } = await import('@/lib/supabase/client');
+        const { supabase } = await import("@/lib/supabase/client");
+
         const { data, error } = await supabase
-          .from('lessons')
-          .select('*')
-          .eq('course_id', courseId)
-          .order('order_index', { ascending: true });
+
+          .from("lessons")
+
+          .select("*")
+
+          .eq("course_id", courseId)
+
+          .order("order_index", { ascending: true });
 
         if (error) throw error;
 
         const lessonsData = (data || []).map((l: any) => ({
           ...l,
-          status: 'Not Started', 
+
+          status: "Not Started",
         }));
 
         setLessons(lessonsData);
+
         if (lessonsData.length > 0) setSelectedLesson(lessonsData[0]);
       } catch (err) {
-        console.error('Error fetching lessons:', err);
+        console.error("Error fetching lessons:", err);
+
         setLessons([]);
       }
+
       setLoading(false);
     };
 
@@ -53,12 +75,11 @@ export default function LessonsPage() {
 
   const handleMarkDone = (lessonId: string) => {
     setLessons((prev) =>
-      prev.map((l) =>
-        l.id === lessonId ? { ...l, status: 'Completed' } : l
-      )
+      prev.map((l) => (l.id === lessonId ? { ...l, status: "Completed" } : l))
     );
+
     if (selectedLesson?.id === lessonId) {
-      setSelectedLesson({ ...selectedLesson, status: 'Completed' });
+      setSelectedLesson({ ...selectedLesson, status: "Completed" });
     }
   };
 
@@ -76,6 +97,7 @@ export default function LessonsPage() {
         selectedLessonId={selectedLesson?.id || null}
         onSelectLesson={setSelectedLesson}
       />
+
       <div className="flex-1">
         {selectedLesson ? (
           <LessonDetail lesson={selectedLesson} onMarkDone={handleMarkDone} />

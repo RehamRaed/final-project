@@ -10,19 +10,17 @@ import InputBase from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import TuneIcon from '@mui/icons-material/Tune';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from "react";
+import { useState } from 'react';
 import { fetchCourses } from '@/lib/search';
 import SearchResults from './SearchResults';
+import { supabase } from '@/lib/supabase/client';
 
-// === Styled Components ===
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -55,9 +53,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-interface Tag{
-  id:string,
-  name: string
+interface Tag {
+  id: string;
+  name: string;
 }
 
 interface HeaderProps {
@@ -72,38 +70,11 @@ interface Course {
   donePercentage: number;
 }
 
-export default function Header({tags}: HeaderProps) {
-
+export default function Header({ tags }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  // const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [res, setRes] = useState<Course[]>([]);
-
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value)
-
-    const query = e.target.value;
-    setSearchQuery(query);
-    if (!query) {
-      console.log(query)
-      setRes([]);
-      return;
-    }
-    try {
-      const courses = await fetchCourses({
-        query: query,
-        // tags: selectedTags,
-      });
-      console.log('Filtered courses:', courses);
-      setRes(courses);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  // {console.log(tags)}
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  // ناخد الـ roadmapId من الرابط (student page)
   const roadmapId = searchParams.get('id');
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -112,18 +83,23 @@ export default function Header({tags}: HeaderProps) {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  // === Handlers ===
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    if (!query) {
+      setRes([]);
+      return;
+    }
+    const courses = await fetchCourses({ query });
+    setRes(courses);
+  };
+
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-    handleMobileMenuClose();
-    router.push(`/roadmaps/${roadmapId}/courses`);
-  };
-
-  const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
 
@@ -142,7 +118,12 @@ export default function Header({tags}: HeaderProps) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  // === Menus ===
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    handleMenuClose();
+    router.push('/auth/login');
+  };
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -153,9 +134,13 @@ export default function Header({tags}: HeaderProps) {
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMenuOpen}
       onClose={handleMenuClose}
+      style={{top:"35px"}}
     >
       <MenuItem onClick={handleProfileRedirect}>Profile</MenuItem>
       <MenuItem onClick={handleMyCourses}>My Courses</MenuItem>
+      <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
+        Logout
+      </MenuItem>
     </Menu>
   );
 
@@ -168,53 +153,38 @@ export default function Header({tags}: HeaderProps) {
       keepMounted
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
+      onClose={handleMenuClose}
     >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
+    {/*}  <MenuItem >
+        <IconButton size="large" color="inherit">
           <Badge badgeContent={17} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
         <p>Notifications</p>
-      </MenuItem>
+      </MenuItem>*/}
       <MenuItem onClick={handleProfileRedirect}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
+        
         <p>Profile</p>
       </MenuItem>
       <MenuItem onClick={handleMyCourses}>
         <p>My Courses</p>
       </MenuItem>
+      <MenuItem onClick={handleLogout}>
+        <p style={{ color: 'red' }}>Logout</p>
+      </MenuItem>
     </Menu>
   );
 
-  // === Render Header ===
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          {/* <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
-            <MenuIcon />
-          </IconButton> */}
-
           <Link href="/student" passHref>
             <Typography
               variant="h6"
               noWrap
-              sx={{
-                display: { xs: 'none', sm: 'block' },
-                textDecoration: 'none',
-                color: 'white',
-                cursor: 'pointer',
-              }}
+              sx={{ display: { xs: 'none', sm: 'block' }, color: 'white', cursor: 'pointer' }}
             >
               StudyMATE
             </Typography>
@@ -224,26 +194,20 @@ export default function Header({tags}: HeaderProps) {
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
-            <StyledInputBase placeholder={searchQuery} onChange={handleSearch} inputProps={{ 'aria-label': 'search' }} />
+            <StyledInputBase placeholder={searchQuery} onChange={handleSearch} />
           </Search>
-          {/* <SearchResults res={res ?? []}/> */}
-{/* 
-          <IconButton size="large" edge="start" color="inherit" aria-label="filter" sx={{ mr: 2 }}>
-            <TuneIcon />
-          </IconButton> */}
 
           <Box sx={{ flexGrow: 1 }} />
 
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
+          {/*}  <IconButton size="large" color="inherit">
               <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
             <IconButton
               size="large"
               edge="end"
-              aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
@@ -256,7 +220,6 @@ export default function Header({tags}: HeaderProps) {
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
-              aria-label="show more"
               aria-controls={mobileMenuId}
               aria-haspopup="true"
               onClick={handleMobileMenuOpen}
@@ -267,6 +230,7 @@ export default function Header({tags}: HeaderProps) {
           </Box>
         </Toolbar>
       </AppBar>
+
       {res.length > 0 && (
         <div className="mt-1 bg-white shadow-md max-h-96 overflow-auto z-50 rounded w-[300px] ml-[150px] p-4">
           <SearchResults res={res} />
@@ -276,6 +240,5 @@ export default function Header({tags}: HeaderProps) {
       {renderMobileMenu}
       {renderMenu}
     </Box>
-    
   );
 }
