@@ -1,3 +1,5 @@
+import TimeNeeded from "../Course/TimeNeeded";
+
 interface LessonCardProps {
   lesson: {
     id: string;
@@ -29,7 +31,7 @@ export default function LessonCard({ lesson, selected = false, onClick }: Lesson
         <h4 className="font-semibold text-sm">{lesson.title}</h4>
         <span className={`text-xs ${statusColors[lesson.status]}`}>{lesson.status}</span>
       </div>
-      <p className="text-xs text-gray-500 mt-1">{lesson.duration} minutes</p>
+      <p className="text-xs text-gray-500 mt-1"><TimeNeeded minutes={lesson.duration}/> </p>
     </div>
   );
 }
