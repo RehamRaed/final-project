@@ -1,13 +1,34 @@
-'use client'
-import '@/app/globals.css';
-import { AuthProvider } from "@/components/SessionProvider";
-import "../styles/theme.css";
-import { useEffect, useState } from "react";
-import type { User } from "@supabase/supabase-js";
-import Header from '@/components/Header/Header';
-import { usePathname } from "next/navigation";
-import { supabase } from "@/lib/supabase/client";
+"use client";
 
+import "@/app/globals.css";
+import "../styles/theme.css";
+import { AuthProvider } from "@/components/SessionProvider";
+import Header from "@/components/Header/Header";
+
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
+import { usePathname } from "next/navigation";
+
+import { Provider, useDispatch } from "react-redux";
+import { store, AppDispatch } from "@/store";
+import { fetchCurrentRoadmap } from "@/store/roadmapSlice";
+
+function AppInitializer({ children }: { children: React.ReactNode }) {
+  const dispatch = useDispatch<AppDispatch>();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const init = async () => {
+      await dispatch(fetchCurrentRoadmap());
+      setReady(true);
+    };
+    init();
+  }, [dispatch]);
+
+  if (!ready) return null;
+  return <>{children}</>;
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 
@@ -18,54 +39,44 @@ const [loadingTags, setLoadingTags] = useState(true);
 
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  
+
   const pathname = usePathname();
-
-  const hideOn = ["/", "/auth/login", "/auth/register", "/roadmaps"];
-
+  const hideOn = ["/", "/auth/login", "/auth/register", "/roadmaps", "/profile"];
   const shouldShowHeader = user && !hideOn.includes(pathname);
 
-  // Fetch tags from Supabase
   useEffect(() => {
-    const fetchTags = async () => {
-      const { data, error } = await supabase.from("tags").select("id, name").order("name");
-      if (error) console.error(error);
-      else setTags(data ?? []);
-      setLoadingTags(false);
-    };
-    fetchTags();
-  }, []);
-
-  // Fetch user session
-  useEffect(() => {
-    const load = async () => {
+    const loadUser = async () => {
       const { data } = await supabase.auth.getSession();
       setUser(data.session?.user ?? null);
       setLoading(false);
     };
-  
-    load();
+    loadUser();
   }, []);
 
   return (
     <html lang="en" dir="ltr">
       <body>
-        <AuthProvider>
-          {!loading && shouldShowHeader && user && (
-            <div
-              style={{
-                zIndex: 50,
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100%",
-              }}
-            >
-              <Header tags={tags}/>
-            </div>
-          )}
-          {children}
-        </AuthProvider>
+        <Provider store={store}>
+          <AuthProvider>
+            {!loading && user && <AppInitializer>{children}</AppInitializer>}
+
+            {!loading && shouldShowHeader && (
+              <div
+                style={{
+                  zIndex: 50,
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                }}
+              >
+                <Header />
+              </div>
+            )}
+
+            {!user && children}
+          </AuthProvider>
+        </Provider>
       </body>
     </html>
   );

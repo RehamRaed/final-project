@@ -61,8 +61,9 @@ interface Tag{
 }
 
 interface HeaderProps {
-  tags: Tag[] | null;
+  tags?: Tag[] | null;
 }
+
 
 interface Course {
   course_id: string;
@@ -119,6 +120,7 @@ export default function Header({tags}: HeaderProps) {
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
+    router.push(`/roadmaps/${roadmapId}/courses`);
   };
 
   const handleMobileMenuClose = () => {
