@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Title from "../Title/title";
 import LessonCard from "./LessonCard";
 import LoadingSpinner from "../ui/LoadingSpinner";
