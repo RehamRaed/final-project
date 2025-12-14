@@ -17,7 +17,10 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import TuneIcon from '@mui/icons-material/Tune';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from "react";
+import { fetchCourses } from '@/lib/search';
+import SearchResults from './SearchResults';
 
 // === Styled Components ===
 const Search = styled('div')(({ theme }) => ({
@@ -52,13 +55,57 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-// === Header Props ===
-interface HeaderProps {
-  roadmapId: string | number; // معرف الرودماب الخاص باليوزر
+interface Tag{
+  id:string,
+  name: string
 }
 
-export default function Header({ roadmapId }: HeaderProps) {
+interface HeaderProps {
+  tags?: Tag[] | null;
+}
+
+
+interface Course {
+  course_id: string;
+  title: string;
+  description: string;
+  donePercentage: number;
+}
+
+export default function Header({tags}: HeaderProps) {
+
+  const [searchQuery, setSearchQuery] = useState('');
+  // const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [res, setRes] = useState<Course[]>([]);
+
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+
+    const query = e.target.value;
+    setSearchQuery(query);
+    if (!query) {
+      console.log(query)
+      setRes([]);
+      return;
+    }
+    try {
+      const courses = await fetchCourses({
+        query: query,
+        // tags: selectedTags,
+      });
+      console.log('Filtered courses:', courses);
+      setRes(courses);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  // {console.log(tags)}
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // ناخد الـ roadmapId من الرابط (student page)
+  const roadmapId = searchParams.get('id');
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -85,6 +132,12 @@ export default function Header({ roadmapId }: HeaderProps) {
     router.push('/profile');
   };
 
+  const handleMyCourses = () => {
+    handleMenuClose();
+    if (!roadmapId) return;
+    router.push(`/roadmaps/${roadmapId}/courses`);
+  };
+
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
@@ -102,7 +155,7 @@ export default function Header({ roadmapId }: HeaderProps) {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleProfileRedirect}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My Courses</MenuItem>
+      <MenuItem onClick={handleMyCourses}>My Courses</MenuItem>
     </Menu>
   );
 
@@ -137,6 +190,9 @@ export default function Header({ roadmapId }: HeaderProps) {
         </IconButton>
         <p>Profile</p>
       </MenuItem>
+      <MenuItem onClick={handleMyCourses}>
+        <p>My Courses</p>
+      </MenuItem>
     </Menu>
   );
 
@@ -145,9 +201,9 @@ export default function Header({ roadmapId }: HeaderProps) {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
+          {/* <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
             <MenuIcon />
-          </IconButton>
+          </IconButton> */}
 
           <Link href="/student" passHref>
             <Typography
@@ -168,12 +224,13 @@ export default function Header({ roadmapId }: HeaderProps) {
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
-            <StyledInputBase placeholder="Search…" inputProps={{ 'aria-label': 'search' }} />
+            <StyledInputBase placeholder={searchQuery} onChange={handleSearch} inputProps={{ 'aria-label': 'search' }} />
           </Search>
-
+          {/* <SearchResults res={res ?? []}/> */}
+{/* 
           <IconButton size="large" edge="start" color="inherit" aria-label="filter" sx={{ mr: 2 }}>
             <TuneIcon />
-          </IconButton>
+          </IconButton> */}
 
           <Box sx={{ flexGrow: 1 }} />
 
@@ -210,8 +267,15 @@ export default function Header({ roadmapId }: HeaderProps) {
           </Box>
         </Toolbar>
       </AppBar>
+      {res.length > 0 && (
+        <div className="mt-1 bg-white shadow-md max-h-96 overflow-auto z-50 rounded w-[300px] ml-[150px] p-4">
+          <SearchResults res={res} />
+        </div>
+      )}
+
       {renderMobileMenu}
       {renderMenu}
     </Box>
+    
   );
 }

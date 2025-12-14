@@ -10,7 +10,6 @@ import { supabase } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { usePathname } from "next/navigation";
 
-// Redux
 import { Provider, useDispatch } from "react-redux";
 import { store, AppDispatch } from "@/store";
 import { fetchCurrentRoadmap } from "@/store/roadmapSlice";
@@ -32,6 +31,12 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+
+const [tags, setTags] = useState<{ id: string; name: string }[]>([]);
+const [loadingTags, setLoadingTags] = useState(true);
+  
+  {console.log(tags)}
+
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
@@ -55,7 +60,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AuthProvider>
             {!loading && user && <AppInitializer>{children}</AppInitializer>}
 
-            {/* الهيدر العادي فقط للصفحات المسموح فيها */}
             {!loading && shouldShowHeader && (
               <div
                 style={{
