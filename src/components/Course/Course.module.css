@@ -1,0 +1,48 @@
+.courseLessonsContainer{
+    /* padding: 100px; */
+    display: flex;
+    flex-direction: column;
+    gap:50px
+}
+
+.statusLine{
+    /* background-color: var(--color-accent); */
+    height: inherit;
+    width: 0.2%;
+    /* border: solid 1px var(--color-border); */
+}
+.lessons{
+    overflow-y:scroll; 
+    height: 700px;
+}
+.lessonCardContainer{
+    border: solid 1px var(--color-border);
+    background-color: var(--color-card-bg);
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap:20px;
+    width: 99.8%;
+}
+
+.img{
+    width: 15px;
+    color: var(--color-border);
+}
+
+.lessonCardTitle{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.link{
+    display: flex;
+    justify-content: right;
+}
+
+.time{
+    color: var(--color-text-secondary);
+    font-size: var(--font-sm);
+}
