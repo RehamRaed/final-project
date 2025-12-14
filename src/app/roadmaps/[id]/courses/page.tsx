@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import CourseCard from "@/components/StudentRoadmap/CourseCard";
+import RoadmapCourseCard from "@/components/StudentRoadmap/RoadmapCourseCard";
 
 interface Course {
   course_id: string;
@@ -106,7 +106,7 @@ export default function RoadmapCoursesPage() {
           </p>
         ) : (
           filteredCourses.map((course) => (
-            <CourseCard key={course.course_id} course={course} />
+            <RoadmapCourseCard key={course.course_id} course={course} />
           ))
         )}
       </div>
