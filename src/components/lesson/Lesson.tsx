@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react"
+/*import { ArrowLeft } from "lucide-react"
 import TimeNeeded from "../Course/TimeNeeded"
 import Title from "../Title/title"
 import styles from "./Lesson.module.css"
@@ -8,7 +8,7 @@ import { useState } from "react"
 import Course from "../Course/Course"
 
 const lesson = {
-        id: 1,
+        id:"1",
         course_id: 1,
         title: "Introduction to HTML",
         content:
@@ -31,7 +31,6 @@ export default function Lesson({id}:{id:number}){
         checkBorderColor()
         setStatus("Completed")
         setBgColor("--color-text-primary")
-        //more to send status to db
     }
     function checkBorderColor(){
         if (status == "Completed"){
@@ -62,4 +61,4 @@ export default function Lesson({id}:{id:number}){
             </article>
         </div>
     </div>)
-}
+}*/
