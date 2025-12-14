@@ -13,7 +13,7 @@ interface Props {
   course: Course;
 }
 
-export default function CourseCard({ course }: Props) {
+export default function RoadmapCourseCard({ course }: Props) {
   const router = useRouter();
   function handleContinue(){
     console.log("handle contiue clicked")

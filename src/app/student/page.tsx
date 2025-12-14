@@ -1,5 +1,7 @@
 import StudentHomePage from "@/components/StudentPage/StudentPage";
+export default function StudentPage() {
 
-export default function page() {
-  return (<StudentHomePage/>)
+  return (<>
+      <StudentHomePage />
+  </>)
 }
