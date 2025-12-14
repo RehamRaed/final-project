@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SelectedRoadmapCard from "@/components/StudentRoadmap/SelectedRoadmapCard";
-import CourseCard from "@/components/StudentPage/CourseCard"; // الكارد البسيط
+import CourseCard from "@/components/StudentPage/CourseCard"; 
 import MiniToDoCard from "@/components/ToDos/MiniToDoCard";
 import { ToDoItem } from "@/types/todo";
 import { ArrowRight } from "lucide-react";
@@ -101,7 +101,6 @@ export default function StudentHomePage() {
     user?.email?.split("@")[0] ||
     "Student";
 
-  const visibleCourses = courses.slice(0, 4);
   const hasMoreCourses = courses.length > 4;
 
   return (
@@ -149,10 +148,14 @@ export default function StudentHomePage() {
             No courses found for this roadmap.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {visibleCourses.map((course) => (
-              <CourseCard key={course.course_id} course={course} />
-            ))}
+          <div className="overflow-x-auto scroll-smooth p-2 scrollbar-hide">
+            <div className="flex gap-4 w-max">
+              {courses.map((course) => (
+                <div key={course.course_id} className="shrink-0 w-64 sm:w-72 lg:w-80">
+                  <CourseCard course={course} />
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
