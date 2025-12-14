@@ -3,23 +3,27 @@
 import React from "react";
 
 interface Course {
-  id: number;
+  course_id: string;
   title: string;
-  description: string;
-  icon: string;
+  summary: string;
+  icon?: string;
 }
 
 export default function CourseCard({ course }: { course: Course }) {
   return (
-    <div className="p-4 bg-card-bg border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col items-center">
-      <div className="w-full mb-3 flex justify-center">
-        <span className="text-[5rem] w-full flex justify-center">{course.icon}</span>
+    <div className="p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between h-full">
+      
+      <div className="flex items-center gap-3 mb-3">
+        <h3 className="text-lg font-semibold text-gray-800">{course.title}</h3>
       </div>
+      
+      <p className="text-gray-500 text-sm flex-1">{course.summary}</p>
 
-      <h3 className="text-lg font-semibold text-primary text-center mb-2">{course.title}</h3>
-
-      <p className="text-text-secondary text-sm text-center">{course.description}</p>
+      <div className="mt-4 flex justify-end">
+        <button className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          Start
+        </button>
+      </div>
     </div>
-
   );
 }

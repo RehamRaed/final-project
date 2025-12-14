@@ -21,10 +21,18 @@ export default function WelcomePage() {
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
 
+  const displayName =
+    user?.user_metadata?.full_name ||
+    user?.email?.split("@")[0] ||
+    "Student";
+
   return (
     <div
       className="flex flex-col items-center justify-center min-h-screen text-center p-6"
-      style={{ backgroundColor: "var(--color-bg)", color: "var(--color-text-primary)" }}
+      style={{
+        backgroundColor: "var(--color-bg)",
+        color: "var(--color-text-primary)",
+      }}
     >
       <h1
         className="text-5xl font-extrabold mb-4"
@@ -56,7 +64,7 @@ export default function WelcomePage() {
           className="mt-4 text-sm"
           style={{ color: "var(--color-text-secondary)" }}
         >
-          Logged in as {user.email}
+          Logged in as <span className="font-semibold">{displayName}</span>
         </p>
       )}
     </div>

@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function TimeNeeded({ minutes }: { minutes: number }) {
   function format(mins: number) {
     if (!mins || mins <= 0) return "0 minutes";
