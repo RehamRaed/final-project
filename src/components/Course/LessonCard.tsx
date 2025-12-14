@@ -1,7 +1,6 @@
-// components/Course/LessonCard.tsx
 'use client';
 
-import React, { useState } from "react";
+import { useState } from "react";
 import TimeNeeded from "./TimeNeeded";
 import Link from "next/link";
 
