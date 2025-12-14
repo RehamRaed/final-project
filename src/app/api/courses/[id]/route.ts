@@ -1,4 +1,3 @@
-
 import { NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { successResponse, errorResponse, handleApiError } from '@/lib/api-response';
@@ -17,22 +16,28 @@ export async function GET(
             .from('courses')
             .select(`
                 *,
-                category:categories(id, name),
-                lessons(id, title, duration, is_free, type, order_index)
+                lessons (
+                    id,
+                    title,
+                    content,
+                    duration,
+                    order_index
+                )
             `)
             .eq('id', id)
             .single();
 
-        if (error) {
+        if (error || !course) {
             return errorResponse('Course not found', 'NOT_FOUND', 404);
         }
 
         if (course.lessons) {
-            course.lessons.sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+            course.lessons.sort((a: any, b: any) =>
+                (a.order_index || 0) - (b.order_index || 0)
+            );
         }
 
         return successResponse(course);
-
     } catch (error) {
         return handleApiError(error);
     }

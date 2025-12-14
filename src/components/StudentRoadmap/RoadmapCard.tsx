@@ -1,26 +1,29 @@
 "use client";
+interface Roadmap {
+  id: string;
+  title: string;
+  description: string;
+}
 
-type RoadmapCardProps = {
-  roadmap: {
-    id: string;
-    title: string;
-    description: string;
-    icon?: string;
-  };
+interface RoadmapCardProps {
+  roadmap: Roadmap;
   isSelected: boolean;
   onSelect: () => void;
-};
+}
 
 export default function RoadmapCard({ roadmap, isSelected, onSelect }: RoadmapCardProps) {
   return (
     <div
-      className={`border rounded-xl p-6 cursor-pointer shadow-md hover:shadow-lg transition ${
-        isSelected ? "border-blue-600 bg-blue-50" : "border-gray-300 bg-white"
-      }`}
       onClick={onSelect}
+      className={`cursor-pointer rounded-xl p-6 flex flex-col items-center justify-center
+        border transition-colors duration-300 ease-in-out
+        w-full
+        ${isSelected ? "border-4 border-primary bg-primary/20" : "border border-gray-200 hover:shadow-lg hover:bg-gray-50"}
+      `}
+      style={{ minHeight: "180px" }}
     >
-      <h2 className="text-xl font-semibold mb-2">{roadmap.title}</h2>
-      <p className="text-gray-500">{roadmap.description}</p>
+      <h3 className="text-lg font-bold text-center text-text-primary">{roadmap.title}</h3>
+      <p className="text-sm text-center text-gray-600 mt-2">{roadmap.description}</p>
     </div>
   );
 }

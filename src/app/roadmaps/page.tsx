@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import RoadmapCard from "@/components/StudentRoadmap/RoadmapCard";
+import RoadmapCard from "../../components/StudentRoadmap/RoadmapCard";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store";
+import { setCurrentRoadmap } from "@/store/roadmapSlice";
 
 interface Roadmap {
   id: string;
@@ -12,8 +15,10 @@ interface Roadmap {
 }
 
 export default function RoadmapsPage() {
+  const dispatch = useDispatch<AppDispatch>();
+  const currentRoadmap = useSelector((state: RootState) => state.roadmap.current);
+
   const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
-  const [selected, setSelected] = useState<Roadmap | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,14 +27,6 @@ export default function RoadmapsPage() {
         const resRoadmaps = await fetch("/api/roadmaps");
         const dataRoadmaps = await resRoadmaps.json();
         setRoadmaps(dataRoadmaps.data || []);
-
-        const resProfile = await fetch("/api/profiles/me");
-        const profileJson = await resProfile.json();
-        const currentRoadmapId = profileJson.data?.current_roadmap_id;
-        if (currentRoadmapId) {
-          const roadmap = (dataRoadmaps.data || []).find((r: any) => r.id === currentRoadmapId);
-          if (roadmap) setSelected(roadmap);
-        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -40,7 +37,8 @@ export default function RoadmapsPage() {
   }, []);
 
   const handleSelect = async (roadmap: Roadmap) => {
-    setSelected(roadmap);
+    if (currentRoadmap?.id === roadmap.id) return; // 🔹 ما نرسل شيء إذا نفس الكارت
+    dispatch(setCurrentRoadmap(roadmap)); // تحديث Redux فورًا
     try {
       await fetch("/api/profiles/update-roadmap", {
         method: "PATCH",
@@ -63,22 +61,20 @@ export default function RoadmapsPage() {
           <RoadmapCard
             key={roadmap.id}
             roadmap={roadmap}
-            isSelected={selected?.id === roadmap.id}
+            isSelected={currentRoadmap?.id === roadmap.id}
             onSelect={() => handleSelect(roadmap)}
           />
         ))}
       </div>
 
-      {selected && (
+      {currentRoadmap && (
         <div className="mt-12 text-center">
           <Link
-            href={{
-              pathname: "/student",
-              query: { id: selected.id, title: selected.title },
-            }}
-            className="px-10 py-4 rounded-xl bg-primary text-lg font-semibold shadow-md hover:bg-primary-hover" style={{color:"white"}}
+            href="/student"
+            className="px-10 py-4 rounded-xl bg-primary text-lg font-semibold shadow-md hover:bg-primary-hover"
+            style={{ color: "white" }}
           >
-            Continue with {selected.title}
+            Continue with {currentRoadmap.title}
           </Link>
         </div>
       )}
