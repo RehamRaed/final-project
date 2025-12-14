@@ -4,9 +4,8 @@ import React from 'react';
 const ProfileHeader: React.FC = () => {
   return (
     <header
-  className="w-full py-4 mb-6"
+  className="w-full py-4 mb-6 bg-primary "
   style={{
-    backgroundColor: 'var(--color-primary)',
     boxShadow: 'var(--shadow-appbar)',
   }}
 >

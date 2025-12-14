@@ -17,7 +17,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import TuneIcon from '@mui/icons-material/Tune';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 // === Styled Components ===
 const Search = styled('div')(({ theme }) => ({
@@ -52,13 +52,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function Header() {
+// === Header Props ===
+interface HeaderProps {
+  roadmapId: string | number; // معرف الرودماب الخاص باليوزر
+}
+
+export default function Header({ roadmapId }: HeaderProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  // ناخد الـ roadmapId من الرابط (student page)
-  const roadmapId = searchParams.get('id');
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -73,6 +73,7 @@ export default function Header() {
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
+    router.push(`/roadmaps/${roadmapId}/courses`);
   };
 
   const handleMobileMenuClose = () => {
@@ -82,12 +83,6 @@ export default function Header() {
   const handleProfileRedirect = () => {
     handleMenuClose();
     router.push('/profile');
-  };
-
-  const handleMyCourses = () => {
-    handleMenuClose();
-    if (!roadmapId) return;
-    router.push(`/roadmaps/${roadmapId}/courses`);
   };
 
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -107,7 +102,7 @@ export default function Header() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleProfileRedirect}>Profile</MenuItem>
-      <MenuItem onClick={handleMyCourses}>My Courses</MenuItem>
+      <MenuItem onClick={handleMenuClose}>My Courses</MenuItem>
     </Menu>
   );
 
@@ -141,9 +136,6 @@ export default function Header() {
           <AccountCircle />
         </IconButton>
         <p>Profile</p>
-      </MenuItem>
-      <MenuItem onClick={handleMyCourses}>
-        <p>My Courses</p>
       </MenuItem>
     </Menu>
   );

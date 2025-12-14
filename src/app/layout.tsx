@@ -1,58 +1,78 @@
 "use client";
 
-import '@/app/globals.css';
-import { AuthProvider } from "@/components/SessionProvider";
+import "@/app/globals.css";
 import "../styles/theme.css";
+import { AuthProvider } from "@/components/SessionProvider";
+import Header from "@/components/Header/Header";
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
-import Header from '@/components/Header/Header';
 import { usePathname } from "next/navigation";
 
+// Redux
+import { Provider, useDispatch } from "react-redux";
+import { store, AppDispatch } from "@/store";
+import { fetchCurrentRoadmap } from "@/store/roadmapSlice";
 
-// export const metadata = {
-//   title: 'Final Project App',
-//   description: 'Roadmap selection and user authentication project.',
-// };
+function AppInitializer({ children }: { children: React.ReactNode }) {
+  const dispatch = useDispatch<AppDispatch>();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const init = async () => {
+      await dispatch(fetchCurrentRoadmap());
+      setReady(true);
+    };
+    init();
+  }, [dispatch]);
+
+  if (!ready) return null;
+  return <>{children}</>;
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  
+
   const pathname = usePathname();
-
-  const hideOn = ["/", "/auth/login", "/auth/register", "/roadmaps"];
-
+  const hideOn = ["/", "/auth/login", "/auth/register", "/roadmaps", "/profile"];
   const shouldShowHeader = user && !hideOn.includes(pathname);
 
-    useEffect(() => {
-      const load = async () => {
-        const { data } = await supabase.auth.getSession();
-        setUser(data.session?.user ?? null);
-        setLoading(false);
-      };
-  
-      load();
-    }, []);
+  useEffect(() => {
+    const loadUser = async () => {
+      const { data } = await supabase.auth.getSession();
+      setUser(data.session?.user ?? null);
+      setLoading(false);
+    };
+    loadUser();
+  }, []);
+
   return (
     <html lang="en" dir="ltr">
       <body>
-        <AuthProvider>
-          {!loading && shouldShowHeader && user && (
-            <div
-              style={{
-                zIndex: 50,
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100%",
-              }}
-            >
-              <Header />
-            </div>
-          )}
-          {children}
-        </AuthProvider>
+        <Provider store={store}>
+          <AuthProvider>
+            {!loading && user && <AppInitializer>{children}</AppInitializer>}
+
+            {/* الهيدر العادي فقط للصفحات المسموح فيها */}
+            {!loading && shouldShowHeader && (
+              <div
+                style={{
+                  zIndex: 50,
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                }}
+              >
+                <Header />
+              </div>
+            )}
+
+            {!user && children}
+          </AuthProvider>
+        </Provider>
       </body>
     </html>
   );
