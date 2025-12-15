@@ -110,7 +110,6 @@ export default function Header({ tags }: HeaderProps) {
 
   const handleMyCourses = () => {
     handleMenuClose();
-    if (!roadmapId) return;
     router.push(`/roadmaps/${roadmapId}/courses`);
   };
 
