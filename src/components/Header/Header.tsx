@@ -136,8 +136,7 @@ export default function Header({currentRoadmapId }: HeaderProps) {
 
   const handleMyCourses = () => {
     handleMenuClose();
-    if (!currentRoadmapId) return;
-    router.push(`/roadmaps/${currentRoadmapId}/courses`);
+    router.push(`/roadmaps/${roadmapId}/courses`);
   };
 
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
