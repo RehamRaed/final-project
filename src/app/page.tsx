@@ -12,9 +12,7 @@ export default async function WelcomePage() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const displayName =
-    user?.user_metadata?.full_name ||
-    user?.email?.split("@")[0] ||
-    "Student";
+    user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Student";
 
   return <WelcomeClient user={user} displayName={displayName} />;
 }
