@@ -11,6 +11,7 @@ import { ArrowLeft } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/store/index";
 import { fetchCurrentRoadmap } from "@/store/roadmapSlice";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 export default function ProfilePage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -86,12 +87,14 @@ export default function ProfilePage() {
     if (profile?.avatar_url) setImagePreview(profile.avatar_url); 
   };
 
-  if (loading) return <p className="text-center mt-10">Loading profile...</p>;
+  if (loading) return <div className="flex justify-center items-center h-[80vh]">
+          <LoadingSpinner />
+        </div> 
 
   return (
     <div className="max-w-5xl bg-bg mx-auto px-4 space-y-5">
       <Link
-        href="/student"
+        href="/student/dashboard"
         className="flex items-center gap-1 font-semibold"
         style={{ color: "var(--color-primary)" }}
       >

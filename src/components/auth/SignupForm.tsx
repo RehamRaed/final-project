@@ -29,7 +29,7 @@ export default function SignUpForm() {
       })
       setLoading(false)
       if (error) setMessage(error.message)
-      else window.location.href = '/roadmaps'
+      else window.location.href = '/student/roadmaps'
     } catch (err: any) {
       if (err?.issues?.length) {
         setMessage(err.issues[0].message)

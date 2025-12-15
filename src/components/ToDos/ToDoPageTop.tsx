@@ -6,7 +6,7 @@ export default function ToDoPageTop({ remainingTasks }: { remainingTasks: number
   return (
     <>
       <Link
-        href="/student"
+        href="/student/dashboard"
         className="flex items-center gap-1 font-semibold transition duration-150"
         style={{ color: 'var(--color-primary)' }}
       >
