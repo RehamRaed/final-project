@@ -8,6 +8,7 @@ import LessonSidebar from '@/components/lesson/LessonSidebar';
 import LessonDetail from '@/components/lesson/LessonDetail';
 import { Lesson } from '@/types/lesson';
 import { supabase } from '@/lib/supabase/client';
+import toast from 'react-hot-toast';
 
 export default function LessonComponent() {
   const { courseId } = useParams();
@@ -130,9 +131,17 @@ export default function LessonComponent() {
         );
 
       if (courseError) throw courseError;
+      // Show notifcation
+      const lessonTitle = lessons.find(l => l.id === lessonId)?.title || 'Lesson';
+      toast.success(`"${lessonTitle}" marked as completed!`);
+
+      if(newDonePercentage === 100){
+        toast.success('Congratulations! You have completed the course!');
+      }
 
     } catch (err) {
       console.error('Error marking lesson done:', err);
+      toast.error('Failed to mark lesson as done');
     }
   };
 
