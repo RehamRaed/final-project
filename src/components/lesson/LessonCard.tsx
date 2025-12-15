@@ -1,18 +1,9 @@
+import { Lesson } from "@/types/lesson";
 import TimeNeeded from "../Course/TimeNeeded";
 
 interface LessonCardProps {
-  lesson: {
-    id: string;
-
-    title: string;
-
-    duration: number;
-
-    status: "Not Started" | "In Progress" | "Completed";
-  };
-
+  lesson: Lesson;
   selected?: boolean;
-
   onClick: () => void;
 }
 

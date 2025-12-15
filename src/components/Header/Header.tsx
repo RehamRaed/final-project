@@ -54,11 +54,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-interface Tag {
-  id: string;
-  name: string;
-}
-
 interface HeaderProps {
   currentRoadmapId?: string | null;
 }
