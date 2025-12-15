@@ -1,6 +1,5 @@
 import "@/app/globals.css";
 import { Toaster } from 'react-hot-toast';
-
 import ClientLayout from "@/components/ClientLayout";
 
 export default function RootLayout({
