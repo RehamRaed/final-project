@@ -17,14 +17,7 @@ export function calculateProfileCompletion(profile: Profile): CompletionResult {
     let score = 0;
     const missingFields: string[] = [];
 
-    // إعادة حساب الأوزان لتكون 100% بناءً على الحقول المتاحة (المجموع الحالي 70)
-    // دعنا نضبط الأوزان: 
-    // full_name: 20
-    // avatar_url: 20
-    // bio: 20
-    // university_id: 20
-    // department: 20
-    // المجموع: 100
+   
 
     const adjustedFields = [
         { key: 'full_name', label: 'Full Name', weight: 20 },
