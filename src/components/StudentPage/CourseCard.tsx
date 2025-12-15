@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 interface Course {
   course_id: string;
@@ -10,11 +9,6 @@ interface Course {
 }
 
 export default function CourseCard({ course }: { course: Course }) {
-  const router = useRouter();
-
-  function handleBtnOnClick() {
-    router.push(`/courses/${course.course_id}/lessons`)
-  }
   return (
     <div className="p-4 bg-card-bg border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between h-full">
       
@@ -25,8 +19,11 @@ export default function CourseCard({ course }: { course: Course }) {
       <p className=" text-sm flex-1 text-text-secondary">{course.summary}</p>
 
       <div className="mt-4 flex justify-end">
-        <Link href="/" className="text-primary hover:text-primary-hover transition">
-          lern more
+        <Link 
+          href={`/courses/${course.course_id}/lessons`} 
+          className="text-primary hover:text-primary-hover transition"
+        >
+        learn more
         </Link>
       </div>
     </div>
