@@ -69,13 +69,13 @@ interface Course {
 export default function Header({currentRoadmapId }: HeaderProps) {
   const searchRef = useRef<HTMLDivElement>(null);
 
-// handle click outside
-useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-      setRes([]); // close search results
-    }
-  };
+  // handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setRes([]); // close search results
+      }
+    };
 
   document.addEventListener("mousedown", handleClickOutside);
 
