@@ -1,23 +1,23 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import ProgressBar from "./ProgressBar";
+import Button from "../Button/Button";
 
-interface Course {
-  course_id: string;
-  title: string;
-  description: string;
-  summary: string;
-  instructor: string;
-  donePercentage: number;
-}
 
 interface Props {
-  course: Course;
+  course: {
+    course_id: string;
+    title: string;
+    description: string;
+    summary: string;
+    instructor: string;
+    donePercentage: number;
+  };
 }
 
 export default function CourseCard({ course }: Props) {
   const router = useRouter();
-
   return (
     <div
       className="flex flex-col md:flex-row gap-4 rounded-xl shadow-md bg-white overflow-hidden hover:shadow-lg transition cursor-pointer"
@@ -41,9 +41,7 @@ export default function CourseCard({ course }: Props) {
             INSTRUCTOR : {course.instructor}
           </p>
           <div className="w-2/5">
-            <ProgressBar
-              donePercentage={course.donePercentage}
-            />
+            <ProgressBar donePercentage={course.donePercentage} />
           </div>
         </div>
 
@@ -65,42 +63,3 @@ export default function CourseCard({ course }: Props) {
     </div>
   );
 }
-
-const ProgressBar = ({
-  donePercentage,
-}: {
-  donePercentage: number;
-}) => (
-  <div className="flex flex-col gap-1">
-    <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
-      <div
-        className="h-3 bg-accent"
-        style={{ width: `${donePercentage}%` }}
-      />
-    </div>
-    <p className="text-right text-gray-600 text-xs">
-      {donePercentage}% done
-    </p>
-  </div>
-);
-
-const Button = ({
-  title,
-  onClick,
-  bgcolor,
-}: {
-  title: string;
-  onClick?: () => void;
-  bgcolor?: string;
-}) => {
-  const bg = bgcolor || "var(--primary)";
-  return (
-    <button
-      onClick={onClick}
-      style={{ backgroundColor: bg }}
-      className="text-white px-4 py-2 rounded-lg hover:opacity-90 transition"
-    >
-      {title}
-    </button>
-  );
-};

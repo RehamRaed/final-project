@@ -14,7 +14,7 @@ export default function LessonComponent() {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const [donePercentage, setDonePercentage] = useState(0);
   //Get logged-in user
   useEffect(() => {
     const loadUser = async () => {
@@ -28,6 +28,8 @@ export default function LessonComponent() {
 
     loadUser();
   }, []);
+
+  console.log("userID:", userId);
 
   // Fetch lessons after user & courseId exist
   useEffect(() => {
@@ -83,46 +85,58 @@ export default function LessonComponent() {
     fetchLessons();
   }, [courseId, userId]);
 
-  //Save progress
   const handleMarkDone = async (lessonId: string) => {
-    if (!userId) return;
+    if (!userId || !courseId) return;
 
     try {
-      const { error } = await supabase
+      const now = new Date().toISOString();
+
+      //Mark lesson completed
+      const { error: lessonError } = await supabase
         .from('user_lesson_progress')
+        .upsert(
+          { user_id: userId, lesson_id: lessonId, status: 'Completed', completed_at: now },
+          { onConflict: 'user_id,lesson_id' }
+        );
+      if (lessonError) throw lessonError;
+
+      //Update local state
+      const updatedLessons = lessons.map(l =>
+        l.id === lessonId ? { ...l, status: 'Completed' as Lesson['status'] } : l
+      );
+      setLessons(updatedLessons);
+
+      if (selectedLesson?.id === lessonId) {
+        setSelectedLesson({ ...selectedLesson, status: 'Completed' as Lesson['status'] });
+      }
+
+      //Calculate donePercentage
+      const completedCount = updatedLessons.filter(l => l.status === 'Completed').length;
+      const newDonePercentage = Math.round((completedCount / updatedLessons.length) * 100);
+      setDonePercentage(newDonePercentage);
+
+      //Upsert course progress for the correct user
+      const { error: courseError } = await supabase
+        .from('user_course_progress')
         .upsert(
           {
             user_id: userId,
-            lesson_id: lessonId,
-            status: 'Completed',
-            completed_at: new Date().toISOString(),
+            course_id: courseId,
+            status: newDonePercentage === 100 ? 'Completed' : 'InProgress',
+            done_percentage: newDonePercentage,
+            completed_at: newDonePercentage === 100 ? now : null,
           },
-          { onConflict: 'user_id,lesson_id' }
+          { onConflict: 'user_id,course_id' }
         );
 
-      if (error) throw error;
+      if (courseError) throw courseError;
 
-      setLessons((prev) =>
-        prev.map((l) =>
-          l.id === lessonId ? { ...l, status: 'Completed' } : l
-        )
-      );
-
-      if (selectedLesson?.id === lessonId) {
-        setSelectedLesson({ ...selectedLesson, status: 'Completed' });
-      }
     } catch (err) {
       console.error('Error marking lesson done:', err);
     }
   };
 
-  if (loading) {
-    return (
-      <p className="text-center py-20 text-gray-500 text-lg font-medium">
-        Loading lessons...
-      </p>
-    );
-  }
+
 
   return (
     <div className="flex max-w-7xl mx-auto px-4 py-20 gap-6">
