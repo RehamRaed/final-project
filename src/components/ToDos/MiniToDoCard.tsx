@@ -28,7 +28,7 @@ const MiniToDoCard: React.FC<{ tasks: ToDoItem[] }> = ({ tasks }) => {
           itemsToDisplay.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between p-3 bg-bg hover:bg-blue-50 rounded-lg border border-border"
+              className="flex items-center justify-between p-3 bg-bg rounded-lg border border-border"
             >
               <span className="text-sm text-text-primary font-medium truncate">
                 {item.task}

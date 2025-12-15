@@ -114,9 +114,9 @@ export default function RoadmapCoursesPage() {
   const doneCount = courses.filter((c) => c.donePercentage === 100).length;
 
   return (
-    <div className="min-h-screen max-w-[1300px] mx-auto px-10 mt-30 flex flex-col gap-6 bg-bg">
+    <div className="min-h-screen max-w-[1400px] mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
-        <h2 className="font-bold text-primary">
+        <h2 className="font-bold text-primary lg:text-2xl md:text-xl">
           My Roadmap Courses
           {showDoneOnly && (
             <span className="text-green-500 text-sm ml-2">

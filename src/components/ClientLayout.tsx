@@ -37,7 +37,7 @@ export default function ClientLayout({
   const [loading, setLoading] = useState(true);
 
   const pathname = usePathname();
-  const hideOn = ["/", "/auth/login", "/auth/register"];
+  const hideOn = ["/", "/auth/login", "/auth/register", "/profile"];
   const showHeader = user && !hideOn.includes(pathname);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function ClientLayout({
         </AuthProvider>
       </Provider>
 
-      <div className="fixed bottom-5 right-5 z-[999]">
+      <div className="fixed bottom-5 right-5 z-999">
         <ThemeToggle />
       </div>
     </ThemeProvider>
