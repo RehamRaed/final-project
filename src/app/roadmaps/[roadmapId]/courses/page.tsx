@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import { supabase } from '@/lib/supabase/client';
 import CourseCard from "@/components/StudentRoadmap/CourseCard";
 
 interface Course {
@@ -22,43 +23,72 @@ export default function RoadmapCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDoneOnly, setShowDoneOnly] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  //Get logged-in user
+    // Load logged-in user
+  useEffect(() => {
+    const loadUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data.user) {
+        console.error('User not authenticated');
+        return;
+      }
+      setUserId(data.user.id);
+    };
+
+    loadUser();
+  }, []); // no dependency on currentRoadmap
 
   useEffect(() => {
-    if (!currentRoadmap?.id) return;
+    if (!currentRoadmap?.id || !userId) return; // wait for both
 
     const fetchCourses = async () => {
       setLoading(true);
       try {
         const { supabase } = await import("@/lib/supabase/client");
 
-        const { data, error } = await supabase
-          .from("roadmap_courses")
-          .select(`
-            course_id,
-            order_index,
-            courses!inner (
-              title,
-              description,
-              summary,
-              instructor,
-              donePercentage
-            )
-          `)
-          .eq("roadmap_id", currentRoadmap.id)
-          .order("order_index", { ascending: true });
+        const { data: coursesData, error: coursesError } = await supabase
+        .from("roadmap_courses")
+        .select(`
+          course_id,
+          order_index,
+          courses!inner (
+            title,
+            description,
+            summary,
+            instructor
+          )
+        `)
+        .eq("roadmap_id", currentRoadmap.id)
+        .order("order_index", { ascending: true });
 
-        if (error) throw error;
+        if (coursesError) throw coursesError;
 
-        const formatted: Course[] = (data as any[]).map((item) => ({
-          course_id: item.course_id,
-          title: item.courses.title,
-          description: item.courses.description,
-          summary: item.courses.summary,
-          instructor: item.courses.instructor,
-          donePercentage: item.courses.donePercentage ?? 0,
-        }));
+        //Fetch user_course_progress for these courses
+        const courseIds = coursesData.map(c => c.course_id);
+        const { data: progressData, error: progressError } = await supabase
+          .from("user_course_progress")
+          .select("course_id, done_percentage")
+          .eq("user_id", userId)
+          .in("course_id", courseIds);
+
+        if (progressError) throw progressError;
+
+        //Merge data
+        const formatted: Course[] = coursesData.map((c: any) => {
+          const progress = progressData.find(p => p.course_id === c.course_id);
+          return {
+            course_id: c.course_id,
+            title: c.courses.title,
+            description: c.courses.description,
+            summary: c.courses.summary,
+            instructor: c.courses.instructor,
+            donePercentage: progress?.done_percentage ?? 0,
+          };
+        });
 
         setCourses(formatted);
+
       } catch (err: any) {
         console.error("Error fetching courses:", err.message);
         setCourses([]);
@@ -67,7 +97,7 @@ export default function RoadmapCoursesPage() {
     };
 
     fetchCourses();
-  }, [currentRoadmap]);
+  }, [currentRoadmap, userId]);
 
   if (!currentRoadmap) {
     return (
