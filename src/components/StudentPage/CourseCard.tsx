@@ -1,4 +1,7 @@
+"use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 interface Course {
   course_id: string;
   title: string;
@@ -7,6 +10,11 @@ interface Course {
 }
 
 export default function CourseCard({ course }: { course: Course }) {
+  const router = useRouter();
+
+  function handleBtnOnClick() {
+    router.push(`/courses/${course.course_id}/lessons`)
+  }
   return (
     <div className="p-4 bg-card-bg border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between h-full">
       

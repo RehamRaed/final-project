@@ -16,7 +16,6 @@ export async function GET(
           id,
           title,
           description,
-          donePercentage,
           lessons(id, title, content, duration, order_index)
         )
       `)

@@ -1,16 +1,9 @@
+import { Lesson } from "@/types/lesson";
+import TimeNeeded from "../Course/TimeNeeded";
+
 interface LessonCardProps {
-  lesson: {
-    id: string;
-
-    title: string;
-
-    duration: number;
-
-    status: "Not Started" | "In Progress" | "Completed";
-  };
-
+  lesson: Lesson;
   selected?: boolean;
-
   onClick: () => void;
 }
 
@@ -43,8 +36,7 @@ export default function LessonCard({
           {lesson.status}
         </span>
       </div>
-
-      <p className="text-xs text-gray-500 mt-1">{lesson.duration} minutes</p>
+      <p className="text-xs text-gray-500 mt-1"><TimeNeeded minutes={lesson.duration}/> </p>
     </div>
   );
 }

@@ -2,18 +2,47 @@
 
 import { useRouter } from "next/navigation";
 import Button from "../Button/Button";
+import { useEffect, useState } from "react";
+import { SupabaseClient } from "@supabase/supabase-js";
+
 interface Course {
   course_id: string;
   title: string;
   description: string;
-  donePercentage: number;
 }
 
 interface Props {
   course: Course;
+  userId: string;
+  supabase: SupabaseClient;
 }
 
-export default function RoadmapCourseCard({ course }: Props) {
+export default function RoadmapCourseCar({ course, userId, supabase}: Props) {
+  const [donePercentage, setDonePercentage] = useState(0);
+    
+    useEffect(() => {
+    async function getProgress() {
+      try {
+        const { data: lessons, error } = await supabase
+          .from('user_lesson_progress')
+          .select('status')
+          .eq('user_id', userId)
+          .eq('course_id', course.course_id);
+  
+        if (error) throw error;
+  
+        const total = lessons.length;
+        const done = lessons.filter((l) => l.status === 'Completed').length;
+        const percentage = total ? Math.round((done / total) * 100) : 0;
+  
+        setDonePercentage(percentage);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  
+    getProgress();
+  }, [course.course_id, userId, supabase]);
   const router = useRouter();
   function handleContinue(){
     console.log("handle contiue clicked")
@@ -34,7 +63,7 @@ export default function RoadmapCourseCard({ course }: Props) {
         <div className="flex justify-between items-center mb-2">
           <p className="text-xs">CHAPTER 3</p>
           <div className="w-2/5">
-            <ProgressBar donePercentage={course.donePercentage} />
+            <ProgressBar donePercentage={donePercentage} />
           </div>
         </div>
 
