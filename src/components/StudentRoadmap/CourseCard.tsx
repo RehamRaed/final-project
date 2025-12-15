@@ -20,7 +20,7 @@ export default function CourseCard({ course }: Props) {
   const router = useRouter();
   return (
     <div
-      className="flex flex-col md:flex-row gap-4 rounded-xl shadow-md bg-white overflow-hidden hover:shadow-lg transition cursor-pointer"
+      className="flex flex-col md:flex-row gap-4 rounded-xl shadow-md bg-card-bg overflow-hidden hover:shadow-lg transition cursor-pointer"
       onClick={() =>
         router.push(`/courses/${course.course_id}/lessons`)
       }
@@ -37,7 +37,7 @@ export default function CourseCard({ course }: Props) {
 
       <div className="flex-1 p-6 flex flex-col justify-between">
         <div className="flex justify-between items-center mb-2">
-          <p className="text-xs text-gray-500">
+          <p className="text-sm text-text-primary">
             INSTRUCTOR : {course.instructor}
           </p>
           <div className="w-2/5">
@@ -45,7 +45,7 @@ export default function CourseCard({ course }: Props) {
           </div>
         </div>
 
-        <h3 className="text-[10px] mb-2">
+        <h3 className="text-[13px] mb-2">
           {course.description}
         </h3>
 

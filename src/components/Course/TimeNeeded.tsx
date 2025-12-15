@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function TimeNeeded({ minutes }: { minutes: number }) {
   function format(mins: number) {
     if (!mins || mins <= 0) return "0 minutes";
@@ -9,5 +7,5 @@ export default function TimeNeeded({ minutes }: { minutes: number }) {
     return rem === 0 ? `${hours} hours` : `${hours}h ${rem}m`;
   }
 
-  return <div className="text-sm text-gray-500 mt-1">{format(minutes)}</div>;
+  return <span className="text-sm text-gray-500 mt-1">{format(minutes)}</span>;
 }

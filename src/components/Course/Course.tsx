@@ -29,6 +29,7 @@ export default function Course({ id }: { id: string }) {
 
   useEffect(() => {
     let mounted = true;
+
     async function fetchCourse() {
       setLoading(true);
       setError(null);
@@ -38,14 +39,13 @@ export default function Course({ id }: { id: string }) {
         const json = await res.json();
 
         if (!res.ok) {
-          const msg = json?.error?.message || "خطأ بجلب الكورس";
+          const msg = json?.error?.message || "An error occurred";
           throw new Error(msg);
         }
 
-        // نفترض successResponse => { data: course }
         const data = json?.data ?? json;
+
         if (mounted) {
-          // normalize lessons ordering
           if (data?.lessons && Array.isArray(data.lessons)) {
             data.lessons.sort((a: any, b: any) => (a.order_index ?? 0) - (b.order_index ?? 0));
           }
@@ -60,6 +60,7 @@ export default function Course({ id }: { id: string }) {
     }
 
     fetchCourse();
+
     return () => {
       mounted = false;
     };
@@ -67,10 +68,9 @@ export default function Course({ id }: { id: string }) {
 
   if (loading) return <div className="p-8"><LoadingSpinner /> Loading...</div>;
   if (error) return <div className="p-8 text-red-600">Error: {error}</div>;
-  if (!course) return <div className="p-8">الكورس غير موجود</div>;
-{console.log(course.title)}
+  if (!course) return <div className="p-8">Course not found</div>;
+
   return (
-    
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-xl shadow p-6 mb-6">
         <Title title={course.title} />
@@ -80,16 +80,21 @@ export default function Course({ id }: { id: string }) {
       <div className="space-y-4">
         {course.lessons && course.lessons.length > 0 ? (
           course.lessons.map((lesson) => (
-            <LessonCard key={lesson.id} lesson={{
-              id: lesson.id,
-              title: lesson.title,
-              content: lesson.content ?? "لا يوجد محتوى متاح حالياً",
-              timeRequired: lesson.timeRequired ?? lesson.duration ?? 0,
-              status: lesson.status ?? "Not Started"
-            }} />
+            <LessonCard
+              key={lesson.id}
+              lesson={{
+                id: lesson.id,
+                title: lesson.title,
+                content: lesson.content ?? "No content available at the moment",
+                timeRequired: lesson.timeRequired ?? lesson.duration ?? 0,
+                status: lesson.status ?? "Not Started",
+              }}
+            />
           ))
         ) : (
-          <div className="p-6 bg-white rounded shadow text-gray-600">لا توجد دروس حالياً لهذا الكورس</div>
+          <div className="p-6 bg-white rounded shadow text-gray-600">
+            No lessons available for this course yet
+          </div>
         )}
       </div>
     </div>

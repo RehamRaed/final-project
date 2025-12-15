@@ -26,7 +26,7 @@ export default function CourseCard({ course }: { course: Course }) {
 
       <div className="mt-4 flex justify-end">
         <Link href="/" className="text-primary hover:text-primary-hover transition">
-          lern more
+          learn more
         </Link>
       </div>
     </div>
