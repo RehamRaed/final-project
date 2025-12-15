@@ -2,20 +2,20 @@ import LessonCard from "./LessonCard";
 
 interface Props {
   lessons: any[];
-
   selectedLessonId: string | null;
-
   onSelectLesson: (lesson: any) => void;
+  courseTitle: string;
 }
 
 export default function LessonSidebar({
   lessons,
   selectedLessonId,
   onSelectLesson,
+  courseTitle
 }: Props) {
   return (
     <div className="w-full md:w-1/3  border rounded-xl  shadow-md p-4 max-h-[calc(105vh-160px)] overflow-y-auto">
-      <h2 className="text-xl font-bold mb-4 text-primary">Lessons</h2>
+      <h2 className="text-xl font-bold mb-4 text-primary">{courseTitle} Lessons</h2>
 
       {lessons.map((lesson) => (
         <LessonCard

@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useEffect } from 'react';
+
 
 interface Course {
   id: string;
@@ -22,7 +21,7 @@ export default function SearchResults({res}:searchResultsProps){
                 <Link 
                     key={r.id}
                     className="text-text-primary no-underline hover:underline" 
-                    href={`/courses/${r.id}/lessons`}
+                    href={`/student/courses/${r.id}/lessons`}
                 >
                     {r.title}
                 </Link>

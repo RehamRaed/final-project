@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import SelectedRoadmapCard from "@/components/StudentPage/SelectedRoadmapCard";
-import CourseCard from "@/components/StudentPage/CourseCard"; 
+import SelectedRoadmapCard from "@/components/Dashboard/SelectedRoadmapCard";
+import CourseCard from "@/components/Dashboard/CourseCard"; 
 import MiniToDoCard from "@/components/ToDos/MiniToDoCard";
 import { ToDoItem } from "@/types/todo";
 import { ArrowRight } from "lucide-react";

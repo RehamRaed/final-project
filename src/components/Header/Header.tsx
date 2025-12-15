@@ -146,12 +146,12 @@ export default function Header({currentRoadmapId }: HeaderProps) {
 
   const handleProfileRedirect = () => {
     handleMenuClose();
-    router.push('/profile');
+    router.push('/student/profile');
   };
 
   const handleMyCourses = () => {
     handleMenuClose();
-    router.push(`/roadmaps/${roadmapId}/courses`);
+    router.push(`/student/roadmaps/${roadmapId}/courses`);
   };
 
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -174,7 +174,7 @@ export default function Header({currentRoadmapId }: HeaderProps) {
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMenuOpen}
       onClose={handleMenuClose}
-      style={{top:"35px"}}
+      style={{top:"40px" }}
     >
       <MenuItem onClick={handleProfileRedirect}>Profile</MenuItem>
       <MenuItem onClick={handleMyCourses}>My Courses</MenuItem>
@@ -220,7 +220,7 @@ export default function Header({currentRoadmapId }: HeaderProps) {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <Link href="/student" passHref>
+          <Link href="/student/dashboard" passHref>
             <Typography
               variant="h6"
               noWrap

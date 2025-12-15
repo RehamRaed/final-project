@@ -1,11 +1,13 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import RoadmapCard from "../../components/StudentRoadmap/RoadmapCard";
+import RoadmapCard from "@/components/StudentRoadmap/RoadmapCard";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
 import { setCurrentRoadmap } from "@/store/roadmapSlice";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface Roadmap {
   id: string;
@@ -50,7 +52,9 @@ export default function RoadmapsPage() {
     }
   };
 
-  if (loading) return <p className="text-center p-6">Loading...</p>;
+  if (loading) return <div className="flex justify-center items-center h-[80vh]">
+          <LoadingSpinner />
+        </div>;
 
   return (
     <div className="pt-25 px-10 max-w-[1400px] mx-auto">
@@ -70,7 +74,7 @@ export default function RoadmapsPage() {
       {currentRoadmap && (
         <div className="mt-12 text-center">
           <Link
-            href="/student"
+            href="/student/dashboard"
             className="px-3 py-2 md:px-10 md:py-4 rounded-xl bg-primary text-[14px] md:text-lg  md:font-semibold shadow-md hover:bg-primary-hover"
             style={{ color: "white" }}
           >
