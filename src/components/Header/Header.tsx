@@ -16,7 +16,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import { fetchCourses } from '@/lib/search';
 import SearchResults from './SearchResults';
 import { supabase } from '@/lib/supabase/client';
@@ -60,14 +60,29 @@ interface HeaderProps {
 
 
 interface Course {
-  course_id: string;
+  id: string;
   title: string;
   description: string;
   donePercentage: number;
 }
 
 export default function Header({currentRoadmapId }: HeaderProps) {
-  
+  const searchRef = useRef<HTMLDivElement>(null);
+
+// handle click outside
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      setRes([]); // close search results
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [searchRef]);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [res, setRes] = useState<Course[]>([]);
@@ -257,11 +272,15 @@ export default function Header({currentRoadmapId }: HeaderProps) {
       </AppBar>
 
       {res.length > 0 && (
-        <div className="mt-1 bg-white shadow-md max-h-96 overflow-auto z-50 rounded w-[300px] ml-[150px] p-4">
-          <SearchResults res={res} />
-        </div>
+      <div
+        ref={searchRef}
+        className="mt-1 bg-white shadow-md max-h-96 overflow-auto z-50 rounded w-[300px] ml-[150px] p-4"
+      >
+        <SearchResults
+          res={res}
+        />
+      </div>
       )}
-
       {renderMobileMenu}
       {renderMenu}
     </Box>

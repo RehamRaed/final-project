@@ -1,7 +1,9 @@
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 interface Course {
-  course_id: string;
+  id: string;
   title: string;
   description: string;
   donePercentage: number;
@@ -10,13 +12,18 @@ interface Course {
 type searchResultsProps={
     res: Course[]
 }
+
 export default function SearchResults({res}:searchResultsProps){
     {console.log(res)}
+    
     return(<>
         {res && <div className="flex flex-col gap-3"> 
             {res.map((r)=>
-            //edit href to the course id rout
-                <Link className="text-text-primary no-underline hover:underline" key={r.course_id} href="/">
+                <Link 
+                    key={r.id}
+                    className="text-text-primary no-underline hover:underline" 
+                    href={`/courses/${r.id}/lessons`}
+                >
                     {r.title}
                 </Link>
             )}
