@@ -1,4 +1,4 @@
-import TimeNeeded from "../Course/TimeNeeded";
+import TimeNeeded from "./TimeNeeded";
 import { Lesson } from '@/types/lesson';
 import ReactMarkdown from 'react-markdown';
 
@@ -9,23 +9,18 @@ interface Props {
 
 function getYoutubeEmbedUrl(url?: string) {
   if (!url) return null;
-
   if (url.includes('youtube.com/embed')) return url;
 
   const watchMatch = url.match(/v=([^&]+)/);
-  if (watchMatch) {
-    return `https://www.youtube.com/embed/${watchMatch[1]}`;
-  }
+  if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
 
   const shortMatch = url.match(/youtu\.be\/([^?]+)/);
-  if (shortMatch) {
-    return `https://www.youtube.com/embed/${shortMatch[1]}`;
-  }
+  if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`;
 
   return null;
 }
+
 export default function LessonDetail({ lesson, onMarkDone }: Props) {
-  
   const borderColor =
     lesson.status === "Completed"
       ? "border-green-500"
@@ -51,29 +46,19 @@ export default function LessonDetail({ lesson, onMarkDone }: Props) {
           {lesson.status === 'Completed' ? 'Completed' : 'Mark Done'}
         </button>
       </div>
+
       <p className="text-gray-500 flex flex-row">(<TimeNeeded minutes={lesson.duration}/>)</p>
+
       <div className="prose max-w-none">
-        <ReactMarkdown
-          components={{
-            img: ({ node, ...props }) => (
-              <img
-                {...props}
-                className="min-w-full h-auto rounded-lg my-4 hidden"
-                style={{ maxHeight: '350px', objectFit: 'contain' }}
-              />
-            ),
-          }}
-        >
-          {lesson.content}
-        </ReactMarkdown>
+        <ReactMarkdown>{lesson.content}</ReactMarkdown>
       </div>
+
       {embedUrl && (
         <iframe
           className="w-full flex-1 rounded-lg min-h-[360px]"
           src={embedUrl}
           title={lesson.title}
           frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         />
       )}
@@ -88,7 +73,6 @@ export default function LessonDetail({ lesson, onMarkDone }: Props) {
           Open video in YouTube
         </a>
       )}
-      
     </div>
   );
 }

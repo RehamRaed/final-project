@@ -1,5 +1,5 @@
 import { Lesson } from "@/types/lesson";
-import TimeNeeded from "../Course/TimeNeeded";
+import TimeNeeded from "./TimeNeeded";
 
 interface LessonCardProps {
   lesson: Lesson;

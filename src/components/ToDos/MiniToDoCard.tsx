@@ -16,7 +16,7 @@ const MiniToDoCard: React.FC<{ tasks: ToDoItem[] }> = ({ tasks }) => {
           My Tasks
         </h3>
         <Link
-          href="/dashboard/todos"
+          href="/student/todos"
           className="text-sm font-semibold text-[#3B82F6] cursor-pointer transition "
         >
           View All 
