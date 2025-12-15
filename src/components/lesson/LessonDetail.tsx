@@ -27,11 +27,11 @@ function getYoutubeEmbedUrl(url?: string) {
 export default function LessonDetail({ lesson, onMarkDone }: Props) {
   
   const borderColor =
-    lesson.status === 'Completed'
-      ? 'border-green-500'
-      : lesson.status === 'In Progress'
-      ? 'border-blue-500'
-      : 'border-gray-300';
+    lesson.status === "Completed"
+      ? "border-green-500"
+      : lesson.status === "In Progress"
+      ? "border-blue-500"
+      : "border-gray-300";
 
   const embedUrl = getYoutubeEmbedUrl(lesson.video_url);
 
