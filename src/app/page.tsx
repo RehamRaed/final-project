@@ -29,21 +29,16 @@ export default function WelcomePage() {
   return (
     <div
       className="flex flex-col items-center justify-center min-h-screen text-center p-6"
-      style={{
-        backgroundColor: "var(--color-bg)",
-        color: "var(--color-text-primary)",
-      }}
+    
     >
       <h1
-        className="text-5xl font-extrabold mb-4"
-        style={{ color: "var(--color-primary)" }}
+        className="text-5xl font-extrabold mb-4 text-primary"
       >
         Welcome to StudyMate
       </h1>
 
       <p
-        className="text-xl mb-10 max-w-lg"
-        style={{ color: "var(--color-text-secondary)" }}
+        className="text-xl mb-10 max-w-lg text-primary-primary"
       >
         Explore roadmaps and build your plan — let’s get started!
       </p>

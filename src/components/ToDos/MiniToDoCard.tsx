@@ -9,7 +9,7 @@ const MiniToDoCard: React.FC<{ tasks: ToDoItem[] }> = ({ tasks }) => {
   const itemsToDisplay = inProgressTasks.slice(0, 2);
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-5 h-full flex flex-col border border-gray-200">
+    <div className="bg-card-bg rounded-xl shadow-lg p-5 h-full flex flex-col border border-gray-200">
       <div className="flex justify-between items-center mb-4 border-b pb-2">
         <h3 className="text-xl font-bold text-primary flex items-center gap-1">
           <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-6 text-green-600" />
@@ -28,9 +28,9 @@ const MiniToDoCard: React.FC<{ tasks: ToDoItem[] }> = ({ tasks }) => {
           itemsToDisplay.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between p-3 bg-gray-50 hover:bg-blue-50 rounded-lg border border-border"
+              className="flex items-center justify-between p-3 bg-bg hover:bg-blue-50 rounded-lg border border-border"
             >
-              <span className="text-sm text-gray-800 font-medium truncate">
+              <span className="text-sm text-text-primary font-medium truncate">
                 {item.task}
               </span>
               <span className="text-xs font-semibold text-white bg-primary px-2 py-0.5 rounded-full ml-2">

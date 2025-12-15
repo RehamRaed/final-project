@@ -37,8 +37,8 @@ export default function RoadmapsPage() {
   }, []);
 
   const handleSelect = async (roadmap: Roadmap) => {
-    if (currentRoadmap?.id === roadmap.id) return; // 🔹 ما نرسل شيء إذا نفس الكارت
-    dispatch(setCurrentRoadmap(roadmap)); // تحديث Redux فورًا
+    if (currentRoadmap?.id === roadmap.id) return;
+    dispatch(setCurrentRoadmap(roadmap));
     try {
       await fetch("/api/profiles/update-roadmap", {
         method: "PATCH",
@@ -53,8 +53,8 @@ export default function RoadmapsPage() {
   if (loading) return <p className="text-center p-6">Loading...</p>;
 
   return (
-    <div className="p-10 max-w-[1400px] mx-auto">
-      <h1 className="text-4xl font-bold text-center mb-12">Choose Your Roadmap</h1>
+    <div className="pt-25 px-10 max-w-[1400px] mx-auto">
+      <h1 className="text-2xl md:text-3xl   font-bold text-center mb-12">Choose Your Roadmap</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {roadmaps.map((roadmap) => (
@@ -71,7 +71,7 @@ export default function RoadmapsPage() {
         <div className="mt-12 text-center">
           <Link
             href="/student"
-            className="px-10 py-4 rounded-xl bg-primary text-lg font-semibold shadow-md hover:bg-primary-hover"
+            className="px-3 py-2 md:px-10 md:py-4 rounded-xl bg-primary text-[14px] md:text-lg  md:font-semibold shadow-md hover:bg-primary-hover"
             style={{ color: "white" }}
           >
             Continue with {currentRoadmap.title}

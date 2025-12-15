@@ -10,13 +10,14 @@
   --text-secondary: #717171;
   --border: #D1D5DB;
   --primary-hover :#2a73ea;
+  --font-family-base: 'Poppins', sans-serif;
 }
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none; 
 }
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE 10+ */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
 }
 @theme{
   --color-primary: var(--primary);
@@ -32,13 +33,14 @@
 
 
 .dark {
-  --primary: #3B82F6;
+  --primary: #5090f8;
   --secondary: #F97316;
   --accent: #10B981;
   --bg: #111827;
-  --card-bg: #111645;
+  --card-bg: #171e544d;
   --text-primary: #ffffff;
   --text-secondary: #e3e3e3;
+  --text-blue: #6ca4fd;
   --border: #D1D5DB;
 }
 
@@ -46,5 +48,5 @@
 body {
   background-color: var(--bg);
   color: var(--text-primary);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-base);
 }

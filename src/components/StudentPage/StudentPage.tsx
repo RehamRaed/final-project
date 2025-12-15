@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import SelectedRoadmapCard from "@/components/StudentRoadmap/SelectedRoadmapCard";
+import SelectedRoadmapCard from "@/components/StudentPage/SelectedRoadmapCard";
 import CourseCard from "@/components/StudentPage/CourseCard"; 
 import MiniToDoCard from "@/components/ToDos/MiniToDoCard";
 import { ToDoItem } from "@/types/todo";
@@ -104,8 +104,8 @@ export default function StudentHomePage() {
   const hasMoreCourses = courses.length > 4;
 
   return (
-    <div className="bg-bg min-h-screen pt-[90px]">
-      <div className="max-w-[1400px] mx-auto px-4 py-8 space-y-10">
+    <div className="bg-bg min-h-screen pt-25">
+      <div className="max-w-[1400px] mx-auto px-4 py-8 space-y-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 p-6 bg-card-bg rounded-xl shadow-md border border-border space-y-4">
@@ -118,7 +118,7 @@ export default function StudentHomePage() {
             </p>
 
             <SelectedRoadmapCard
-              title={currentRoadmap?.title || "No roadmap selected"}
+              title={currentRoadmap?.title || "loading..."}
               description="This is your current roadmap. Keep progressing!"
               color="var(--primary)"
             />
