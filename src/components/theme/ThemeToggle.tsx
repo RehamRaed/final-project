@@ -14,10 +14,10 @@ export default function ThemeToggle() {
     <button
       onClick={toggleTheme}
       aria-label="Toggle theme"
-      className="p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg"
+      className="p-3 rounded-full bg-gray-200 cursor-pointer shadow-lg"
     >
       {dark ? (
-        <Sun className="w-5 h-5 text-yellow-400" />
+        <Sun className="w-5 h-5 text-gray-800 " />
       ) : (
         <Moon className="w-5 h-5 text-gray-800" />
       )}

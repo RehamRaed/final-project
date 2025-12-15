@@ -36,9 +36,9 @@ export default function LessonDetail({ lesson, onMarkDone }: Props) {
   const embedUrl = getYoutubeEmbedUrl(lesson.video_url);
 
   return (
-    <div className={`border-2 ${borderColor} p-12 bg-white rounded-xl flex flex-col gap-5 max-h-[calc(105vh-160px)] overflow-y-auto`}>
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-primary">{lesson.title}</h1>
+    <div className={`border-2 ${borderColor} p-5 md:p-12 rounded-xl flex flex-col gap-5 max-h-[calc(105vh-160px)] overflow-y-auto`}>
+      <div className="flex flex-col md:flex-row items-start justify-between md:items-center gap-2">
+        <h1 className="text-xl md:text-2xl font-bold text-primary">{lesson.title}</h1>
         <button
           className={`px-4 py-2 rounded-lg text-white font-semibold ${
             lesson.status === 'Completed'

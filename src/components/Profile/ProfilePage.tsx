@@ -21,7 +21,6 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [imagePreview, setImagePreview] = useState<string>("/avatar.jpg");
 
-  // 🔹 Load profile
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -39,7 +38,6 @@ export default function ProfilePage() {
         setProfile(profileData);
         setImagePreview(profileData.avatar_url || "/avatar.jpg");
 
-        // 🔹 Load current roadmap to Redux
         dispatch(fetchCurrentRoadmap());
       } catch (err) {
         console.error(err);
@@ -59,7 +57,6 @@ export default function ProfilePage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // فوراً عرض الصورة الجديدة
     const reader = new FileReader();
     reader.onloadend = () => setImagePreview(reader.result as string);
     reader.readAsDataURL(file);
@@ -69,7 +66,6 @@ export default function ProfilePage() {
     if (!profile) return;
     setIsEditing(false);
 
-    // 🔹 حفظ بيانات البروفايل بما فيها الصورة
     await supabase
       .from("profiles")
       .update({
@@ -87,13 +83,13 @@ export default function ProfilePage() {
 
   const handleCancel = () => {
     setIsEditing(false);
-    if (profile?.avatar_url) setImagePreview(profile.avatar_url); // استرجاع الصورة القديمة
+    if (profile?.avatar_url) setImagePreview(profile.avatar_url); 
   };
 
   if (loading) return <p className="text-center mt-10">Loading profile...</p>;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 space-y-5">
+    <div className="max-w-5xl bg-bg mx-auto px-4 space-y-5">
       <Link
         href="/student"
         className="flex items-center gap-1 font-semibold"

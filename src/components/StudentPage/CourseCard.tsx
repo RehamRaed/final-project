@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Course {
   course_id: string;
@@ -19,11 +20,8 @@ export default function CourseCard({ course }: { course: Course }) {
       <p className=" text-sm flex-1 text-text-secondary">{course.summary}</p>
 
       <div className="mt-4 flex justify-end">
-        <Link 
-          href={`/courses/${course.course_id}/lessons`} 
-          className="text-primary hover:text-primary-hover transition"
-        >
-        learn more
+        <Link href="/" className="text-primary hover:text-primary-hover transition">
+          learn more
         </Link>
       </div>
     </div>

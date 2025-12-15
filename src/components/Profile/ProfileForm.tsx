@@ -13,7 +13,7 @@ export default function ProfileForm({ profile, isEditing, handleChange }: any) {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-8">
       {fields.map(({ name, label, readOnly, textarea }) => (
         <div key={name} className="flex flex-col">
-          <label className="text-sm font-medium mb-1" style={{ color: "var(--color-text-secondary)" }}>{label}</label>
+          <label className="text-sm font-medium mb-1 text-text-secondary" >{label}</label>
           {textarea ? (
             <textarea
               name={name}

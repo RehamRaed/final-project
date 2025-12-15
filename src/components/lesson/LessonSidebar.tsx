@@ -14,7 +14,7 @@ export default function LessonSidebar({
   onSelectLesson,
 }: Props) {
   return (
-    <div className="w-1/3 border rounded-xl bg-white shadow-md p-4 max-h-[calc(105vh-160px)] overflow-y-auto">
+    <div className="w-full md:w-1/3  border rounded-xl  shadow-md p-4 max-h-[calc(105vh-160px)] overflow-y-auto">
       <h2 className="text-xl font-bold mb-4 text-primary">Lessons</h2>
 
       {lessons.map((lesson) => (
