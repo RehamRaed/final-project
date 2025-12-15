@@ -10,39 +10,32 @@ import { supabase } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { usePathname } from "next/navigation";
 
-import { Provider, useDispatch } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { store, AppDispatch } from "@/store";
 import { fetchCurrentRoadmap } from "@/store/roadmapSlice";
-
-function AppInitializer({ children }: { children: React.ReactNode }) {
-  const dispatch = useDispatch<AppDispatch>();
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const init = async () => {
-      await dispatch(fetchCurrentRoadmap());
-      setReady(true);
-    };
-    init();
-  }, [dispatch]);
-
-  if (!ready) return null;
-  return <>{children}</>;
-}
-
+import { RootState } from "@/store";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-
-const [tags, setTags] = useState<{ id: string; name: string }[]>([]);
-const [loadingTags, setLoadingTags] = useState(true);
-  
-  {console.log(tags)}
-
+  return (
+    <html lang="en" dir="ltr">
+      <body>
+        <Provider store={store}>
+          <AuthProvider>
+            <AppWithRedux>{children}</AppWithRedux>
+          </AuthProvider>
+        </Provider>
+      </body>
+    </html>
+  );
+}
+function AppWithRedux({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-
   const pathname = usePathname();
   const hideOn = ["/", "/auth/login", "/auth/register", "/roadmaps", "/profile"];
   const shouldShowHeader = user && !hideOn.includes(pathname);
+
+  const currentRoadmap = useSelector((state: RootState) => state.roadmap.current);
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -53,31 +46,26 @@ const [loadingTags, setLoadingTags] = useState(true);
     loadUser();
   }, []);
 
+  useEffect(() => {
+    dispatch(fetchCurrentRoadmap());
+  }, [dispatch]);
+
   return (
-    <html lang="en" dir="ltr">
-      <body>
-        <Provider store={store}>
-          <AuthProvider>
-            {!loading && user && <AppInitializer>{children}</AppInitializer>}
-
-            {!loading && shouldShowHeader && (
-              <div
-                style={{
-                  zIndex: 50,
-                  position: "fixed",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                }}
-              >
-                <Header />
-              </div>
-            )}
-
-            {!user && children}
-          </AuthProvider>
-        </Provider>
-      </body>
-    </html>
+    <>
+      {!loading && shouldShowHeader && (
+        <div
+          style={{
+            zIndex: 50,
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+          }}
+        >
+          <Header currentRoadmapId={currentRoadmap?.id} />
+        </div>
+      )}
+      {children}
+    </>
   );
 }

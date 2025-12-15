@@ -29,7 +29,7 @@ export default function LessonComponent() {
     loadUser();
   }, []);
 
-  console.log("userID:", userId);
+  // console.log("userID:", userId);
 
   // Fetch lessons after user & courseId exist
   useEffect(() => {
