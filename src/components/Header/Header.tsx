@@ -16,10 +16,11 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 import { fetchCourses } from '@/lib/search';
 import SearchResults from './SearchResults';
 import { supabase } from '@/lib/supabase/client';
+import { User } from 'next-auth';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -59,7 +60,7 @@ interface Tag {
 }
 
 interface HeaderProps {
-  tags?: Tag[] | null;
+  currentRoadmapId?: string | null;
 }
 
 
@@ -70,19 +71,49 @@ interface Course {
   donePercentage: number;
 }
 
-export default function Header({ tags }: HeaderProps) {
+export default function Header({currentRoadmapId }: HeaderProps) {
+  
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [res, setRes] = useState<Course[]>([]);
   const router = useRouter();
+  
   const searchParams = useSearchParams();
   const roadmapId = searchParams.get('id');
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
+  const [currentRoadmap, setCurrentRoadmap] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+  useEffect(() => {
+      const loadUserAndRoadmap = async () => {
+        const { supabase } = await import("@/lib/supabase/client");
+  
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+  
+        setUser(user);
+  
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("current_roadmap_id, roadmaps(*)")
+          .eq("id", user.id)
+          .single();
+  
+        if (profile?.roadmaps) {
+          setCurrentRoadmap(profile.roadmaps);
+        }
+      };
+  
+      loadUserAndRoadmap();
+    }, []);
+  
+    
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -110,8 +141,8 @@ export default function Header({ tags }: HeaderProps) {
 
   const handleMyCourses = () => {
     handleMenuClose();
-    if (!roadmapId) return;
-    router.push(`/roadmaps/${roadmapId}/courses`);
+    if (!currentRoadmapId) return;
+    router.push(`/roadmaps/${currentRoadmapId}/courses`);
   };
 
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
