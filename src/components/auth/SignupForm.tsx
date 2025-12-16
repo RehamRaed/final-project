@@ -3,6 +3,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 import { SignupSchema, SignupType } from '@/lib/validators'
+import { ZodError } from "zod"
+
 
 export default function SignUpForm() {
   const [form, setForm] = useState<SignupType>({
@@ -29,17 +31,19 @@ export default function SignUpForm() {
       })
       setLoading(false)
       if (error) setMessage(error.message)
-      else window.location.href = '/student/roadmaps'
-    } catch (err: any) {
-      if (err?.issues?.length) {
+      else window.location.href = '/roadmaps'
+    } catch (err: unknown) {
+      if (err instanceof ZodError) {
         setMessage(err.issues[0].message)
-      } else if (err?.message) {
+      } else if (err instanceof Error) {
         setMessage(err.message)
+      } else {
+        setMessage('An unexpected error occurred')
       }
     }
   }
 
-  
+
 
   const handleGoogleSignIn = async () => {
     setLoading(true)
@@ -53,7 +57,7 @@ export default function SignUpForm() {
 
   return (
     <div className="card max-w-md mx-auto mt-20 space-y-3 text-center">
-      <h2 className="text-2xl font-bold" style={{  color: "var(--color-primary)" }}>
+      <h2 className="text-2xl font-bold" style={{ color: "var(--color-primary)" }}>
         Create Account
       </h2>
 

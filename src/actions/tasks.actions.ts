@@ -1,9 +1,9 @@
 'use server'
+
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import * as tasksService from '@/services/tasks.service'
 import { TablesInsert, TablesUpdate } from '@/types/database.types'
-
 
 
 async function setupAction() {
@@ -17,7 +17,22 @@ async function setupAction() {
     return { supabase, user }
 }
 
+function invalidateTaskListCache() {
+    revalidatePath('/tasklist');
+}
 
+function handleActionError(error: unknown, defaultMessage: string) {
+    let errorMessage = defaultMessage;
+    
+    if (error instanceof Error) {
+        errorMessage = error.message;
+    } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = (error as { message: string }).message;
+    }
+
+    console.error('Server Action Error:', errorMessage, error);
+    return { success: false, error: errorMessage };
+}
 
 export async function getAllTasksAction() {
     try {
@@ -28,12 +43,10 @@ export async function getAllTasksAction() {
         if (error) throw error
 
         return { success: true, data }
-    } catch (e: any) {
-        console.error('getAllTasksAction error:', e)
-        return { success: false, error: e.message || 'Failed to fetch tasks' }
+    } catch (e: unknown) {
+        return handleActionError(e, 'Failed to fetch tasks')
     }
 }
-
 
 export async function getTaskAction(taskId: string) {
     try {
@@ -44,37 +57,31 @@ export async function getTaskAction(taskId: string) {
         if (error) throw error
 
         return { success: true, data }
-    } catch (e: any) {
-        console.error('getTaskAction error:', e)
-        return { success: false, error: e.message || 'Failed to fetch task' }
+    } catch (e: unknown) {
+        return handleActionError(e, 'Failed to fetch task')
     }
 }
 
-
-
 export async function createTaskAction(
-    taskData: Omit<TablesInsert<'tasks'>, 'user_id'> // يتم إزالة user_id من البيانات المتوقعة من العميل
+    taskData: Omit<TablesInsert<'tasks'>, 'user_id'>
 ) {
     try {
         const { supabase, user } = await setupAction()
 
         const { data, error } = await tasksService.createTask(supabase, {
             ...taskData,
-            user_id: user.id //  💡 يتم إضافة user_id من الخادم (مصدر موثوق)
+            user_id: user.id
         })
 
         if (error) throw error
 
-        revalidatePath('/tasklist')
+        invalidateTaskListCache()
 
         return { success: true, data }
-    } catch (e: any) {
-        console.error('createTaskAction error:', e)
-        return { success: false, error: e.message || 'Failed to create task' }
+    } catch (e: unknown) {
+        return handleActionError(e, 'Failed to create task')
     }
 }
-
-
 
 export async function updateTaskAction(
     id: string,
@@ -87,34 +94,29 @@ export async function updateTaskAction(
 
         if (error) throw error
 
-        revalidatePath('/tasklist')
+        invalidateTaskListCache()
 
         return { success: true, data }
-    } catch (e: any) {
-        console.error('updateTaskAction error:', e)
-        return { success: false, error: e.message || 'Failed to update task' }
+    } catch (e: unknown) {
+        return handleActionError(e, 'Failed to update task')
     }
 }
-
-
 
 export async function deleteTaskAction(taskId: string) {
     try {
         const { supabase } = await setupAction()
 
-        const { data, error } = await tasksService.deleteTask(supabase, taskId)
+        const { error } = await tasksService.deleteTask(supabase, taskId)
 
         if (error) throw error
 
-        revalidatePath('/tasklist')
+        invalidateTaskListCache()
 
         return { success: true }
-    } catch (e: any) {
-        console.error('deleteTaskAction error:', e)
-        return { success: false, error: e.message || 'Failed to delete task' }
+    } catch (e: unknown) {
+        return handleActionError(e, 'Failed to delete task')
     }
 }
-
 
 export async function toggleTaskAction(taskId: string) {
     try {
@@ -122,51 +124,48 @@ export async function toggleTaskAction(taskId: string) {
 
         const { data: task, error } = await tasksService.toggleTaskCompletion(supabase, taskId)
 
-        if (error || !task) throw error
+        if (error || !task) throw new Error(error?.message || "Task update failed.")
 
-        // XP Reward Logic: Award points only when task is completed
         if (task.is_completed) {
+            
             const xpMap: Record<string, number> = {
                 'high': 100,
                 'medium': 50,
                 'low': 20
             }
-            // Default to 20 if priority is null or unknown
             const priority = task.priority?.toLowerCase() || 'low'
             const xpReward = xpMap[priority] || 20
 
-            // Fetch current profile XP
-            const { data: profile } = await supabase
+            const { data: profile, error: fetchProfileError } = await supabase
                 .from('profiles')
                 .select('xp')
                 .eq('id', user.id)
-                .single()
+                .single() as { data: { xp: number } | null, error: Error }
 
-            const currentXp = profile?.xp || 0
-            const newXp = currentXp + xpReward
+            if (fetchProfileError) {
+                console.error('Failed to fetch profile for XP update:', fetchProfileError)
+            } else {
+                const currentXp = profile?.xp || 0
+                const newXp = currentXp + xpReward
 
-            // Update profile with new XP
-            const { error: xpError } = await supabase
-                .from('profiles')
-                .update({ xp: newXp })
-                .eq('id', user.id)
-
-            if (xpError) {
-                console.error('Failed to update XP:', xpError)
-                // We don't throw here to avoid failing the task toggle itself
+                const { error: xpError } = await supabase
+                    .from('profiles')
+                    .update({ xp: newXp })
+                    .eq('id', user.id)
+                
+                if (xpError) {
+                    console.error('Failed to update XP:', xpError)
+                }
             }
         }
 
-        revalidatePath('/tasklist')
+        invalidateTaskListCache()
 
         return { success: true, data: task }
-    } catch (e: any) {
-        console.error('toggleTaskAction error:', e)
-        return { success: false, error: e.message || 'Failed to toggle task' }
+    } catch (e: unknown) {
+        return handleActionError(e, 'Failed to toggle task')
     }
 }
-
-
 
 export async function completeTaskAction(taskId: string) {
     try {
@@ -177,17 +176,14 @@ export async function completeTaskAction(taskId: string) {
         })
 
         if (error) throw error
-
-        revalidatePath('/tasklist')
+        
+        invalidateTaskListCache()
 
         return { success: true, data }
-    } catch (e: any) {
-        console.error('completeTaskAction error:', e)
-        return { success: false, error: e.message || 'Failed to complete task' }
+    } catch (e: unknown) {
+        return handleActionError(e, 'Failed to complete task')
     }
 }
-
-
 
 export async function uncompleteTaskAction(taskId: string) {
     try {
@@ -199,11 +195,10 @@ export async function uncompleteTaskAction(taskId: string) {
 
         if (error) throw error
 
-        revalidatePath('/tasklist')
+        invalidateTaskListCache()
 
         return { success: true, data }
-    } catch (e: any) {
-        console.error('uncompleteTaskAction error:', e)
-        return { success: false, error: e.message || 'Failed to uncomplete task' }
+    } catch (e: unknown) {
+        return handleActionError(e, 'Failed to uncomplete task')
     }
 }
