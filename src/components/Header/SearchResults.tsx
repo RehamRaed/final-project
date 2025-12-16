@@ -2,26 +2,26 @@ import Link from 'next/link';
 
 
 interface Course {
-  id: string;
-  title: string;
-  description: string;
-  donePercentage: number;
+    id: string;
+    title: string;
+    description: string;
+    donePercentage: number;
 }
 
-type searchResultsProps={
+type searchResultsProps = {
     res: Course[]
 }
 
-export default function SearchResults({res}:searchResultsProps){
-    {console.log(res)}
-    
-    return(<>
-        {res && <div className="flex flex-col gap-3"> 
-            {res.map((r)=>
-                <Link 
+export default function SearchResults({ res }: searchResultsProps) {
+    { console.log(res) }
+
+    return (<>
+        {res && <div className="flex flex-col gap-3">
+            {res.map((r) =>
+                <Link
                     key={r.id}
-                    className="text-text-primary no-underline hover:underline" 
-                    href={`/student/courses/${r.id}/lessons`}
+                    className="text-text-primary no-underline hover:underline"
+                    href={`/courses/${r.id}/lessons`}
                 >
                     {r.title}
                 </Link>

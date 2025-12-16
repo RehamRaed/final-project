@@ -35,7 +35,7 @@ export default function WelcomePage() {
       </p>
 
       <Link
-        href={user ? "/student/roadmaps" : "/auth/login"}
+        href={user ? "/roadmaps" : "/auth/login"}
         className="px-8 py-3 rounded-xl shadow-lg transition font-semibold text-lg"
         style={{
           backgroundColor: "var(--color-primary)",

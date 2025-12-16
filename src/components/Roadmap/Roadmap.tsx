@@ -33,7 +33,7 @@ export default function RoadmapCard({ roadmap, onSelect, isSelected = false }: R
 
       <div>
         <Link
-          href={`/student/roadmaps/${roadmap.id}`}
+          href={`/roadmaps/${roadmap.id}`}
           className="underline text-bg"
         >
           Learn More

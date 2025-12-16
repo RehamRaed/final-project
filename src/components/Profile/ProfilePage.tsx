@@ -84,17 +84,17 @@ export default function ProfilePage() {
 
   const handleCancel = () => {
     setIsEditing(false);
-    if (profile?.avatar_url) setImagePreview(profile.avatar_url); 
+    if (profile?.avatar_url) setImagePreview(profile.avatar_url);
   };
 
   if (loading) return <div className="flex justify-center items-center h-[80vh]">
-          <LoadingSpinner />
-        </div> 
+    <LoadingSpinner />
+  </div>
 
   return (
     <div className="max-w-5xl bg-bg mx-auto px-4 space-y-5">
       <Link
-        href="/student/dashboard"
+        href="/dashboard"
         className="flex items-center gap-1 font-semibold"
         style={{ color: "var(--color-primary)" }}
       >
