@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import * as tasksService from '@/services/tasks.service'
-import { TablesInsert, TablesUpdate } from '@/types/database.types'
+import { Tables, TablesInsert, TablesUpdate } from '@/types/database.types'
 
 
 async function setupAction() {
@@ -21,9 +21,16 @@ function invalidateTaskListCache() {
     revalidatePath('/tasklist');
 }
 
-function handleActionError(error: unknown, defaultMessage: string) {
+// Define a discriminated union type for server actions
+export type ActionResponse<T> =
+    | { success: true; data: T; error?: undefined }
+    | { success: false; error: string; data?: undefined };
+
+// ... (setupAction and invalidateTaskListCache remain the same)
+
+function handleActionError(error: unknown, defaultMessage: string): { success: false; error: string } {
     let errorMessage = defaultMessage;
-    
+
     if (error instanceof Error) {
         errorMessage = error.message;
     } else if (typeof error === 'object' && error !== null && 'message' in error) {
@@ -34,7 +41,7 @@ function handleActionError(error: unknown, defaultMessage: string) {
     return { success: false, error: errorMessage };
 }
 
-export async function getAllTasksAction() {
+export async function getAllTasksAction(): Promise<ActionResponse<Tables<'tasks'>[] | null>> {
     try {
         const { supabase, user } = await setupAction()
 
@@ -127,7 +134,7 @@ export async function toggleTaskAction(taskId: string) {
         if (error || !task) throw new Error(error?.message || "Task update failed.")
 
         if (task.is_completed) {
-            
+
             const xpMap: Record<string, number> = {
                 'high': 100,
                 'medium': 50,
@@ -152,7 +159,7 @@ export async function toggleTaskAction(taskId: string) {
                     .from('profiles')
                     .update({ xp: newXp })
                     .eq('id', user.id)
-                
+
                 if (xpError) {
                     console.error('Failed to update XP:', xpError)
                 }
@@ -176,7 +183,7 @@ export async function completeTaskAction(taskId: string) {
         })
 
         if (error) throw error
-        
+
         invalidateTaskListCache()
 
         return { success: true, data }

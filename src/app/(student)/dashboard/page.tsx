@@ -61,7 +61,6 @@ export default async function StudentPage() {
         }
     }
 
-    // 4. Fetch Upcoming Tasks
     const { data: tasks } = await supabase
         .from('tasks')
         .select('*')

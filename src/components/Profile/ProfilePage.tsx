@@ -2,6 +2,7 @@
 
 import { useEffect, useState, ChangeEvent } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { Tables } from "@/types/database.types";
 import ProfileAvatar from "./ProfileAvatar";
 import ProfileForm from "./ProfileForm";
 import ProfileActions from "./ProfileActions";
@@ -19,7 +20,7 @@ export default function ProfilePage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<Tables<'profiles'> | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("/avatar.jpg");
 
   useEffect(() => {

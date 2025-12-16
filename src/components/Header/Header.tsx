@@ -21,6 +21,7 @@ import { fetchCourses } from '@/lib/search';
 import SearchResults from './SearchResults';
 import { supabase } from '@/lib/supabase/client';
 import { User } from 'next-auth';
+import { Tables } from '@/types/database.types';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -94,7 +95,7 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const [currentRoadmap, setCurrentRoadmap] = useState<any>(null);
+  const [currentRoadmap, setCurrentRoadmap] = useState<Tables<'roadmaps'> | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
   const isMenuOpen = Boolean(anchorEl);
@@ -111,12 +112,20 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("current_roadmap_id, roadmaps(*)")
+        .select("current_roadmap_id")
         .eq("id", user.id)
         .single();
 
-      if (profile?.roadmaps) {
-        setCurrentRoadmap(profile.roadmaps);
+      if (profile?.current_roadmap_id) {
+        const { data: roadmap } = await supabase
+          .from("roadmaps")
+          .select("*")
+          .eq("id", profile.current_roadmap_id)
+          .single();
+
+        if (roadmap) {
+          setCurrentRoadmap(roadmap);
+        }
       }
     };
 

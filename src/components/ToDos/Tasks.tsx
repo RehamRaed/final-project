@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect } from 'react'
 import {
-    getAllTasksAction,
+    getAllTasksAction, // تبقى هنا لإعادة جلب البيانات بعد العمليات
     toggleTaskAction,
     deleteTaskAction
 } from '@/actions/tasks.actions'
@@ -24,9 +24,19 @@ type ViewMode = 'grid' | 'table' | 'calendar' | 'matrix'
 type FilterStatus = 'all' | 'pending' | 'completed'
 type FilterPriority = 'all' | 'low' | 'medium' | 'high'
 
-const Tasks = () => {
-    const [tasks, setTasks] = useState<Task[]>([])
-    const [isLoading, setIsLoading] = useState(true)
+// **[تعديل]:** تعريف Props ليقبل initialTasks
+interface TasksProps {
+    initialTasks: Task[];
+}
+
+const Tasks = ({ initialTasks }: TasksProps) => { // **[تعديل]:** استقبال initialTasks
+
+    // **[تعديل]:** استخدام initialTasks كقيمة افتراضية للـ state
+    const [tasks, setTasks] = useState<Task[]>(initialTasks)
+
+    // بما أننا جلبنا البيانات في السيرفر، يمكن أن نبدأ بـ isLoading = false
+    const [isLoading, setIsLoading] = useState(false)
+
     const [viewMode, setViewMode] = useState<ViewMode>('grid')
     const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
     const [filterPriority, setFilterPriority] = useState<FilterPriority>('all')
@@ -34,10 +44,9 @@ const Tasks = () => {
     const [showAddModal, setShowAddModal] = useState(false)
     const [selectedTask, setSelectedTask] = useState<Task | null>(null)
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isPending, startTransition] = useTransition()
 
-    const fetchTasks = async () => {
+    async function fetchTasks(): Promise<void> {
         setIsLoading(true)
         const result = await getAllTasksAction()
         if (result.success && result.data) {
@@ -46,34 +55,38 @@ const Tasks = () => {
         setIsLoading(false)
     }
 
-    useEffect(() => {
-        // Fetch tasks on mount
-        const load = async () => {
-            await fetchTasks()
-        }
-        load()
-    }, [])
 
     const handleToggle = async (id: string) => {
         // Optimistic update
         setTasks(prev => prev.map(t => t.id === id ? { ...t, is_completed: !t.is_completed } : t))
 
-        const result = await toggleTaskAction(id)
-        if (!result.success) {
-            // Revert on failure
-            setTasks(prev => prev.map(t => t.id === id ? { ...t, is_completed: !t.is_completed } : t))
-        }
+        // استخدام startTransition لتضمين العملية
+        startTransition(async () => {
+            const result = await toggleTaskAction(id)
+            if (!result.success) {
+                // Revert on failure
+                setTasks(prev => prev.map(t => t.id === id ? { ...t, is_completed: !t.is_completed } : t))
+            } else {
+                // إعادة جلب البيانات لضمان تزامن الـ XP أو أي تحديثات جانبية
+                await fetchTasks();
+            }
+        })
     }
 
     const handleDelete = async (id: string) => {
         // Optimistic update
         setTasks(prev => prev.filter(t => t.id !== id))
 
-        const result = await deleteTaskAction(id)
-        if (!result.success) {
-            // Re-fetch or revert
-            await fetchTasks()
-        }
+        startTransition(async () => {
+            const result = await deleteTaskAction(id)
+            if (!result.success) {
+                // Re-fetch or revert
+                await fetchTasks()
+            } else {
+                // إعادة جلب البيانات لضمان تزامن الـ XP أو أي تحديثات جانبية
+                await fetchTasks();
+            }
+        })
     }
 
     const filteredTasks = tasks.filter(task => {
@@ -118,6 +131,7 @@ const Tasks = () => {
         setIsLoading(true)
 
         // Delete all tasks one by one
+        // **ملاحظة:** يفضل إنشاء action واحدة تحذف الكل دفعة واحدة لتقليل زمن الاستجابة.
         for (const task of tasks) {
             await deleteTaskAction(task.id)
         }
@@ -127,7 +141,9 @@ const Tasks = () => {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4" aria-live="polite" aria-busy={isLoading}>
+            {/* ... بقية الـ JSX (بدون تغيير كبير) ... */}
+
             <div className="flex justify-between items-center gap-4">
                 <button
                     onClick={() => setShowFocusMode(!showFocusMode)}
@@ -139,7 +155,7 @@ const Tasks = () => {
                             : 'bg-white text-gray-700 hover:bg-linear-to-r hover:from-gray-50 hover:to-gray-100 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700'}
                     `}
                 >
-                    <span className="group-hover:rotate-12 transition-transform duration-300">⏱️</span>
+                    <span className="group-hover:rotate-12 transition-transform duration-300" aria-hidden="true">⏱️</span>
                     {showFocusMode ? 'Hide Focus Timer' : 'Show Focus Timer'}
                 </button>
 
@@ -151,8 +167,9 @@ const Tasks = () => {
                             bg-linear-to-r from-red-500 to-red-600 text-white shadow-md
                             hover:scale-105 hover:shadow-lg hover:shadow-red-500/50 active:scale-95
                             disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
+                        aria-label={`Delete all ${tasks.length} tasks`}
                     >
-                        <span className="group-hover:rotate-12 transition-transform duration-300">🗑️</span>
+                        <span className="group-hover:rotate-12 transition-transform duration-300" aria-hidden="true">🗑️</span>
                         Delete All ({tasks.length})
                     </button>
                 )}
@@ -191,7 +208,7 @@ const Tasks = () => {
                         hover:scale-105 hover:shadow-xl hover:shadow-blue-500/50 active:scale-95 cursor-pointer
                         hover:from-blue-700 hover:to-blue-800"
                 >
-                    <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                    <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" aria-hidden="true" />
                     New Task
                 </button>
             </div>
@@ -199,14 +216,14 @@ const Tasks = () => {
             <AddTaskModal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
-                onTaskAdded={fetchTasks}
+                onTaskAdded={fetchTasks} // إعادة الجلب بعد الإضافة
             />
 
             <TaskDetailsModal
                 task={selectedTask}
                 isOpen={!!selectedTask}
                 onClose={() => setSelectedTask(null)}
-                onTaskUpdated={fetchTasks}
+                onTaskUpdated={fetchTasks} // إعادة الجلب بعد التعديل
             />
 
             <AnimatePresence mode="wait">
