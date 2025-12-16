@@ -1,13 +1,31 @@
 "use client";
 
-export default function ProfileForm({ profile, isEditing, handleChange }: any) {
-  const fields = [
+import { ChangeEvent } from "react";
+import { Tables } from "@/types/database.types";
+
+interface ProfileFormProps {
+  profile: Tables<'profiles'> | null;
+  isEditing: boolean;
+  handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}
+
+export default function ProfileForm({ profile, isEditing, handleChange }: ProfileFormProps) {
+  type FieldConfig = {
+    name: string;
+    label: string;
+    readOnly?: boolean;
+    textarea?: boolean;
+  };
+
+  const fields: FieldConfig[] = [
     { name: "full_name", label: "Full Name" },
     { name: "email", label: "Email", readOnly: true },
     { name: "university_id", label: "University ID" },
     { name: "department", label: "Department" },
     { name: "bio", label: "Bio", textarea: true },
   ];
+
+  if (!profile) return null;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-8">
@@ -17,7 +35,7 @@ export default function ProfileForm({ profile, isEditing, handleChange }: any) {
           {textarea ? (
             <textarea
               name={name}
-              value={profile[name] ?? ""}
+              value={(profile as Record<string, unknown>)[name] as string ?? ""}
               onChange={handleChange}
               readOnly={!isEditing}
               disabled={!isEditing}
@@ -35,7 +53,7 @@ export default function ProfileForm({ profile, isEditing, handleChange }: any) {
             <input
               type={name === "email" ? "email" : "text"}
               name={name}
-              value={profile[name] ?? ""}
+              value={(profile as Record<string, unknown>)[name] as string ?? ""}
               onChange={handleChange}
               readOnly={!isEditing || readOnly}
               disabled={!isEditing || readOnly}

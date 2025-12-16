@@ -1,5 +1,7 @@
 import Tasks from "@/components/ToDos/Tasks";
-import { Metadata } from 'next'
+import { Metadata } from 'next';
+import { getAllTasksAction } from '@/actions/tasks.actions';
+import { Tables } from '@/types/database.types';
 
 export const metadata: Metadata = {
     title: 'Task Management | Smart Task System',
@@ -13,6 +15,23 @@ export const metadata: Metadata = {
 }
 
 export default async function TaskList() {
+
+    let initialTasks: Tables<'tasks'>[] = [];
+    let fetchError: string | null = null;
+
+    try {
+        const result = await getAllTasksAction();
+        if (result.success) {
+            initialTasks = result.data || [];
+        } else {
+            fetchError = result.error;
+        }
+    } catch (e) {
+        console.error("Server fetch error:", e);
+        fetchError = "An unexpected error occurred during data fetching.";
+    }
+
+
     return (
         <div className="container mx-auto px-4 py-6 min-h-screen">
             <header className="mb-6">
@@ -25,7 +44,14 @@ export default async function TaskList() {
             </header>
 
             <main>
-                <Tasks />
+                {fetchError ? (
+                    <div className="p-4 border border-red-400 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-lg">
+                        <p className="font-semibold">Data Load Error:</p>
+                        <p>{fetchError}</p>
+                    </div>
+                ) : (
+                    <Tasks initialTasks={initialTasks} />
+                )}
             </main>
         </div>
     )

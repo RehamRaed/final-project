@@ -1,11 +1,31 @@
-export default function TimeNeeded({ minutes }: { minutes: number }) {
-  function format(mins: number) {
-    if (!mins || mins <= 0) return "0 minutes";
-    if (mins < 60) return `${mins} minutes`;
-    const hours = Math.floor(mins / 60);
-    const rem = mins % 60;
-    return rem === 0 ? `${hours} hours` : `${hours}h ${rem}m`;
+'use client';
+
+import React from 'react';
+
+interface TimeNeededProps {
+  minutes: number | null;
+}
+
+export default function TimeNeeded({ minutes }: TimeNeededProps) {
+  function formatDuration(mins: number | null) {
+    if (!mins || mins <= 0) return "less than a minute";
+
+    const totalMins = Math.round(mins);
+
+    if (totalMins < 60) return `${totalMins} minutes`;
+
+    const hours = Math.floor(totalMins / 60);
+    const remMins = totalMins % 60;
+
+    const hourText = `${hours} hour${hours > 1 ? 's' : ''}`;
+    const minText = remMins > 0 ? ` and ${remMins} minute${remMins > 1 ? 's' : ''}` : '';
+
+    return `${hourText}${minText}`;
   }
 
-  return <span className="text-sm text-gray-500 mt-1">{format(minutes)}</span>;
+  return (
+    <span className="text-sm text-gray-500 mt-1" aria-label={`Estimated duration: ${formatDuration(minutes)}`}>
+      {formatDuration(minutes)}
+    </span>
+  );
 }

@@ -13,8 +13,6 @@ type searchResultsProps = {
 }
 
 export default function SearchResults({ res }: searchResultsProps) {
-    { console.log(res) }
-
     return (<>
         {res && <div className="flex flex-col gap-3">
             {res.map((r) =>

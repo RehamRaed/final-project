@@ -2,7 +2,7 @@ import { supabase } from './supabase/client';
 
 export interface CourseFilter {
   query?: string;
-  tags?: string[]; // array of tag ids
+  tags?: string[];
 }
 
 export async function fetchCourses(filter: CourseFilter) {

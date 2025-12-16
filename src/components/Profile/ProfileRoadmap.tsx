@@ -1,34 +1,29 @@
+// ProfileRoadmap.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
 
-export default function ProfileRoadmap({ currentRoadmap }: any) {
+interface ProfileRoadmapProps {
+  currentRoadmapTitle: string; // تم التبسيط
+}
+
+export default function ProfileRoadmap({ currentRoadmapTitle }: ProfileRoadmapProps) {
   const router = useRouter();
 
   return (
-    <div
-      className="p-6 rounded-xl shadow-md border mt-6"
-      style={{ backgroundColor: "var(--color-card-bg)", borderColor: "var(--color-border)" }}
-    >
-      <h3 className="text-xl font-semibold mb-4" style={{ color: "var(--color-text-primary)" }}>
+    <div className="p-6 rounded-xl shadow-md border mt-6 bg-card-bg border-border">
+      <h3 className="text-xl font-semibold mb-4 text-text-primary">
         Roadmap Details
       </h3>
 
-      <div
-        className="flex flex-col md:flex-row justify-between items-center p-4 rounded-lg"
-        style={{ backgroundColor: "var(--color-bg)" }}
-      >
-        <p
-          style={{ color: "var(--color-text-secondary)", fontWeight: 500 }}
-          className="mb-2 md:mb-0"
-        >
-          Current Roadmap: {currentRoadmap ? currentRoadmap.title : "Not selected"}
+      <div className="flex flex-col md:flex-row justify-between items-center p-4 rounded-lg bg-bg">
+        <p className="mb-2 md:mb-0 text-text-secondary font-medium">
+          Current Roadmap: {currentRoadmapTitle}
         </p>
 
         <button
           onClick={() => router.push("/roadmaps")}
-          className="px-4 py-2 font-semibold rounded-lg transition text-sm"
-          style={{ backgroundColor: "var(--color-accent)", color: "#fff" }}
+          className="px-4 py-2 font-semibold rounded-lg transition text-sm bg-accent text-white hover:opacity-90"
         >
           Change Roadmap
         </button>

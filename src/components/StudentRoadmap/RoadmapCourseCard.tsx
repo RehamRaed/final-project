@@ -17,10 +17,10 @@ interface Props {
   supabase: SupabaseClient;
 }
 
-export default function RoadmapCourseCar({ course, userId, supabase}: Props) {
+export default function RoadmapCourseCar({ course, userId, supabase }: Props) {
   const [donePercentage, setDonePercentage] = useState(0);
-    
-    useEffect(() => {
+
+  useEffect(() => {
     async function getProgress() {
       try {
         const { data: lessons, error } = await supabase
@@ -28,24 +28,23 @@ export default function RoadmapCourseCar({ course, userId, supabase}: Props) {
           .select('status')
           .eq('user_id', userId)
           .eq('course_id', course.course_id);
-  
+
         if (error) throw error;
-  
+
         const total = lessons.length;
         const done = lessons.filter((l) => l.status === 'Completed').length;
         const percentage = total ? Math.round((done / total) * 100) : 0;
-  
+
         setDonePercentage(percentage);
       } catch (err) {
         console.error(err);
       }
     }
-  
+
     getProgress();
   }, [course.course_id, userId, supabase]);
   const router = useRouter();
-  function handleContinue(){
-    console.log("handle contiue clicked")
+  function handleContinue() {
     router.push(`/courses/${course.course_id}`);
   }
   return (
@@ -72,7 +71,7 @@ export default function RoadmapCourseCar({ course, userId, supabase}: Props) {
         </h3>
 
         <div className="flex justify-end">
-          <Button title="Continue" onClick={handleContinue}/>
+          <Button title="Continue" onClick={handleContinue} />
         </div>
       </div>
     </div>

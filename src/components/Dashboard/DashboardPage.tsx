@@ -59,7 +59,6 @@ export default function StudentHomePage({
                         />
                     </div>
 
-                    {/* Upcoming Tasks Widget */}
                     <div className="lg:col-span-1 bg-card-bg rounded-xl shadow-md border border-border flex flex-col h-full">
                         <div className="p-5 border-b border-border flex justify-between items-center">
                             <h3 className="font-bold text-lg text-text-primary flex items-center gap-2">
@@ -122,7 +121,7 @@ export default function StudentHomePage({
                         <button
                             className="flex items-center gap-2 text-primary font-semibold hover:underline"
                             onClick={() =>
-                                router.push(`/roadmaps/${currentRoadmap.id}/courses`)
+                                router.push(`/roadmaps/${currentRoadmap.id}`)
                             }
                         >
                             Show More <ArrowRight size={18} />
