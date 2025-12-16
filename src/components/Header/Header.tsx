@@ -16,7 +16,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState,useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { fetchCourses } from '@/lib/search';
 import SearchResults from './SearchResults';
 import { supabase } from '@/lib/supabase/client';
@@ -66,7 +66,7 @@ interface Course {
   donePercentage: number;
 }
 
-export default function Header({currentRoadmapId }: HeaderProps) {
+export default function Header({ currentRoadmapId }: HeaderProps) {
   const searchRef = useRef<HTMLDivElement>(null);
 
   // handle click outside
@@ -77,17 +77,17 @@ export default function Header({currentRoadmapId }: HeaderProps) {
       }
     };
 
-  document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [searchRef]);
-  
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [searchRef]);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [res, setRes] = useState<Course[]>([]);
   const router = useRouter();
-  
+
   const searchParams = useSearchParams();
   const roadmapId = searchParams.get('id');
 
@@ -96,34 +96,34 @@ export default function Header({currentRoadmapId }: HeaderProps) {
 
   const [currentRoadmap, setCurrentRoadmap] = useState<any>(null);
   const [user, setUser] = useState<User | null>(null);
-  
+
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   useEffect(() => {
-      const loadUserAndRoadmap = async () => {
-        const { supabase } = await import("@/lib/supabase/client");
-  
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-  
-        setUser(user);
-  
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("current_roadmap_id, roadmaps(*)")
-          .eq("id", user.id)
-          .single();
-  
-        if (profile?.roadmaps) {
-          setCurrentRoadmap(profile.roadmaps);
-        }
-      };
-  
-      loadUserAndRoadmap();
-    }, []);
-  
-    
+    const loadUserAndRoadmap = async () => {
+      const { supabase } = await import("@/lib/supabase/client");
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      setUser(user);
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("current_roadmap_id, roadmaps(*)")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.roadmaps) {
+        setCurrentRoadmap(profile.roadmaps);
+      }
+    };
+
+    loadUserAndRoadmap();
+  }, []);
+
+
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -146,12 +146,12 @@ export default function Header({currentRoadmapId }: HeaderProps) {
 
   const handleProfileRedirect = () => {
     handleMenuClose();
-    router.push('/student/profile');
+    router.push('/profile');
   };
 
   const handleMyCourses = () => {
     handleMenuClose();
-    router.push(`/student/roadmaps/${roadmapId}/courses`);
+    router.push(`/roadmaps/${roadmapId}/courses`);
   };
 
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -174,7 +174,7 @@ export default function Header({currentRoadmapId }: HeaderProps) {
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMenuOpen}
       onClose={handleMenuClose}
-      style={{top:"40px" }}
+      style={{ top: "40px" }}
     >
       <MenuItem onClick={handleProfileRedirect}>Profile</MenuItem>
       <MenuItem onClick={handleMyCourses}>My Courses</MenuItem>
@@ -195,7 +195,7 @@ export default function Header({currentRoadmapId }: HeaderProps) {
       open={isMobileMenuOpen}
       onClose={handleMenuClose}
     >
-    {/*}  <MenuItem >
+      {/*}  <MenuItem >
         <IconButton size="large" color="inherit">
           <Badge badgeContent={17} color="error">
             <NotificationsIcon />
@@ -204,7 +204,7 @@ export default function Header({currentRoadmapId }: HeaderProps) {
         <p>Notifications</p>
       </MenuItem>*/}
       <MenuItem onClick={handleProfileRedirect}>
-        
+
         <p>Profile</p>
       </MenuItem>
       <MenuItem onClick={handleMyCourses}>
@@ -220,7 +220,7 @@ export default function Header({currentRoadmapId }: HeaderProps) {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <Link href="/student/dashboard" passHref>
+          <Link href="/dashboard" passHref>
             <Typography
               variant="h6"
               noWrap
@@ -240,7 +240,7 @@ export default function Header({currentRoadmapId }: HeaderProps) {
           <Box sx={{ flexGrow: 1 }} />
 
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          {/*}  <IconButton size="large" color="inherit">
+            {/*}  <IconButton size="large" color="inherit">
               <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
               </Badge>
@@ -272,14 +272,14 @@ export default function Header({currentRoadmapId }: HeaderProps) {
       </AppBar>
 
       {res.length > 0 && (
-      <div
-        ref={searchRef}
-        className="mt-1 bg-white shadow-md max-h-96 overflow-auto z-50 rounded w-[300px] ml-[150px] p-4"
-      >
-        <SearchResults
-          res={res}
-        />
-      </div>
+        <div
+          ref={searchRef}
+          className="mt-1 bg-white shadow-md max-h-96 overflow-auto z-50 rounded w-[300px] ml-[150px] p-4"
+        >
+          <SearchResults
+            res={res}
+          />
+        </div>
       )}
       {renderMobileMenu}
       {renderMenu}

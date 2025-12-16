@@ -1,0 +1,151 @@
+'use client'
+
+import { Tables } from '@/types/database.types'
+import { Calendar, CheckCircle2, Circle, Clock, MoreVertical, Trash2 } from 'lucide-react'
+import { useState } from 'react'
+
+type Task = Tables<'tasks'>
+
+interface CardProps {
+    task: Task
+    onToggle: (id: string) => Promise<void>
+    onDelete: (id: string) => Promise<void>
+    onEdit?: (task: Task) => void
+}
+
+const Card = ({ task, onToggle, onDelete, onEdit }: CardProps) => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+
+    const priorityColors = {
+        High: 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800',
+        Medium: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800',
+        Low: 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800'
+    }
+
+    const handleToggle = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        setIsLoading(true)
+        await onToggle(task.id)
+        setIsLoading(false)
+    }
+
+    const handleDelete = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        setIsMenuOpen(false)
+        setIsLoading(true)
+        await onDelete(task.id)
+        setIsLoading(false)
+    }
+
+    const handleCardClick = () => {
+        if (onEdit) {
+            onEdit(task)
+        }
+    }
+
+    return (
+        <div
+            onClick={handleCardClick}
+            className={`
+            group relative bg-white dark:bg-gray-800 rounded-xl p-5 
+            border transition-all duration-300 hover:shadow-xl cursor-pointer
+            ${task.is_completed
+                    ? 'border-green-200 dark:border-green-900 bg-green-50/30 dark:bg-green-900/10'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:-translate-y-1'}
+            ${isLoading ? 'opacity-70 pointer-events-none' : ''}
+        `}
+            role="button"
+            tabIndex={0}
+            aria-label={`View details for ${task.title}`}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    handleCardClick()
+                }
+            }}
+        >
+            {/* Header: Priority & Menu */}
+            <div className="flex items-start justify-between mb-3">
+                <span className={`
+                    px-2.5 py-1 rounded-full text-xs font-semibold border uppercase tracking-wide
+                    ${priorityColors[task.priority as keyof typeof priorityColors] || priorityColors.Medium}
+                `}>
+                    {task.priority || 'Medium'}
+                </span>
+
+                <div className="relative">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            setIsMenuOpen(!isMenuOpen)
+                        }}
+                        className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                        aria-label="Task options"
+                    >
+                        <MoreVertical className="w-4 h-4 text-gray-500" />
+                    </button>
+
+                    {isMenuOpen && (
+                        <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
+                            <button
+                                onClick={handleDelete}
+                                className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                Delete
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Content */}
+            <div className="mb-4">
+                <h3 className={`
+                    text-lg font-semibold mb-2 line-clamp-2
+                    ${task.is_completed ? 'text-gray-400 line-through' : 'text-gray-900 dark:text-white'}
+                `}>
+                    {task.title}
+                </h3>
+                {task.description && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
+                        {task.description}
+                    </p>
+                )}
+            </div>
+
+            {/* Footer: Date & Status */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                    {task.due_date && (
+                        <div className="flex items-center gap-1">
+                            <Calendar className="w-3.5 h-3.5" />
+                            {new Date(task.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </div>
+                    )}
+                    <div className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {new Date(task.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </div>
+                </div>
+
+                <button
+                    onClick={handleToggle}
+                    className={`
+                        p-2 rounded-full transition-all duration-300 transform active:scale-95
+                        ${task.is_completed
+                            ? 'bg-green-100 text-green-600 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-gray-100 text-gray-400 hover:bg-blue-100 hover:text-blue-600 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-blue-900/30 dark:hover:text-blue-400'}
+                    `}
+                    title={task.is_completed ? "Mark as incomplete" : "Mark as complete"}
+                    aria-label={task.is_completed ? "Mark as incomplete" : "Mark as complete"}
+                >
+                    {task.is_completed ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                </button>
+            </div>
+        </div>
+    )
+}
+
+export default Card

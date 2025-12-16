@@ -22,7 +22,7 @@ export default function CourseCard({ course }: Props) {
     <div
       className="flex flex-col md:flex-row gap-4 rounded-xl shadow-md bg-card-bg overflow-hidden hover:shadow-lg transition cursor-pointer"
       onClick={() =>
-        router.push(`/student/courses/${course.course_id}/lessons`)
+        router.push(`/courses/${course.course_id}/lessons`)
       }
     >
       <div className="text-white p-6 flex flex-col justify-center md:w-1/4 bg-primary rounded-l-xl">

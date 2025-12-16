@@ -6,14 +6,14 @@ export async function GET(
   {
     params,
   }: {
-    params: {
+    params: Promise<{
       roadmapId: string;
       courseId: string;
-    };
+    }>;
   }
 ) {
   try {
-    const { courseId } = params;
+    const { courseId } = await params;
     const supabase = await createClient();
 
     const { data, error } = await supabase
