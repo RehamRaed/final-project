@@ -133,7 +133,7 @@ export default function StudentHomePage() {
             <button
               className="flex items-center gap-2 text-primary font-semibold hover:underline"
               onClick={() =>
-                router.push(`/roadmaps/${currentRoadmap.id}/courses`)
+                router.push(`/student/roadmaps/${currentRoadmap.id}/courses`)
               }
             >
               Show More <ArrowRight size={18} />
