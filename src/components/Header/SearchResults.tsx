@@ -1,31 +1,29 @@
+'use client';
+
 import Link from 'next/link';
 
-
-interface Course {
+export interface CourseSearchResult {
   id: string;
   title: string;
   description: string;
-  donePercentage: number;
 }
 
-type searchResultsProps={
-    res: Course[]
-}
+type SearchResultsProps = {
+  res: CourseSearchResult[];
+};
 
-export default function SearchResults({res}:searchResultsProps){
-    {console.log(res)}
-    
-    return(<>
-        {res && <div className="flex flex-col gap-3"> 
-            {res.map((r)=>
-                <Link 
-                    key={r.id}
-                    className="text-text-primary no-underline hover:underline" 
-                    href={`/student/courses/${r.id}/lessons`}
-                >
-                    {r.title}
-                </Link>
-            )}
-        </div>}
-    </>)
+export default function SearchResults({ res }: SearchResultsProps) {
+  return (
+    <div className="flex flex-col gap-3">
+      {res.map((r) => (
+        <Link
+          key={r.id}
+          href={`/courses/${r.id}/lessons`}
+          className="text-text-primary no-underline hover:underline"
+        >
+          {r.title}
+        </Link>
+      ))}
+    </div>
+  );
 }

@@ -3,9 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { roadmapId: string } }
+  props: { params: Promise<{ roadmapId: string }> }
 ) {
   try {
+    const params = await props.params;
     const { roadmapId } = params;
     const supabase = await createClient();
 

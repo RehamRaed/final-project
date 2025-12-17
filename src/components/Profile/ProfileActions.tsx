@@ -1,22 +1,39 @@
 "use client";
 
-export default function ProfileActions({ isEditing, handleSave, handleCancel, setIsEditing }: any) {
-  return (
-    <div className="flex flex-wrap justify-center gap-4 pt-4 border-t" style={{ borderColor: "var(--color-border)" }}>
-      {!isEditing ? (
-        <button onClick={() => setIsEditing(true)} className="px-6 py-3 font-semibold rounded-lg shadow-md flex items-center transition" style={{ backgroundColor: "var(--color-primary)", color: "#fff" }}>
-          <i className="fas fa-edit mr-2"></i> Edit Profile
-        </button>
-      ) : (
-        <>
-          <button onClick={handleSave} className="px-6 py-3 rounded-lg shadow-md flex items-center transition" style={{ backgroundColor: "var(--color-accent)", color: "#fff" }}>
-            <i className="fas fa-save mr-2"></i> Save Changes
-          </button>
+interface ProfileActionsProps {
+  isEditing: boolean;
+  isSaving: boolean;
+  setIsEditing: (val: boolean) => void;
+  handleSave: () => void;
+  handleCancel: () => void;
+}
 
-          <button onClick={handleCancel} className="px-6 py-3 rounded-lg shadow-md flex items-center transition" style={{ backgroundColor: "var(--color-secondary)", color: "#fff" }}>
-            <i className="fas fa-times mr-2"></i> Cancel
+export default function ProfileActions({ isEditing, isSaving, setIsEditing, handleSave, handleCancel }: ProfileActionsProps) {
+  return (
+    <div className="flex gap-4 mt-4">
+      {isEditing ? (
+        <>
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+          >
+            {isSaving ? "Saving..." : "Save"}
+          </button>
+          <button
+            onClick={handleCancel}
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+          >
+            Cancel
           </button>
         </>
+      ) : (
+        <button
+          onClick={() => setIsEditing(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Edit Profile
+        </button>
       )}
     </div>
   );
