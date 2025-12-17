@@ -33,7 +33,7 @@ export function ForgotPasswordForm() {
     }
 
     return (
-        <form action={handleSubmit} className="space-y-4">
+        <form action={handleSubmit} className="space-y-4 bg-bg">
             {message && (
                 <div
                     className={`px-4 py-3 rounded-xl text-sm ${message.type === 'success'
@@ -46,7 +46,7 @@ export function ForgotPasswordForm() {
             )}
 
             <div>
-                <label htmlFor="email" className="block font-semibold mb-2 text-text-primary">
+                <label htmlFor="email" className="block font-semibold mb-2 text-text-primary ">
                     Email Address
                 </label>
                 <input

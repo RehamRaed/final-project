@@ -14,7 +14,7 @@ function SubmitButton() {
             disabled={pending}
             className="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
-            {pending ? 'جاري التعيين...' : 'إعادة تعيين كلمة المرور'}
+            {pending ? 'Resetting...' : 'Reset Password'}
         </button>
     )
 }
@@ -29,20 +29,20 @@ export function ResetPasswordForm() {
         const result = await resetPassword(formData)
 
         if (result.success) {
-            setMessage({ type: 'success', text: result.message || 'تم التعيين بنجاح' })
+            setMessage({ type: 'success', text: result.message || 'Password reset successfully' })
             setTimeout(() => {
                 router.push('/login')
             }, 2000)
         } else {
-            setMessage({ type: 'error', text: result.error || 'حدث خطأ' })
+            setMessage({ type: 'error', text: result.error || 'Something went wrong' })
         }
     }
 
     function getPasswordStrength(pass: string): { text: string, color: string, width: string } {
         if (pass.length === 0) return { text: '', color: '', width: '0%' }
-        if (pass.length < 8) return { text: 'ضعيفة', color: 'bg-red-500', width: '33%' }
-        if (pass.length < 12) return { text: 'متوسطة', color: 'bg-yellow-500', width: '66%' }
-        return { text: 'قوية', color: 'bg-green-500', width: '100%' }
+        if (pass.length < 8) return { text: 'Weak', color: 'bg-red-500', width: '33%' }
+        if (pass.length < 12) return { text: 'Medium', color: 'bg-yellow-500', width: '66%' }
+        return { text: 'Strong', color: 'bg-green-500', width: '100%' }
     }
 
     const strength = getPasswordStrength(password)
@@ -62,7 +62,7 @@ export function ResetPasswordForm() {
 
             <div>
                 <label htmlFor="password" className="block font-semibold mb-2 text-gray-700">
-                    كلمة المرور الجديدة
+                    New Password
                 </label>
                 <input
                     id="password"
@@ -79,7 +79,7 @@ export function ResetPasswordForm() {
                 {password && (
                     <div className="mt-2">
                         <div className="flex items-center justify-between text-sm mb-1">
-                            <span className="text-gray-600">قوة كلمة المرور:</span>
+                            <span className="text-gray-600">Password Strength:</span>
                             <span className={`font-semibold ${strength.color.replace('bg-', 'text-')}`}>
                                 {strength.text}
                             </span>
@@ -96,7 +96,7 @@ export function ResetPasswordForm() {
 
             <div>
                 <label htmlFor="confirmPassword" className="block font-semibold mb-2 text-gray-700">
-                    تأكيد كلمة المرور
+                    Confirm Password
                 </label>
                 <input
                     id="confirmPassword"

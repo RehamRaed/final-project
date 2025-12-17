@@ -1,8 +1,8 @@
-'use client';
+'use client'
 
 import { Tables } from "@/types/database.types";
 import { ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import CourseCard from "./CourseCard";
 
 interface Course {
@@ -19,6 +19,8 @@ interface CoursesSectionProps {
 
 export default function CoursesSection({ courses, currentRoadmap }: CoursesSectionProps) {
     const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
     const hasMoreCourses = courses.length > 4;
 
     return (
@@ -45,7 +47,16 @@ export default function CoursesSection({ courses, currentRoadmap }: CoursesSecti
                 <div className="overflow-x-auto scroll-smooth p-2 scrollbar-hide">
                     <div className="flex gap-4 w-max">
                         {courses.map((course) => (
-                            <div key={course.course_id} className="shrink-0 w-64 sm:w-72 lg:w-80">
+                            <div
+                                key={course.course_id}
+                                className="shrink-0 w-64 sm:w-72 lg:w-80 cursor-pointer"
+                                onClick={() => {
+                                    // نرسل fromDashboard=true اذا الكورس من داشبورد
+                                    const fromDashboard = pathname.includes('/dashboard');
+                                    const query = fromDashboard ? '?fromDashboard=true' : '';
+                                    router.push(`/courses/${course.course_id}${query}`);
+                                }}
+                            >
                                 <CourseCard course={course} />
                             </div>
                         ))}

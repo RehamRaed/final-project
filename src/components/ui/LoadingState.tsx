@@ -10,7 +10,7 @@ export default function LoadingState({
     fullScreen = false
 }: LoadingStateProps) {
     const containerClass = fullScreen
-        ? "fixed inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm z-50"
+        ? "fixed inset-0 flex flex-col items-center justify-center bg-bg backdrop-blur-sm z-50"
         : "flex flex-col items-center justify-center py-20";
 
     return (

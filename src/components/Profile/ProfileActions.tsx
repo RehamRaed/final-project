@@ -16,7 +16,7 @@ export default function ProfileActions({ isEditing, isSaving, setIsEditing, hand
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+            className="px-4 py-2 bg-accent text-white rounded-md  hover:opacity-90 "
           >
             {isSaving ? "Saving..." : "Save"}
           </button>
