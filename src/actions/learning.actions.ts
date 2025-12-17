@@ -1,5 +1,4 @@
-// /actions/learning.action.ts
-'use server' // يجب إضافة هذه العلامة لعمل Server Actions
+'use server' 
 
 import {
     fetchAllRoadmapsWithCourseCount,
@@ -8,7 +7,7 @@ import {
     fetchCourseLessons,
     upsertLessonProgress,
     updateXp,
-    fetchCourseXpReward, // دالة جديدة لاستدعاء مكافأة XP
+    fetchCourseXpReward, 
 } from '@/services/learning.service'
 import { createClient } from '@/lib/supabase/server'
 import { Tables } from '@/types/database.types'
@@ -19,7 +18,6 @@ async function getCurrentUserId(): Promise<string | null> {
     return data.user?.id || null;
 }
 
-// استخدام الأنواع المركبة من Service Layer
 type RoadmapWithStatus = Tables<'roadmaps'> & {
     course_count: number;
     is_current: boolean;
@@ -38,7 +36,6 @@ export async function getRoadmapsListAction() {
 
     const roadmaps: RoadmapWithStatus[] = (roadmapsData || []).map(roadmap => ({
         ...roadmap,
-        // يتم جلب Count كجزء من البيانات (roadmap_courses: [{ count: X }])
         course_count: roadmap.roadmap_courses?.[0]?.count || 0,
         is_current: roadmap.id === currentRoadmapId,
     }))
@@ -59,7 +56,6 @@ export async function getRoadmapDetailsAction(roadmapId: string) {
     const coursesInRoadmap = data.roadmap_courses || [];
     const totalCourses = coursesInRoadmap.length
 
-    // يتم الحساب هنا في Server Action
     const completedCourses = coursesInRoadmap.filter(
         rc => rc.course?.user_progress?.[0]?.status === 'completed'
     ).length
@@ -79,7 +75,6 @@ export async function updateCurrentRoadmapAction(newRoadmapId: string) {
 
     const supabase = await createClient()
 
-    // استخدام تحديث مباشر لأنها عملية بسيطة لا تحتاج لمنطق معقد في Service
     const { error } = await supabase
         .from('profiles')
         .update({ current_roadmap_id: newRoadmapId })
@@ -94,8 +89,7 @@ export async function getCourseLessonsAction(courseId: string) {
     if (!userId) return { success: false, error: "User not authenticated." }
 
     const supabase = await createClient()
-    // ملاحظة: قد نحتاج إلى تعديل fetchCourseLessons لتضمين user_progress
-    // للكورس نفسه إذا لم يكن متوفراً بالفعل في الدالة.
+
     const { data, error } = await fetchCourseLessons(supabase, courseId, userId)
 
     if (error) return { success: false, error: error.message }
@@ -128,14 +122,13 @@ export async function toggleLessonCompletion(
     const supabase = await createClient();
     const isCompleted = newStatus === 'completed';
 
-    // 1. تحديث تقدم الدرس
     const now = new Date().toISOString();
     const { data: progressData, error: progressError } = await supabase
         .from('user_lesson_progress')
         .upsert({
             user_id: userId,
             lesson_id: lessonId,
-            status: newStatus, // 'in_progress' or 'completed'
+            status: newStatus, 
             completed_at: isCompleted ? now : null
         }, { onConflict: 'user_id,lesson_id' })
         .select()
@@ -146,16 +139,13 @@ export async function toggleLessonCompletion(
     let xpUpdateResult = { success: true, xp: 0 };
     let courseCompleted = false;
 
-    // 2. التحقق من إكمال جميع دروس الكورس
     if (isCompleted) {
-        // جلب جميع دروس الكورس مع تقدم المستخدم
         const { data: courseData, error: courseError } = await fetchCourseLessons(supabase, courseId, userId);
 
         if (courseError || !courseData) {
             console.warn(`Could not fetch course lessons for ${courseId}.`);
         } else {
             const allLessons = courseData.lessons || [];
-            // التحقق من إكمال جميع الدروس
             const allCompleted = allLessons.every(
                 lesson => lesson.user_progress?.[0]?.status === 'completed'
             );
@@ -163,7 +153,6 @@ export async function toggleLessonCompletion(
             if (allCompleted) {
                 courseCompleted = true;
 
-                // منح XP فقط عند إكمال الكورس بالكامل
                 const xpReward = courseData.xp_reward || 0;
 
                 if (xpReward > 0) {
@@ -181,7 +170,6 @@ export async function toggleLessonCompletion(
                     }
                 }
 
-                // تحديث حالة الكورس إلى مكتمل
                 const now = new Date().toISOString();
                 await supabase
                     .from('user_course_progress')
@@ -195,7 +183,6 @@ export async function toggleLessonCompletion(
         }
     }
 
-    // 3. إرجاع النتيجة
     return {
         success: true,
         message: courseCompleted

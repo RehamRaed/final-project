@@ -58,7 +58,7 @@ export default function CourseCard({ course, href }: CourseCardProps) {
           <span
             className={`
               px-6 py-2 rounded-lg text-white font-semibold shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5
-              ${course.donePercentage === 100 ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-600 hover:bg-blue-700'}
+              ${course.donePercentage === 100 ? 'bg-accent' : 'bg-primary hover:bg-primary-hover'}
             `}
           >
             {course.donePercentage === 100 ? "Completed ✓" : "Continue →"}

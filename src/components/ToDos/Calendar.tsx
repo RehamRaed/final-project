@@ -50,34 +50,32 @@ const Calendar = ({ tasks, onToggle, onDelete, onEdit }: CalendarProps) => {
     }
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            {/* Header */}
-            <div className="p-6 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+        <div className="bg-bg rounded-xl shadow-sm border border-gray-200  overflow-hidden">
+            <div className="p-6 flex items-center justify-between border-b border-gray-200 ">
+                <h2 className="text-xl font-bold text-text-primary">
                     {currentDate.toLocaleDateString('default', { month: 'long', year: 'numeric' })}
                 </h2>
                 <div className="flex gap-2">
-                    <button onClick={prevMonth} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                    <button onClick={prevMonth} className="p-2 hover:bg-gray-100  rounded-lg transition-colors">
                         <ChevronLeft className="w-5 h-5" />
                     </button>
-                    <button onClick={nextMonth} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                    <button onClick={nextMonth} className="p-2 hover:bg-gray-100  rounded-lg transition-colors">
                         <ChevronRight className="w-5 h-5" />
                     </button>
                 </div>
             </div>
 
-            {/* Calendar Grid */}
-            <div className="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+            <div className="grid grid-cols-7 border-b border-gray-200  bg-bg">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} className="p-4 text-center text-sm font-semibold text-gray-500 dark:text-gray-400">
+                    <div key={day} className="p-4 text-center text-sm font-semibold text-text-secondery">
                         {day}
                     </div>
                 ))}
             </div>
 
-            <div className="grid grid-cols-7 auto-rows-fr bg-gray-200 dark:bg-gray-700 gap-px">
+            <div className="grid grid-cols-7 auto-rows-fr bg-bg gap-px">
                 {emptyDays.map(i => (
-                    <div key={`empty-${i}`} className="bg-white dark:bg-gray-800 min-h-[120px]" />
+                    <div key={`empty-${i}`} className="bg-bg min-h-[120px]" />
                 ))}
 
                 {daysArray.map(day => {
@@ -88,7 +86,7 @@ const Calendar = ({ tasks, onToggle, onDelete, onEdit }: CalendarProps) => {
                         currentDate.getFullYear() === new Date().getFullYear()
 
                     return (
-                        <div key={day} className={`bg-white dark:bg-gray-800 p-2 min-h-[120px] relative group ${isToday ? 'bg-blue-50/30' : ''}`}>
+                        <div key={day} className={`bg-bg p-2 min-h-[120px] relative group ${isToday ? 'bg-blue-50/30' : ''}`}>
                             <span className={`
                                 w-7 h-7 flex items-center justify-center rounded-full text-sm font-medium mb-1
                                 ${isToday ? 'bg-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300'}

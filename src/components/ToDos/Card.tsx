@@ -48,11 +48,11 @@ const Card = ({ task, onToggle, onDelete, onEdit }: CardProps) => {
         <div
             onClick={handleCardClick}
             className={`
-            group relative bg-white dark:bg-gray-800 rounded-xl p-5 
+            group relative bg-bg rounded-xl p-5 
             border transition-all duration-300 hover:shadow-xl cursor-pointer
             ${task.is_completed
-                    ? 'border-green-200 dark:border-green-900 bg-green-50/30 dark:bg-green-900/10'
-                    : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:-translate-y-1'}
+                    ? 'border-green-200  bg-green-50/30 '
+                    : 'border-gray-200  hover:border-blue-300 hover:-translate-y-1'}
             ${isLoading ? 'opacity-70 pointer-events-none' : ''}
         `}
             role="button"
@@ -65,7 +65,6 @@ const Card = ({ task, onToggle, onDelete, onEdit }: CardProps) => {
                 }
             }}
         >
-            {/* Header: Priority & Menu */}
             <div className="flex items-start justify-between mb-3">
                 <span className={`
                     px-2.5 py-1 rounded-full text-xs font-semibold border uppercase tracking-wide
@@ -80,17 +79,17 @@ const Card = ({ task, onToggle, onDelete, onEdit }: CardProps) => {
                             e.stopPropagation()
                             setIsMenuOpen(!isMenuOpen)
                         }}
-                        className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                        className="p-1.5 rounded-lg transition-colors text-text-primary cursor-pointer"
                         aria-label="Task options"
                     >
-                        <MoreVertical className="w-4 h-4 text-gray-500" />
+                        <MoreVertical className="w-4 h-4 " />
                     </button>
 
                     {isMenuOpen && (
-                        <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
+                        <div className="absolute right-0 mt-1 w-40 bg-bg rounded-lg shadow-lg border border-gray-200  py-1 z-10">
                             <button
                                 onClick={handleDelete}
-                                className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                                className="w-full px-4 py-2 text-left text-sm text-red-600 cursor-pointer  flex items-center gap-2"
                             >
                                 <Trash2 className="w-4 h-4" />
                                 Delete
@@ -100,24 +99,22 @@ const Card = ({ task, onToggle, onDelete, onEdit }: CardProps) => {
                 </div>
             </div>
 
-            {/* Content */}
             <div className="mb-4">
                 <h3 className={`
                     text-lg font-semibold mb-2 line-clamp-2
-                    ${task.is_completed ? 'text-gray-400 line-through' : 'text-gray-900 dark:text-white'}
+                    ${task.is_completed ? 'text-text-primary line-through' : 'text-text-primary'}
                 `}>
                     {task.title}
                 </h3>
                 {task.description && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
+                    <p className="text-sm text-text-secondary line-clamp-2">
                         {task.description}
                     </p>
                 )}
             </div>
 
-            {/* Footer: Date & Status */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
-                <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+            <div className="flex items-center justify-between pt-4 border-t border-gray-100 ">
+                <div className="flex items-center gap-4 text-xs text-text-secondary">
                     {task.due_date && (
                         <div className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" />
@@ -135,8 +132,8 @@ const Card = ({ task, onToggle, onDelete, onEdit }: CardProps) => {
                     className={`
                         p-2 rounded-full transition-all duration-300 transform active:scale-95
                         ${task.is_completed
-                            ? 'bg-green-100 text-green-600 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400'
-                            : 'bg-gray-100 text-gray-400 hover:bg-blue-100 hover:text-blue-600 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-blue-900/30 dark:hover:text-blue-400'}
+                            ? 'bg-green-100 text-green-600 hover:bg-green-200  dark:text-green-400'
+                            : ' text-text-secondary hover:bg-blue-100 hover:text-blue-600  '}
                     `}
                     title={task.is_completed ? "Mark as incomplete" : "Mark as complete"}
                     aria-label={task.is_completed ? "Mark as incomplete" : "Mark as complete"}

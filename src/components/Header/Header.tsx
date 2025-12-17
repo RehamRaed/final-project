@@ -1,4 +1,5 @@
 'use client';
+
 import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -8,30 +9,36 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
-import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState, useRef } from "react";
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useRef } from 'react';
 import { fetchCourses } from '@/lib/search';
-import SearchResults from './SearchResults';
+import SearchResults, { CourseSearchResult } from './SearchResults';
 import { supabase } from '@/lib/supabase/client';
 import { User } from 'next-auth';
-import { Tables } from '@/types/database.types';
+import { useNotifications } from '@/context/NotificationsContext';
+
+/* ================== Styles ================== */
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': { backgroundColor: alpha(theme.palette.common.white, 0.25) },
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
   marginRight: theme.spacing(2),
   marginLeft: 0,
   width: '100%',
-  [theme.breakpoints.up('sm')]: { marginLeft: theme.spacing(3), width: 'auto' },
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -51,115 +58,100 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '100%',
-    [theme.breakpoints.up('md')]: { width: '20ch' },
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
   },
 }));
+
+/* ================== Types ================== */
 
 interface HeaderProps {
   currentRoadmapId?: string | null;
 }
 
+/* ================== Component ================== */
 
-interface Course {
-  id: string;
-  title: string;
-  description: string | null;
-}
-
-export default function Header({ currentRoadmapId }: HeaderProps) {
+export default function Header({ currentRoadmapId: propRoadmapId }: HeaderProps) {
+  const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
+  const { notifications } = useNotifications();
 
-  // handle click outside
+  const [searchQuery, setSearchQuery] = useState('');
+  const [res, setRes] = useState<CourseSearchResult[]>([]);
+
+  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
+  const [notificationAnchorEl, setNotificationAnchorEl] = useState<null | HTMLElement>(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+
+  const [currentRoadmapId, setCurrentRoadmapId] = useState<string | null>(
+    propRoadmapId || null
+  );
+  const [user, setUser] = useState<User | null>(null);
+
+  /* ================== Effects ================== */
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setRes([]); // close search results
+        setRes([]);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [searchRef]);
-
-  const [searchQuery, setSearchQuery] = useState('');
-  const [res, setRes] = useState<Course[]>([]);
-  const router = useRouter();
-
-  const searchParams = useSearchParams();
-  const roadmapId = searchParams.get('id');
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const [currentRoadmap, setCurrentRoadmap] = useState<Tables<'roadmaps'> | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const loadUserAndRoadmap = async () => {
-      try {
-        const { supabase } = await import("@/lib/supabase/client");
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError || !user) return;
+      if (!user) return;
 
-        setUser(user);
+      setUser(user);
 
-        // استعلام واحد بدلاً من استعلامين منفصلين
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select(`
-            current_roadmap_id,
-            roadmaps:current_roadmap_id (*)
-          `)
-          .eq("id", user.id)
+      if (!propRoadmapId) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('current_roadmap_id')
+          .eq('id', user.id)
           .single();
 
-        if (profileError) {
-          console.error("Failed to load profile:", profileError.message);
-          return;
+        if (profile?.current_roadmap_id) {
+          setCurrentRoadmapId(profile.current_roadmap_id);
         }
-
-        if (profile?.roadmaps) {
-          // التحقق من أن roadmaps ليس array
-          const roadmapData = Array.isArray(profile.roadmaps)
-            ? profile.roadmaps[0]
-            : profile.roadmaps;
-          if (roadmapData) {
-            setCurrentRoadmap(roadmapData as Tables<'roadmaps'>);
-          }
-        }
-      } catch (error) {
-        console.error("Error loading user data:", error);
       }
     };
 
     loadUserAndRoadmap();
-  }, []);
+  }, [propRoadmapId]);
 
+  /* ================== Handlers ================== */
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
+
     if (!query) {
       setRes([]);
       return;
     }
+
     const courses = await fetchCourses({ query });
     setRes(courses);
   };
 
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) =>
+    setProfileAnchorEl(event.currentTarget);
+
+  const handleNotifcationMenuOpen = (event: React.MouseEvent<HTMLElement>) =>
+    setNotificationAnchorEl(event.currentTarget);
 
   const handleMenuClose = () => {
-    setAnchorEl(null);
+    setProfileAnchorEl(null);
+    setNotificationAnchorEl(null);
     setMobileMoreAnchorEl(null);
   };
 
@@ -170,76 +162,32 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
 
   const handleMyCourses = () => {
     handleMenuClose();
-    router.push(`/roadmaps/${roadmapId}/courses`);
+    if (currentRoadmapId) {
+      router.push(`/roadmaps/${currentRoadmapId}/courses`);
+    }
   };
 
-  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setMobileMoreAnchorEl(event.currentTarget);
+  const handleMyTasks = () => {
+    handleMenuClose();
+    router.push('/tasklist');
   };
+
+  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) =>
+    setMobileMoreAnchorEl(event.currentTarget);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     handleMenuClose();
-    router.push('/login');
+    router.push('/auth/login');
   };
 
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-      style={{ top: "40px" }}
-    >
-      <MenuItem onClick={handleProfileRedirect}>Profile</MenuItem>
-      <MenuItem onClick={handleMyCourses}>My Courses</MenuItem>
-      <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
-        Logout
-      </MenuItem>
-    </Menu>
-  );
-
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMobileMenuOpen}
-      onClose={handleMenuClose}
-    >
-      {/*}  <MenuItem >
-        <IconButton size="large" color="inherit">
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>*/}
-      <MenuItem onClick={handleProfileRedirect}>
-
-        <p>Profile</p>
-      </MenuItem>
-      <MenuItem onClick={handleMyCourses}>
-        <p>My Courses</p>
-      </MenuItem>
-      <MenuItem onClick={handleLogout}>
-        <p style={{ color: 'red' }}>Logout</p>
-      </MenuItem>
-    </Menu>
-  );
+  /* ================== Render ================== */
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <Link href="/dashboard" passHref>
+          <Link href="/student" className="no-underline">
             <Typography
               variant="h6"
               noWrap
@@ -253,40 +201,25 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
-            <StyledInputBase placeholder={searchQuery} onChange={handleSearch} />
+
+            <StyledInputBase
+              placeholder="Search courses…"
+              value={searchQuery}
+              onChange={handleSearch}
+            />
           </Search>
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            {/*}  <IconButton size="large" color="inherit">
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton> */}
-            <IconButton
-              size="large"
-              edge="end"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
+          <IconButton color="inherit" onClick={handleNotifcationMenuOpen}>
+            <Badge badgeContent={notifications.length} color="error">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
 
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>
+          <IconButton edge="end" onClick={handleProfileMenuOpen} color="inherit">
+            <AccountCircle />
+          </IconButton>
         </Toolbar>
       </AppBar>
 
@@ -295,18 +228,9 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
           ref={searchRef}
           className="mt-1 bg-white shadow-md max-h-96 overflow-auto z-50 rounded w-[300px] ml-[150px] p-4"
         >
-          <SearchResults
-            res={res.map(c => ({
-              id: c.id,
-              title: c.title,
-              description: c.description,
-              donePercentage: 0
-            }))}
-          />
+          <SearchResults res={res} />
         </div>
       )}
-      {renderMobileMenu}
-      {renderMenu}
     </Box>
   );
 }

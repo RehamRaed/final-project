@@ -21,7 +21,7 @@ export default function NotFound() {
                     </Link>
                     <Link
                         href="/dashboard"
-                        className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition font-semibold"
+                        className="px-6 py-3 bg-gray-200 text-text-primary rounded-lg  transition font-semibold"
                     >
                         Dashboard
                     </Link>

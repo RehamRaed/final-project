@@ -2,7 +2,6 @@ import { getRoadmapDetailsAction } from "@/actions/learning.actions";
 import { Metadata } from 'next';
 import { Tables } from "@/types/database.types";
 import RoadmapDetailsClient from "@/components/Roadmap/RoadmapDetailsClient";
-import { redirect } from "next/navigation";
 
 interface CourseWithProgress extends Tables<'courses'> {
   user_progress: { status: string | null }[] | null;
@@ -67,7 +66,6 @@ export default async function RoadmapCoursesPage({ params }: RoadmapPageProps) {
 
   const roadmapData: DetailedRoadmap = result.data as DetailedRoadmap;
 
-  // Process courses data
   const courses = (roadmapData.roadmap_courses || [])
     .filter(rc => rc.course)
     .map(rc => {

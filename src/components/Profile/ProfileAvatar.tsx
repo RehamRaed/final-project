@@ -1,37 +1,25 @@
 "use client";
 
-import { useRef, ChangeEvent } from "react";
-
 interface ProfileAvatarProps {
   imagePreview: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isEditing: boolean;
 }
 
 export default function ProfileAvatar({ imagePreview, onChange, isEditing }: ProfileAvatarProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   return (
-    <div className="relative w-36 h-36 mx-auto mb-10 group cursor-pointer shadow-md rounded-full ring-2 ring-gray-300">
-      <img src={imagePreview} alt="Profile" className="w-full h-full object-cover rounded-full" />
-
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        accept="image/*"
-        onChange={onChange}
-        disabled={!isEditing}
+    <div className="relative mb-10 mx-auto w-32 h-32">
+      <img
+        src={imagePreview}
+        alt="Avatar"
+        className="w-32 h-32 rounded-full object-cover border border-border"
       />
 
       {isEditing && (
-        <div
-          className="absolute inset-0 bg-black/40 text-white flex flex-col items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition duration-300"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <i className="fas fa-camera text-xl mb-1"></i>
-          <span className="text-sm font-medium">Change Picture</span>
-        </div>
+        <label className="absolute inset-0 bg-black/25 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition cursor-pointer">
+          <span className="text-white font-semibold text-sm">Change Photo</span>
+          <input type="file" accept="image/*" onChange={onChange} className="hidden" />
+        </label>
       )}
     </div>
   );

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { updateCurrentRoadmapAction } from "@/actions/learning.actions";
 import RoadmapCard from "@/components/StudentRoadmap/RoadmapCard";
 import RoadmapChangeConfirmationModal from "@/components/Roadmap/RoadmapChangeConfirmationModal";
@@ -12,7 +11,6 @@ import { Tables } from "@/types/database.types";
 interface RoadmapWithStatus extends Tables<'roadmaps'> {
     course_count: number;
     is_current: boolean;
-    // description and icon are already in Tables<'roadmaps'>, so we don't need to redeclare them unless overriding
 }
 
 interface RoadmapSelectionClientProps {
@@ -21,6 +19,8 @@ interface RoadmapSelectionClientProps {
 
 export default function RoadmapSelectionClient({ initialRoadmaps }: RoadmapSelectionClientProps) {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const fromProfile = searchParams.get("from") === "profile";
 
     const [roadmaps, setRoadmaps] = useState<RoadmapWithStatus[]>(initialRoadmaps);
     const [isPending, setIsPending] = useState(false);
@@ -48,8 +48,12 @@ export default function RoadmapSelectionClient({ initialRoadmaps }: RoadmapSelec
             })));
 
             router.refresh();
-            // Navigate to the new roadmap's page
-            router.push(`/roadmaps/${selectedRoadmap.id}`);
+
+            if (fromProfile) {
+                router.push("/profile");
+            } else {
+                router.push(`/roadmaps/${selectedRoadmap.id}`); 
+            }
         } else {
             alert(`Failed to change roadmap: ${result.error}`);
             setIsPending(false);
@@ -62,10 +66,8 @@ export default function RoadmapSelectionClient({ initialRoadmaps }: RoadmapSelec
         const isCurrent = currentActiveRoadmap?.id === selectedRoadmap.id;
 
         if (isCurrent) {
-            // If it's the current roadmap, navigate directly to its page
             router.push(`/roadmaps/${selectedRoadmap.id}`);
         } else {
-            // If it's a different roadmap, show confirmation modal
             setIsModalOpen(true);
         }
     };
@@ -80,7 +82,7 @@ export default function RoadmapSelectionClient({ initialRoadmaps }: RoadmapSelec
             return (
                 <button
                     onClick={handleButtonClick}
-                    className={`${baseClass} bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 shadow-lg`}
+                    className={`${baseClass} bg-primary hover:bg-primary-hover text-white shadow-lg`}
                     role="button"
                     aria-label={`Go to current roadmap: ${selectedRoadmap.title}`}
                 >
@@ -91,7 +93,7 @@ export default function RoadmapSelectionClient({ initialRoadmaps }: RoadmapSelec
             return (
                 <button
                     onClick={handleButtonClick}
-                    className={`${baseClass} bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg`}
+                    className={`${baseClass} bg-primary text-white hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed shadow-lg`}
                     disabled={isPending}
                     aria-live="assertive"
                     aria-busy={isPending}
@@ -121,7 +123,6 @@ export default function RoadmapSelectionClient({ initialRoadmaps }: RoadmapSelec
                 {renderButton()}
             </div>
 
-            {/* Confirmation Modal for Changing Roadmap */}
             {selectedRoadmap && currentActiveRoadmap?.id !== selectedRoadmap.id && (
                 <RoadmapChangeConfirmationModal
                     roadmap={selectedRoadmap}

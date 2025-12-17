@@ -1,5 +1,5 @@
 import { getFullProfileData } from "@/services/profile.service";
-import NewProfileClientWrapper from "@/components/Profile/NewProfileClientWrapper";
+import ProfileClientWrapper from "@/components/Profile/ProfileClientWrapper"; // <--- هذا هو الكمبوننت الجديد
 
 export default async function ProfilePage() {
   const { profile, currentRoadmap } = await getFullProfileData();
@@ -10,7 +10,10 @@ export default async function ProfilePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <NewProfileClientWrapper initialProfile={profile} currentRoadmapTitle={currentRoadmap?.title || "Not selected"} />
+      <ProfileClientWrapper 
+        initialProfile={profile} 
+        currentRoadmapTitle={currentRoadmap?.title || "Not selected"} 
+      />
     </div>
   );
 }

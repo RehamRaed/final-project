@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { Tables } from "@/types/database.types";
 import { z } from "zod";
 
-// تعريف مخططات التحقق (Zod Schemas)
 const ProfileSchema = z.object({
     full_name: z.string().min(3, "Full Name must be at least 3 characters").optional(),
     avatar_url: z.string().url("Invalid URL").optional().or(z.literal("")),
@@ -28,7 +27,6 @@ export async function updateProfile(formData: Partial<Tables<'profiles'>>): Prom
         return { success: false, message: "User not authenticated." };
     }
 
-    // 1. التحقق من البيانات (Server-side Validation)
     const result = ProfileSchema.safeParse(formData);
 
     if (!result.success) {

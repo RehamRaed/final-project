@@ -9,15 +9,12 @@ export async function GET(request: Request) {
     if (code) {
         const supabase = await createClient()
 
-        // Exchange code for session
         const { error } = await supabase.auth.exchangeCodeForSession(code)
 
         if (error) {
-            // Redirect to login with error
             return NextResponse.redirect(`${origin}/login?error=Authentication failed. Please try again.`)
         }
     }
 
-    // URL to redirect to after sign in process completes
     return NextResponse.redirect(`${origin}/dashboard`)
 }

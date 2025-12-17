@@ -12,7 +12,7 @@ function SubmitButton() {
         <button
             type="submit"
             disabled={pending}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
             {pending ? 'جاري التعيين...' : 'إعادة تعيين كلمة المرور'}
         </button>
@@ -30,7 +30,6 @@ export function ResetPasswordForm() {
 
         if (result.success) {
             setMessage({ type: 'success', text: result.message || 'تم التعيين بنجاح' })
-            // Redirect to login after 2 seconds
             setTimeout(() => {
                 router.push('/login')
             }, 2000)
@@ -39,7 +38,6 @@ export function ResetPasswordForm() {
         }
     }
 
-    // Simple password strength indicator
     function getPasswordStrength(pass: string): { text: string, color: string, width: string } {
         if (pass.length === 0) return { text: '', color: '', width: '0%' }
         if (pass.length < 8) return { text: 'ضعيفة', color: 'bg-red-500', width: '33%' }

@@ -11,7 +11,6 @@ import { ArrowLeft } from "lucide-react";
 import LoadingState from '@/components/ui/LoadingState';
 import { Tables } from '@/types/database.types';
 
-// تعريف الأنواع المطلوبة
 type Lesson = Tables<'lessons'> & {
     user_progress: { status: string | null; completed_at: string | null }[] | null
 };
@@ -31,7 +30,6 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
     const router = useRouter();
     const lessons = courseData.lessons || [];
 
-    // إدارة الحالة المحلية
     const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(lessons[0] || null);
     const [isProcessing, setIsProcessing] = useState(false);
 
@@ -44,7 +42,6 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
     const handleMarkDone = async (lessonId: string) => {
         setIsProcessing(true);
         try {
-            // التحقق من الحالة الحالية للدرس
             const currentLesson = lessons.find(l => l.id === lessonId);
             const isCurrentlyCompleted = currentLesson?.user_progress?.[0]?.status === 'completed';
             const newStatus: 'in_progress' | 'completed' = isCurrentlyCompleted ? 'in_progress' : 'completed';
@@ -53,11 +50,9 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
 
             if (result.success) {
                 toast.success(result.message);
-                router.refresh(); // إعادة تحميل البيانات لتحديث الواجهة من الخادم
+                router.refresh();
 
-                // تحديث الحالة المحلية مؤقتاً حتى يتم التحديث من الخادم
                 if (selectedLesson?.id === lessonId) {
-                    // يمكن هنا تحديث الحالة المحلية إذا لزم الأمر، لكن router.refresh() سيقوم بذلك
                 }
             } else {
                 toast.error(result.error || 'Failed to update lesson progress');
@@ -99,15 +94,14 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
             </div>
 
             <div className="flex gap-6 flex-col lg:flex-row h-[calc(100vh-200px)] min-h-[600px]">
-                {/* Sidebar */}
-                <div className="lg:w-[350px] flex-shrink-0 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-                    <div className="p-4 border-b bg-gray-50">
-                        <h2 className="font-bold text-lg text-gray-800">Course Content</h2>
+                <div className="lg:w-[350px] hrink-0 bg-bg rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                    <div className="p-4 border-b ">
+                        <h2 className="font-bold text-lg text-text-primary">Course Content</h2>
                         <p className="text-xs text-gray-500 mt-1">{lessons.length} Lessons</p>
                     </div>
                     <div className="overflow-y-auto flex-1 p-2">
                         <LessonsSidebar
-                            lessons={lessons as any} // تحويل النوع مؤقتاً ليتوافق مع المكون الحالي
+                            lessons={lessons as any}
                             selectedLessonId={selectedLesson?.id || null}
                             onSelectLesson={(lesson) => setSelectedLesson(lesson as any)}
                             courseTitle={courseData.title}
@@ -115,8 +109,7 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
                     </div>
                 </div>
 
-                {/* Main Content */}
-                <div className="flex-1 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                <div className="flex-1 bg-bg rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
                     {selectedLesson ? (
                         <div className="h-full ">
                             <LessonDetails
@@ -127,10 +120,10 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
                                         : selectedLesson.user_progress?.[0]?.status === 'in_progress'
                                             ? 'InProgress'
                                             : 'Not Started',
-                                    duration_minutes: selectedLesson.duration || 0, // Map duration to duration_minutes
-                                    content: selectedLesson.content || '', // Ensure content is string
-                                    video_url: selectedLesson.video_url || '' // Ensure video_url is string
-                                } as any} // Using any temporarily to bypass strict type check on extended properties if needed, but the shape is now correct
+                                    duration_minutes: selectedLesson.duration || 0, 
+                                    content: selectedLesson.content || '', 
+                                    video_url: selectedLesson.video_url || '' 
+                                } as any} 
                                 onMarkDone={handleMarkDone}
                                 isMarkingDone={isProcessing}
                             />

@@ -74,7 +74,7 @@ const MatrixView = ({ tasks, onToggle, onDelete, onEdit }: MatrixViewProps) => {
                         className={`rounded-2xl border-2 p-6 min-h-[400px] flex flex-col ${q.color}`}
                     >
                         <div className="flex items-center gap-3 mb-6">
-                            <div className={`p-2 rounded-lg bg-white dark:bg-gray-800 shadow-sm ${q.textColor}`}>
+                            <div className={`p-2 rounded-lg bg-bg shadow-sm ${q.textColor}`}>
                                 <Icon className="w-6 h-6" />
                             </div>
                             <div>

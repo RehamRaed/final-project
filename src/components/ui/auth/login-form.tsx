@@ -12,7 +12,7 @@ function SubmitButton() {
         <button
             type="submit"
             disabled={pending}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="w-full bg-primary hover:bg-primary-hover text-white py-3 rounded-xl font-semibold hover:shadow-xl  transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label={pending ? 'Logging in, please wait' : 'Log in to your account'}
         >
             {pending ? 'Logging in...' : 'Login'}
@@ -24,7 +24,6 @@ export function LoginForm() {
     const [error, setError] = useState<string>('')
     const searchParams = useSearchParams()
 
-    // Check for error in URL params (e.g., from callback)
     useEffect(() => {
         const urlError = searchParams?.get('error')
         if (urlError) {
@@ -54,8 +53,8 @@ export function LoginForm() {
             )}
 
             <div>
-                <label htmlFor="email" className="block font-semibold mb-2 text-gray-700">
-                    Email Address
+                <label htmlFor="email" className="block font-semibold mb-2 text-text-primary">
+                    Email 
                 </label>
                 <input
                     id="email"
@@ -71,7 +70,7 @@ export function LoginForm() {
             </div>
 
             <div>
-                <label htmlFor="password" className="block font-semibold mb-2 text-gray-700">
+                <label htmlFor="password" className="block font-semibold mb-2 text-text-primary">
                     Password
                 </label>
                 <input

@@ -59,24 +59,21 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md overflow-hidden border border-gray-200 dark:border-gray-700"
+                className="bg-bg rounded-xl shadow-xl w-full max-w-md overflow-hidden border border-gray-200 dark:border-gray-700"
             >
-                {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
-                    <h2 className="text-lg font-bold text-gray-900 dark:text-white">Add New Task</h2>
+                    <h2 className="text-lg font-bold text-primary">Add New Task</h2>
                     <button
                         onClick={onClose}
                         className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                     >
-                        <X className="w-5 h-5 text-gray-500" />
+                        <X className="w-5 h-5 text-text-primary" />
                     </button>
                 </div>
 
-                {/* Form */}
                 <form onSubmit={handleSubmit} className="p-4 space-y-4">
-                    {/* Title */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label className="block text-sm font-medium text-text-primary  mb-1">
                             Title <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -84,14 +81,13 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="What needs to be done?"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                            className="w-full px-3 py-2 border text-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/80  "
                             required
                         />
                     </div>
 
-                    {/* Description */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label className="block text-sm font-medium text-text-primary mb-1">
                             Description
                         </label>
                         <textarea
@@ -99,20 +95,19 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="Add details..."
                             rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white resize-none"
+                            className="w-full px-3 py-2 border text-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/80  "
                         />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                        {/* Priority */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label className="block text-sm font-medium text-text-primary mb-1">
                                 Priority
                             </label>
                             <select
                                 value={priority}
                                 onChange={(e) => setPriority(e.target.value as 'Low' | 'Medium' | 'High')}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                                className="w-full px-3 py-2 border text-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/80"
                             >
                                 <option value="Low">Low</option>
                                 <option value="Medium">Medium</option>
@@ -130,7 +125,7 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                                     type="date"
                                     value={dueDate}
                                     onChange={(e) => setDueDate(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                                    className="w-full px-3 py-2 border text-gray-600 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/80 "
                                 />
                                 <CalendarIcon className="absolute right-3 top-2.5 w-4 h-4 text-gray-500 pointer-events-none" />
                             </div>
@@ -138,12 +133,11 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                     </div>
 
                     {error && (
-                        <div className="text-sm text-red-500 bg-red-50 dark:bg-red-900/10 p-2 rounded-lg border border-red-100 dark:border-red-900/20">
+                        <div className="text-sm text-red-500 bg-red-50  p-2 rounded-lg border border-red-100 ">
                             {error}
                         </div>
                     )}
 
-                    {/* Footer */}
                     <div className="flex items-center justify-end gap-3 pt-2">
                         <button
                             type="button"
@@ -155,7 +149,7 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                         <button
                             type="submit"
                             disabled={isPending || !title.trim()}
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white  bg-primary hover:bg-primary-hover  rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
                             {isPending ? 'Adding...' : 'Add Task'}

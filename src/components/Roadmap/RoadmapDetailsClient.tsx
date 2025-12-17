@@ -5,9 +5,7 @@ import CourseCard from "@/components/StudentRoadmap/CourseCard";
 import { Filter, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Tables } from "@/types/database.types";
-import Breadcrumbs, { BreadcrumbItem } from "@/components/ui/Breadcrumbs";
 
-// Define strict local interface for the transformed course object passed to the client
 interface RoadmapCourseForClient extends Tables<'courses'> {
     summary: string | null;
     order_index: number | null;
@@ -51,63 +49,61 @@ export default function RoadmapDetailsClient({
     ];
 
     return (
-        <div className="min-h-screen max-w-[1300px] mx-auto px-10 pt-30" aria-label={`Courses for roadmap: ${roadmapTitle}`}>
-            {/* Breadcrumbs */}
-            <Breadcrumbs items={breadcrumbItems} className="mb-6" />
+        <div className="min-h-screen max-w-[1300px] mx-auto px-10 py-25 bg-bg text-text-primary">
+          <header className="mb-8 border-b border-border pb-6 flex flex-col gap-4">
+  {/* Back Link */}
+  <Link
+    href="/roadmaps"
+    className="inline-flex items-center gap-2 text-primary hover:text-primary-hover font-medium transition-colors"
+  >
+    <ArrowLeft className="w-5 h-5" />
+    Back to Roadmaps
+  </Link>
 
-            {/* Header Section */}
-            <header className="mb-8 border-b pb-6">
-                <Link
-                    href="/roadmaps"
-                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-4 font-medium transition-colors"
-                    aria-label="Back to roadmaps selection"
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                    Back to Roadmaps
-                </Link>
+  {/* Title & Description */}
+  <div className="flex flex-col gap-1">
+    <h1 className="text-3xl md:text-4xl font-extrabold">{roadmapTitle}</h1>
+    {roadmapDescription && (
+      <p className="text-lg text-text-secondary">{roadmapDescription}</p>
+    )}
+  </div>
 
-                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2" tabIndex={0}>
-                    {roadmapTitle}
-                </h1>
+  {/* Progress + Completed Button */}
+  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4">
+    {/* Progress Bar */}
+    <div className="flex-1 w-full">
+      <div className="flex justify-between items-center mb-1">
+        <span className="text-sm font-medium text-text-secondary">Overall Progress</span>
+        <span className="text-sm font-bold text-primary">{progressPercent}%</span>
+      </div>
+      <div className="w-full bg-border rounded-full h-3 overflow-hidden">
+        <div
+          className="bg-primary h-full rounded-full transition-all duration-500"
+          style={{ width: `${progressPercent}%` }}
+          role="progressbar"
+          aria-valuenow={progressPercent}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        />
+      </div>
+    </div>
 
-                {roadmapDescription && (
-                    <p className="text-lg text-gray-600 mb-3">
-                        {roadmapDescription}
-                    </p>
-                )}
+    {/* Completed Button */}
+    <div className="text-center px-4 py-2 bg-card-bg rounded-lg border border-border hrink-0">
+      <p className="text-xs text-text-secondary font-medium">Completed</p>
+      <p className="text-lg font-bold text-primary">{doneCount}/{initialCourses.length}</p>
+    </div>
+  </div>
+</header>
 
-                <div className="flex items-center gap-4 mt-4">
-                    <div className="flex-1">
-                        <div className="flex justify-between items-center mb-1">
-                            <span className="text-sm font-medium text-gray-700">Overall Progress</span>
-                            <span className="text-sm font-bold text-blue-600">{progressPercent}%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                            <div
-                                className="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-full transition-all duration-500"
-                                style={{ width: `${progressPercent}%` }}
-                                role="progressbar"
-                                aria-valuenow={progressPercent}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                            />
-                        </div>
-                    </div>
 
-                    <div className="text-center px-4 py-2 bg-blue-50 rounded-lg border border-blue-200">
-                        <p className="text-xs text-gray-600 font-medium">Completed</p>
-                        <p className="text-lg font-bold text-blue-600">{doneCount}/{initialCourses.length}</p>
-                    </div>
-                </div>
-            </header>
 
-            {/* Courses Section */}
             <div className="flex flex-col gap-6">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4 border-b pb-4">
-                    <h2 className="font-bold text-2xl text-gray-700" id="course-list-title">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4 border-b border-border pb-4">
+                    <h2 className="font-bold text-2xl text-text-primary" id="course-list-title">
                         Roadmap Courses
                         {showDoneOnly && (
-                            <span className="text-lg text-green-600 ml-2">
+                            <span className="text-lg text-accent ml-2">
                                 / Completed ({doneCount})
                             </span>
                         )}
@@ -122,7 +118,7 @@ export default function RoadmapDetailsClient({
 
                 <section aria-labelledby="course-list-title" className="flex flex-col gap-4 mt-4">
                     {noCoursesMessage ? (
-                        <p className="text-center text-gray-500 text-lg py-10" aria-live="polite">
+                        <p className="text-center text-text-secondary text-lg py-10" aria-live="polite">
                             {noCoursesMessage}
                         </p>
                     ) : (
@@ -152,10 +148,10 @@ const FilterButton = ({
     <button
         onClick={() => setShowDoneOnly(!showDoneOnly)}
         disabled={!showDoneOnly && doneCount === 0}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition text-white font-semibold shadow-md
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition font-semibold shadow-md
             ${showDoneOnly
-                ? "bg-gray-600 hover:bg-gray-700"
-                : "bg-blue-600 hover:bg-blue-700"
+                ? "bg-text-secondary hover:bg-text-primary"
+                : "bg-primary hover:bg-primary-hover text-white"
             }
             ${!showDoneOnly && doneCount === 0 ? "opacity-60 cursor-not-allowed" : ""}
         `}
@@ -163,7 +159,7 @@ const FilterButton = ({
         role="switch"
         aria-label={showDoneOnly ? "Show all courses" : "Filter only completed courses"}
     >
-        <Filter className="w-5 h-5" aria-hidden="true" />
+        <Filter className="w-5 h-5" />
         {showDoneOnly ? "Show All" : `Filter Completed (${doneCount})`}
     </button>
 );
