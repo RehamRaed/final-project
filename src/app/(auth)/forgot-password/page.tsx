@@ -11,7 +11,11 @@ export default function ForgotPasswordPage() {
                     <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-primary">
                         Forgot your password?
                     </h1>
+<<<<<<< HEAD
                     <p className="text-text-secondary mt-2">Don&apos;t worry, we&apos;ll help you recover it</p>
+=======
+                    <p className="text-text-secondary mt-2">Don't worry, we'll help you recover it</p>
+>>>>>>> 3514bc8 (feat: add logout confirmation modal and logic, refactor Header from MUI to Tailwind, chore: adjust project structure)
                 </div>
 
                 <div className="bg-bg backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">

@@ -36,9 +36,18 @@ export default function CoursePageClient({
   return (
     <div className="min-h-screen max-w-325 mx-auto px-10 pt-30 pb-20">
       <header className="mb-8 border-b border-border pb-6">
+<<<<<<< HEAD
         <Link href="/dashboard" className="inline-flex items-center gap-2 text-primary mb-4 font-medium transition-colors">
           <ArrowLeft className="w-5 h-5" />
           Back
+=======
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-primary mb-4 font-medium transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back 
+>>>>>>> 3514bc8 (feat: add logout confirmation modal and logic, refactor Header from MUI to Tailwind, chore: adjust project structure)
         </Link>
 
         <div className="flex flex-col lg:flex-row gap-6 items-start">
