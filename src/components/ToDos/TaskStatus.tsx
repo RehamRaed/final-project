@@ -22,46 +22,45 @@ const TaskStatus = ({ tasks }: TaskStatusProps) => {
     }
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4">
+        <div className="bg-bg rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4">
             <div className="flex flex-wrap items-center justify-between gap-4">
                 {/* Stats */}
                 <div className="flex gap-6">
                     <div className="flex items-center gap-2">
                         <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
-                            <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                            <CheckCircle2 className="w-5 h-5 text-primary" />
                         </div>
                         <div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
-                            <p className="text-xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+                            <p className="text-xs text-text-secondary">Total</p>
+                            <p className="text-xl font-bold text-primary">{stats.total}</p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
                         <div className="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-900/30 flex items-center justify-center">
-                            <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+                            <CheckCircle2 className="w-5 h-5 text-accent" />
                         </div>
                         <div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">Done</p>
-                            <p className="text-xl font-bold text-green-600 dark:text-green-400">{stats.completed}</p>
+                            <p className="text-xs text-text-secondary">Done</p>
+                            <p className="text-xl font-bold text-accent">{stats.completed}</p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 rounded-lg bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center">
-                            <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                        <div className="w-10 h-10 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-secondary flex items-center justify-center">
+                            <Clock className="w-5 h-5 text-" />
                         </div>
                         <div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">Pending</p>
-                            <p className="text-xl font-bold text-orange-600 dark:text-orange-400">{stats.pending}</p>
+                            <p className="text-xs text-text-secondary">Pending</p>
+                            <p className="text-xl font-bold text-secondary">{stats.pending}</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Progress Bar */}
                 <div className="w-full md:max-w-xs flex flex-col gap-1">
                     <div className="flex justify-between items-end">
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Progress</span>
-                        <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{percentage}%</span>
+                        <span className="text-xs font-medium text-text-secondary">Progress</span>
+                        <span className="text-lg font-bold text-primary">{percentage}%</span>
                     </div>
                     <div className="h-3 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden p-0.5">
                         <div
@@ -69,8 +68,8 @@ const TaskStatus = ({ tasks }: TaskStatusProps) => {
                             style={{ width: `${percentage}%` }}
                         />
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 text-right mt-1 font-medium">
-                        {percentage === 100 ? '🎉 All tasks completed! Great job!' : 'Keep going, you got this! 💪'}
+                    <p className="text-xs text-text-secondery text-right mt-1 font-medium">
+                        {percentage === 100 ? ' All tasks completed! Great job!' : 'Keep going, you got this! '}
                     </p>
                 </div>
             </div>

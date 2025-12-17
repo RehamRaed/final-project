@@ -19,10 +19,10 @@ const GridList = ({ tasks, onToggle, onDelete, onEdit }: GridListProps) => {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700"
+                className="text-center py-20 bg-bg rounded-xl border border-dashed border-gray-300 dark:border-gray-700"
             >
-                <p className="text-gray-500 dark:text-gray-400 text-lg">No tasks found</p>
-                <p className="text-gray-400 text-sm mt-2">Create a new task to get started!</p>
+                <p className="text-text-primary text-lg">No tasks found</p>
+                <p className="text-text-secondary text-sm mt-2">Create a new task to get started!</p>
             </motion.div>
         )
     }

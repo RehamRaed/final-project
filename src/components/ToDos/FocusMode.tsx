@@ -36,7 +36,6 @@ const FocusMode = () => {
                 if (seconds === 0) {
                     if (minutes === 0) {
                         setIsActive(false)
-                        // Timer finished logic here (e.g., sound, notification)
                     } else {
                         setMinutes(minutes - 1)
                         setSeconds(59)
@@ -55,7 +54,7 @@ const FocusMode = () => {
     }, [isActive, seconds, minutes])
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+        <div className="bg-bg rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                     <Timer className="w-6 h-6 text-blue-600" />
@@ -89,7 +88,7 @@ const FocusMode = () => {
                     </button>
                 </div>
 
-                <div className="text-6xl font-bold text-gray-900 dark:text-white mb-8 font-mono tracking-wider">
+                <div className="text-6xl font-bold text-text-primary mb-8 font-mono tracking-wider">
                     {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
                 </div>
 

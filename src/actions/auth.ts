@@ -3,10 +3,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
-import type { TablesUpdate } from '@/types/database.types' // استوردنا فقط النوع المطلوب
+import type { TablesUpdate } from '@/types/database.types'
 
-// Validation schemas (تبقى كما هي لأنها تعتمد على Zod)
-// ----------------------------------------------------
+
 const registerSchema = z.object({
     fullName: z.string().min(4, 'Full name must be at least 4 characters'),
     email: z.string().email('Invalid email address'),
@@ -34,13 +33,6 @@ const resetPasswordSchema = z.object({
     path: ['confirmPassword'],
 })
 
-// ----------------------------------------------------
-// الدوال التي تم تعديلها لاستخدام الأنواع
-// ----------------------------------------------------
-
-/**
- * Register a new user with email and password
- */
 export async function register(formData: FormData) {
     const supabase = await createClient()
 
@@ -66,7 +58,6 @@ export async function register(formData: FormData) {
         password,
         options: {
             data: {
-                // الحقل 'full_name' هنا هو حقل 'user_metadata' وهو string
                 full_name: fullName,
             },
             emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/callback`,
@@ -86,17 +77,10 @@ export async function register(formData: FormData) {
         return { success: false, error: 'Error creating account' }
     }
 
-    // بما أنك قمت بتعطيل جزء إنشاء الـ profile يدوياً (لأنك تستخدم Trigger/Function في Supabase)، 
-    // فسنترك الكود كما هو ليقوم Supabase باللازم.
-
     redirect('/verify-email')
 }
 
-// ----------------------------------------------------
 
-/**
- * Login with email and password
- */
 export async function login(formData: FormData) {
     const supabase = await createClient()
 
@@ -138,22 +122,14 @@ export async function login(formData: FormData) {
     redirect('/dashboard')
 }
 
-// ----------------------------------------------------
 
-/**
- * Logout the current user
- */
 export async function logout() {
     const supabase = await createClient()
     await supabase.auth.signOut()
     redirect('/login')
 }
 
-// ----------------------------------------------------
 
-/**
- * Login with OAuth provider (Google or GitHub)
- */
 export async function loginWithOAuth(provider: 'google' | 'github') {
     const supabase = await createClient()
 
@@ -175,11 +151,7 @@ export async function loginWithOAuth(provider: 'google' | 'github') {
     return { success: false, error: 'Login failed' }
 }
 
-// ----------------------------------------------------
 
-/**
- * Send password reset email
- */
 export async function forgotPassword(formData: FormData) {
     const supabase = await createClient()
 
@@ -214,11 +186,7 @@ export async function forgotPassword(formData: FormData) {
     }
 }
 
-// ----------------------------------------------------
 
-/**
- * Reset password with token
- */
 export async function resetPassword(formData: FormData) {
     const supabase = await createClient()
 
@@ -254,11 +222,7 @@ export async function resetPassword(formData: FormData) {
     }
 }
 
-// ----------------------------------------------------
 
-/**
- * Resend verification email
- */
 export async function resendVerificationEmail() {
     const supabase = await createClient()
 
@@ -292,11 +256,7 @@ export async function resendVerificationEmail() {
     }
 }
 
-// ----------------------------------------------------
 
-/**
- * Update user profile
- */
 export async function updateProfile(formData: FormData) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -309,18 +269,15 @@ export async function updateProfile(formData: FormData) {
     const universityId = formData.get('universityId') as string
     const department = formData.get('department') as string
 
-    // 💡 نستخدم TablesUpdate<'profiles'> لضمان صحة أسماء الحقول وأنها اختيارية
     const profileUpdate: TablesUpdate<'profiles'> = {
         full_name: fullName,
         university_id: universityId || null,
         department: department || null,
-        // لا نحتاج لـ 'as any'
     }
 
-    // Update profiles table
     const { error } = await supabase
         .from('profiles')
-        .update(profileUpdate) // تم تمرير المتغير المحمي بالنوع
+        .update(profileUpdate) 
         .eq('id', user.id)
 
     if (error) {
@@ -328,9 +285,8 @@ export async function updateProfile(formData: FormData) {
         return { success: false, error: 'Failed to update profile data.' }
     }
 
-    // Update auth metadata as well for consistency
     await supabase.auth.updateUser({
-        data: { full_name: fullName } // هذا الحقل يجب أن يكون متطابقاً مع ما تتوقعه Supabase في user_metadata
+        data: { full_name: fullName } 
     })
 
     return { success: true, message: 'Profile updated successfully.' }

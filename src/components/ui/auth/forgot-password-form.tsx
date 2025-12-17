@@ -11,7 +11,7 @@ function SubmitButton() {
         <button
             type="submit"
             disabled={pending}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
             {pending ? 'Sending...' : 'Send Reset Link'}
         </button>
@@ -46,7 +46,7 @@ export function ForgotPasswordForm() {
             )}
 
             <div>
-                <label htmlFor="email" className="block font-semibold mb-2 text-gray-700">
+                <label htmlFor="email" className="block font-semibold mb-2 text-text-primary">
                     Email Address
                 </label>
                 <input
@@ -57,7 +57,7 @@ export function ForgotPasswordForm() {
                     className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     required
                 />
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm text-text-secondary mt-2">
                     We will send you a password reset link
                 </p>
             </div>

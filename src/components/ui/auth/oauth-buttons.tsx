@@ -2,9 +2,8 @@
 
 import { loginWithOAuth } from '@/actions/auth'
 import { useState } from 'react'
-import { Github } from 'lucide-react'
 
-export function OAuthButtons() {
+export function OAuthButton() {
     const [loadingProvider, setLoadingProvider] = useState<'google' | 'github' | null>(null)
 
     async function handleOAuth(provider: 'google' | 'github') {
@@ -19,7 +18,7 @@ export function OAuthButtons() {
                     <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-white text-gray-500">OR</span>
+                    <span className="px-4 bg-white text-text-secondary">OR</span>
                 </div>
             </div>
 
@@ -27,7 +26,7 @@ export function OAuthButtons() {
                 type="button"
                 onClick={() => handleOAuth('google')}
                 disabled={loadingProvider !== null}
-                className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-3 bg-bg border-2 border-gray-300 text-text-primary py-3 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {loadingProvider === 'google' ? (
                     <span>Loading...</span>
@@ -56,21 +55,7 @@ export function OAuthButtons() {
                 )}
             </button>
 
-            <button
-                type="button"
-                onClick={() => handleOAuth('github')}
-                disabled={loadingProvider !== null}
-                className="w-full flex items-center justify-center gap-3 bg-gray-900 text-white py-3 rounded-xl font-semibold hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                {loadingProvider === 'github' ? (
-                    <span>Loading...</span>
-                ) : (
-                    <>
-                        <Github className="w-5 h-5" />
-                        Continue with GitHub
-                    </>
-                )}
-            </button>
+           
         </div>
     )
 }

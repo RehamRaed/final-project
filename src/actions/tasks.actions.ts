@@ -21,12 +21,10 @@ function invalidateTaskListCache() {
     revalidatePath('/tasklist');
 }
 
-// Define a discriminated union type for server actions
 export type ActionResponse<T> =
     | { success: true; data: T; error?: undefined }
     | { success: false; error: string; data?: undefined };
 
-// ... (setupAction and invalidateTaskListCache remain the same)
 
 function handleActionError(error: unknown, defaultMessage: string): { success: false; error: string } {
     let errorMessage = defaultMessage;

@@ -3,13 +3,11 @@ import { redirect } from "next/navigation";
 import { Tables } from "@/types/database.types";
 import CourseCard from "@/components/StudentRoadmap/CourseCard";
 
-// حساب نسبة الإنجاز من الدروس المكتملة
 async function calculateCourseProgress(
   supabase: any,
   courseId: string,
   userId: string
 ): Promise<number> {
-  // 1. جلب جميع دروس الكورس
   const { data: lessons } = await supabase
     .from("lessons")
     .select("id")
@@ -17,7 +15,6 @@ async function calculateCourseProgress(
 
   if (!lessons || lessons.length === 0) return 0;
 
-  // 2. جلب تقدم المستخدم في هذه الدروس
   const lessonIds = lessons.map((l: any) => l.id);
   const { data: progress } = await supabase
     .from("user_lesson_progress")
@@ -27,7 +24,6 @@ async function calculateCourseProgress(
 
   if (!progress) return 0;
 
-  // 3. حساب النسبة
   const completedCount = progress.filter(
     (p: any) => p.status === "completed"
   ).length;
@@ -58,7 +54,6 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
     redirect("/login");
   }
 
-  // 2. التحقق من الـ roadmap
   const { data: roadmap } = await supabase
     .from("roadmaps")
     .select("*")
@@ -69,7 +64,6 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
     redirect("/roadmaps");
   }
 
-  // 3. جلب الكورسات
   const { data: coursesData, error: coursesError } = await supabase
     .from("roadmap_courses")
     .select(
@@ -88,7 +82,6 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
     console.error("Error fetching courses:", coursesError);
   }
 
-  // 4. حساب نسبة الإنجاز لكل كورس
   const courses: Course[] = [];
   if (coursesData) {
     for (const c of coursesData) {
@@ -99,7 +92,7 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
       );
       const courseData = c.courses as any;
       courses.push({
-        ...courseData,  // نشر جميع خصائص الكورس
+        ...courseData,  
         course_id: c.course_id,
         summary: courseData.summary || null,
         donePercentage: progress,

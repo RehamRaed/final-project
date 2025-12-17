@@ -16,8 +16,7 @@ export default function LessonSidebar({
   courseTitle
 }: Props) {
   return (
-    <div className="w-full md:w-3/3  border rounded-xl  shadow-md p-4 max-h-[calc(105vh-160px)] overflow-y-auto">
-      <h2 className="text-xl font-bold mb-4 text-primary">{courseTitle} Lessons</h2>
+    <div className="w-full md:w-3/3  border rounded-xl  shadow-md p-4 overflow-y-auto">
 
       {lessons.map((lesson) => (
         <LessonCard

@@ -1,7 +1,7 @@
 import { getCourseLessonsAction } from "@/actions/learning.actions";
 import { Metadata } from 'next';
 import { redirect } from "next/navigation";
-import CoursePageClient from "@/components/Course/CoursePageClient";
+import CoursePageClient from "@/components/lessons/CoursePageClient";
 import ErrorState from "@/components/ui/ErrorState";
 
 interface CoursePageProps {

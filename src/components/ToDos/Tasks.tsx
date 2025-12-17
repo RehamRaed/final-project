@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect } from 'react'
 import {
-    getAllTasksAction, // تبقى هنا لإعادة جلب البيانات بعد العمليات
+    getAllTasksAction,
     toggleTaskAction,
     deleteTaskAction
 } from '@/actions/tasks.actions'
@@ -24,17 +24,14 @@ type ViewMode = 'grid' | 'table' | 'calendar' | 'matrix'
 type FilterStatus = 'all' | 'pending' | 'completed'
 type FilterPriority = 'all' | 'low' | 'medium' | 'high'
 
-// **[تعديل]:** تعريف Props ليقبل initialTasks
 interface TasksProps {
     initialTasks: Task[];
 }
 
-const Tasks = ({ initialTasks }: TasksProps) => { // **[تعديل]:** استقبال initialTasks
+const Tasks = ({ initialTasks }: TasksProps) => {
 
-    // **[تعديل]:** استخدام initialTasks كقيمة افتراضية للـ state
     const [tasks, setTasks] = useState<Task[]>(initialTasks)
 
-    // بما أننا جلبنا البيانات في السيرفر، يمكن أن نبدأ بـ isLoading = false
     const [isLoading, setIsLoading] = useState(false)
 
     const [viewMode, setViewMode] = useState<ViewMode>('grid')
@@ -57,33 +54,26 @@ const Tasks = ({ initialTasks }: TasksProps) => { // **[تعديل]:** استق�
 
 
     const handleToggle = async (id: string) => {
-        // Optimistic update
         setTasks(prev => prev.map(t => t.id === id ? { ...t, is_completed: !t.is_completed } : t))
 
-        // استخدام startTransition لتضمين العملية
         startTransition(async () => {
             const result = await toggleTaskAction(id)
             if (!result.success) {
-                // Revert on failure
                 setTasks(prev => prev.map(t => t.id === id ? { ...t, is_completed: !t.is_completed } : t))
             } else {
-                // إعادة جلب البيانات لضمان تزامن الـ XP أو أي تحديثات جانبية
                 await fetchTasks();
             }
         })
     }
 
     const handleDelete = async (id: string) => {
-        // Optimistic update
         setTasks(prev => prev.filter(t => t.id !== id))
 
         startTransition(async () => {
             const result = await deleteTaskAction(id)
             if (!result.success) {
-                // Re-fetch or revert
                 await fetchTasks()
             } else {
-                // إعادة جلب البيانات لضمان تزامن الـ XP أو أي تحديثات جانبية
                 await fetchTasks();
             }
         })
@@ -130,8 +120,7 @@ const Tasks = ({ initialTasks }: TasksProps) => { // **[تعديل]:** استق�
 
         setIsLoading(true)
 
-        // Delete all tasks one by one
-        // **ملاحظة:** يفضل إنشاء action واحدة تحذف الكل دفعة واحدة لتقليل زمن الاستجابة.
+  
         for (const task of tasks) {
             await deleteTaskAction(task.id)
         }
@@ -142,7 +131,6 @@ const Tasks = ({ initialTasks }: TasksProps) => { // **[تعديل]:** استق�
 
     return (
         <div className="space-y-4" aria-live="polite" aria-busy={isLoading}>
-            {/* ... بقية الـ JSX (بدون تغيير كبير) ... */}
 
             <div className="flex justify-between items-center gap-4">
                 <button
@@ -151,11 +139,11 @@ const Tasks = ({ initialTasks }: TasksProps) => { // **[تعديل]:** استق�
                         group flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
                         hover:scale-105 hover:shadow-lg active:scale-95 cursor-pointer
                         ${showFocusMode
-                            ? 'bg-linear-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-blue-500/50'
-                            : 'bg-white text-gray-700 hover:bg-linear-to-r hover:from-gray-50 hover:to-gray-100 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700'}
+                            ? 'bg-primary text-white shadow-md hover:shadow-blue-500/50'
+                            : 'bg-bg hover:bg-linear-to-r border border-gray-200 '}
                     `}
                 >
-                    <span className="group-hover:rotate-12 transition-transform duration-300" aria-hidden="true">⏱️</span>
+                    <span className="group-hover:rotate-12 transition-transform duration-300 " aria-hidden="true">⏱️</span>
                     {showFocusMode ? 'Hide Focus Timer' : 'Show Focus Timer'}
                 </button>
 
@@ -204,9 +192,9 @@ const Tasks = ({ initialTasks }: TasksProps) => { // **[تعديل]:** استق�
                 <button
                     onClick={() => setShowAddModal(true)}
                     className="group flex items-center gap-2 px-6 py-3 rounded-lg font-medium shadow-md transition-all duration-300
-                        bg-linear-to-r from-blue-600 to-blue-700 text-white
+                        bg-linear-to-r  text-white
                         hover:scale-105 hover:shadow-xl hover:shadow-blue-500/50 active:scale-95 cursor-pointer
-                        hover:from-blue-700 hover:to-blue-800"
+                        bg-primary hover:bg-primary-hover"
                 >
                     <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" aria-hidden="true" />
                     New Task
@@ -216,14 +204,14 @@ const Tasks = ({ initialTasks }: TasksProps) => { // **[تعديل]:** استق�
             <AddTaskModal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
-                onTaskAdded={fetchTasks} // إعادة الجلب بعد الإضافة
+                onTaskAdded={fetchTasks} 
             />
 
             <TaskDetailsModal
                 task={selectedTask}
                 isOpen={!!selectedTask}
                 onClose={() => setSelectedTask(null)}
-                onTaskUpdated={fetchTasks} // إعادة الجلب بعد التعديل
+                onTaskUpdated={fetchTasks} 
             />
 
             <AnimatePresence mode="wait">

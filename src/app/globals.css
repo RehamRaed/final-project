@@ -1,90 +1,52 @@
 @import "tailwindcss";
 
-:root {
-  --primary: #3b82f6;
-  --secondary: #f97316;
-  --accent: #10b981;
+:root{
+  --primary: #3B82F6;
+  --secondary: #F97316;
+  --accent: #10B981;
   --bg: #ffffff;
-  --card-bg: #ffffff;
+  --card-bg: #FFFFFF;
   --text-primary: #585858;
   --text-secondary: #717171;
-  --border: #d1d5db;
-  --primary-hover: #2a73ea;
-  --font-family-base: "Poppins", sans-serif;
+  --border: #D1D5DB;
+  --primary-hover :#2a73ea;
+  --font-family-base: 'Poppins', sans-serif;
 }
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;
+  display: none; 
 }
 .scrollbar-hide {
-  -ms-overflow-style: none;
+  -ms-overflow-style: none; 
   scrollbar-width: none;
 }
-/* @theme is a Tailwind v4 feature - commented to avoid warnings in v3 */
-/* @theme {
+@theme{
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
-  --color-accent: var(--accent);
+  --color-accent:var(--accent);
   --color-bg: var(--bg);
-  --color-card-bg: var(--card-bg);
+  --color-card-bg:var(--card-bg);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-border: var(--border);
-  --color-primary-hover: var(--primary-hover);
-} */
+  --color-primary-hover :var(--primary-hover);
+}
+
 
 .dark {
   --primary: #5090f8;
-  --secondary: #f97316;
-  --accent: #10b981;
+  --secondary: #F97316;
+  --accent: #10B981;
   --bg: #111827;
-  --card-bg: #171e544d;
+  --card-bg: #1116454d;
   --text-primary: #ffffff;
   --text-secondary: #e3e3e3;
   --text-blue: #6ca4fd;
-  --border: #d1d5db;
+  --border: #D1D5DB;
 }
+
 
 body {
   background-color: var(--bg);
   color: var(--text-primary);
   font-family: var(--font-family-base);
-}
-
-/* Custom scrollbar styles */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.3);
-  border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.5);
-}
-
-/* Dark mode scrollbar */
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(75, 85, 99, 0.5);
-}
-
-.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(75, 85, 99, 0.7);
-}
-
-/* Smooth transitions and cursor for all interactive elements */
-button,
-a,
-[role="button"] {
-  cursor: pointer !important;
-}
-
-.group:hover {
-  cursor: pointer !important;
 }

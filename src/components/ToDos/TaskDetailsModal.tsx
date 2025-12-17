@@ -24,7 +24,6 @@ const TaskDetailsModal = ({ task, isOpen, onClose, onTaskUpdated }: TaskDetailsM
     const [isPending, startTransition] = useTransition()
     const [error, setError] = useState('')
 
-    // Initialize form when task changes
     useState(() => {
         if (task) {
             setTitle(task.title)
@@ -90,12 +89,12 @@ const TaskDetailsModal = ({ task, isOpen, onClose, onTaskUpdated }: TaskDetailsM
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden border border-gray-200 dark:border-gray-700"
+                className="bg-bg rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden border border-gray-200 dark:border-gray-700"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700  from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h2 className="text-2xl font-bold text-text-primary">
                         {isEditing ? 'Edit Task' : 'Task Details'}
                     </h2>
                     <div className="flex items-center gap-2">
@@ -118,10 +117,8 @@ const TaskDetailsModal = ({ task, isOpen, onClose, onTaskUpdated }: TaskDetailsM
                     </div>
                 </div>
 
-                {/* Content */}
                 <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
                     {isEditing ? (
-                        // Edit Mode
                         <>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -184,7 +181,6 @@ const TaskDetailsModal = ({ task, isOpen, onClose, onTaskUpdated }: TaskDetailsM
                             )}
                         </>
                     ) : (
-                        // View Mode
                         <>
                             <div>
                                 <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">

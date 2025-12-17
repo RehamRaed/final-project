@@ -2,55 +2,38 @@
 
 interface ProfileActionsProps {
   isEditing: boolean;
+  isSaving: boolean;
+  setIsEditing: (val: boolean) => void;
   handleSave: () => void;
   handleCancel: () => void;
-  setIsEditing: (value: boolean) => void;
 }
 
-interface ProfileActionsProps {
-  isEditing: boolean;
-  handleSave: () => void;
-  handleCancel: () => void;
-  setIsEditing: (value: boolean) => void;
-  isSaving: boolean; // إضافة خاصية حالة الحفظ
-}
-
-export default function ProfileActions({ isEditing, handleSave, handleCancel, setIsEditing, isSaving }: ProfileActionsProps) {
+export default function ProfileActions({ isEditing, isSaving, setIsEditing, handleSave, handleCancel }: ProfileActionsProps) {
   return (
-    <div className="flex flex-wrap justify-center gap-4 pt-4 border-t border-border">
-      {!isEditing ? (
-        <button
-          onClick={() => setIsEditing(true)}
-          className="px-6 py-3 font-semibold rounded-lg shadow-md flex items-center transition bg-primary text-white hover:opacity-90"
-        >
-          <i className="fas fa-edit mr-2"></i> Edit Profile
-        </button>
-      ) : (
+    <div className="flex gap-4 mt-4">
+      {isEditing ? (
         <>
           <button
             onClick={handleSave}
-            disabled={isSaving} // تعطيل الزر أثناء الحفظ
-            className={`px-6 py-3 rounded-lg shadow-md flex items-center transition ${isSaving ? 'bg-gray-400 cursor-not-allowed' : 'bg-accent text-white hover:opacity-90'}`}
+            disabled={isSaving}
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
           >
-            {isSaving ? (
-              <>
-                <i className="fas fa-spinner fa-spin mr-2"></i> Saving...
-              </>
-            ) : (
-              <>
-                <i className="fas fa-save mr-2"></i> Save Changes
-              </>
-            )}
+            {isSaving ? "Saving..." : "Save"}
           </button>
-
           <button
             onClick={handleCancel}
-            disabled={isSaving}
-            className={`px-6 py-3 rounded-lg shadow-md flex items-center transition bg-secondary text-white hover:opacity-90 ${isSaving ? 'opacity-50' : ''}`}
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
           >
-            <i className="fas fa-times mr-2"></i> Cancel
+            Cancel
           </button>
         </>
+      ) : (
+        <button
+          onClick={() => setIsEditing(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Edit Profile
+        </button>
       )}
     </div>
   );

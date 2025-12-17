@@ -56,7 +56,7 @@ export default function Error({
                     </button>
                     <a
                         href="/"
-                        className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
+                        className="px-6 py-2 bg-gray-200 text-text-primary rounded-lg  transition"
                     >
                         Go home
                     </a>
