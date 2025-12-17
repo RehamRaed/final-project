@@ -47,7 +47,7 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
             // التحقق من الحالة الحالية للدرس
             const currentLesson = lessons.find(l => l.id === lessonId);
             const isCurrentlyCompleted = currentLesson?.user_progress?.[0]?.status === 'completed';
-            const newStatus = !isCurrentlyCompleted;
+            const newStatus: 'in_progress' | 'completed' = isCurrentlyCompleted ? 'in_progress' : 'completed';
 
             const result = await toggleLessonCompletion(lessonId, courseData.id, newStatus);
 

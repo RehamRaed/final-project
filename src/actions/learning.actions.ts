@@ -120,20 +120,26 @@ export async function getCourseLessonsAction(courseId: string) {
 export async function toggleLessonCompletion(
     lessonId: string,
     courseId: string,
-    isCompleted: boolean,
+    newStatus: 'in_progress' | 'completed'
 ) {
-    const userId = await getCurrentUserId()
-    if (!userId) return { success: false, error: "User not authenticated." }
+    const userId = await getCurrentUserId();
+    if (!userId) return { success: false, error: "User not authenticated." };
 
-    const supabase = await createClient()
+    const supabase = await createClient();
+    const isCompleted = newStatus === 'completed';
 
-    // 1. تحديث تقدم الدرس (Upsert)
-    const { data: progressData, error: progressError } = await upsertLessonProgress(
-        supabase,
-        userId,
-        lessonId,
-        isCompleted
-    )
+    // 1. تحديث تقدم الدرس
+    const now = new Date().toISOString();
+    const { data: progressData, error: progressError } = await supabase
+        .from('user_lesson_progress')
+        .upsert({
+            user_id: userId,
+            lesson_id: lessonId,
+            status: newStatus, // 'in_progress' or 'completed'
+            completed_at: isCompleted ? now : null
+        }, { onConflict: 'user_id,lesson_id' })
+        .select()
+        .single();
 
     if (progressError) return { success: false, error: `Failed to update progress: ${progressError.message}` }
 

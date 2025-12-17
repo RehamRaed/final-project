@@ -63,8 +63,7 @@ interface HeaderProps {
 interface Course {
   id: string;
   title: string;
-  description: string;
-  donePercentage: number;
+  description: string | null;
 }
 
 export default function Header({ currentRoadmapId }: HeaderProps) {
@@ -103,29 +102,40 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
 
   useEffect(() => {
     const loadUserAndRoadmap = async () => {
-      const { supabase } = await import("@/lib/supabase/client");
+      try {
+        const { supabase } = await import("@/lib/supabase/client");
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) return;
 
-      setUser(user);
+        setUser(user);
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("current_roadmap_id")
-        .eq("id", user.id)
-        .single();
-
-      if (profile?.current_roadmap_id) {
-        const { data: roadmap } = await supabase
-          .from("roadmaps")
-          .select("*")
-          .eq("id", profile.current_roadmap_id)
+        // استعلام واحد بدلاً من استعلامين منفصلين
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select(`
+            current_roadmap_id,
+            roadmaps:current_roadmap_id (*)
+          `)
+          .eq("id", user.id)
           .single();
 
-        if (roadmap) {
-          setCurrentRoadmap(roadmap);
+        if (profileError) {
+          console.error("Failed to load profile:", profileError.message);
+          return;
         }
+
+        if (profile?.roadmaps) {
+          // التحقق من أن roadmaps ليس array
+          const roadmapData = Array.isArray(profile.roadmaps)
+            ? profile.roadmaps[0]
+            : profile.roadmaps;
+          if (roadmapData) {
+            setCurrentRoadmap(roadmapData as Tables<'roadmaps'>);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading user data:", error);
       }
     };
 
@@ -170,7 +180,7 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     handleMenuClose();
-    router.push('/auth/login');
+    router.push('/login');
   };
 
   const menuId = 'primary-search-account-menu';
@@ -286,7 +296,12 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
           className="mt-1 bg-white shadow-md max-h-96 overflow-auto z-50 rounded w-[300px] ml-[150px] p-4"
         >
           <SearchResults
-            res={res}
+            res={res.map(c => ({
+              id: c.id,
+              title: c.title,
+              description: c.description,
+              donePercentage: 0
+            }))}
           />
         </div>
       )}

@@ -12,6 +12,7 @@ function SubmitButton() {
       type="submit"
       disabled={pending}
       className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+      aria-label={pending ? 'Creating account, please wait' : 'Create your account'}
     >
       {pending ? 'Creating account...' : 'Create Account'}
     </button>
@@ -41,9 +42,13 @@ export function SignupForm() {
   const strength = getPasswordStrength(password)
 
   return (
-    <form action={handleSubmit} className="space-y-4">
+    <form action={handleSubmit} className="space-y-4" aria-label="Registration form">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+        <div
+          className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm"
+          role="alert"
+          aria-live="assertive"
+        >
           {error}
         </div>
       )}
@@ -59,6 +64,8 @@ export function SignupForm() {
           className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
           required
           minLength={4}
+          aria-required="true"
+          autoComplete="name"
         />
       </div>
 
@@ -73,6 +80,8 @@ export function SignupForm() {
           placeholder="example@domain.com"
           className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
           required
+          aria-required="true"
+          autoComplete="email"
         />
       </div>
 
@@ -90,10 +99,13 @@ export function SignupForm() {
           className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
           required
           minLength={8}
+          aria-required="true"
+          aria-describedby="password-strength"
+          autoComplete="new-password"
         />
 
         {password && (
-          <div className="mt-2">
+          <div className="mt-2" id="password-strength" role="status" aria-live="polite">
             <div className="flex items-center justify-between text-sm mb-1">
               <span className="text-gray-600">Password Strength:</span>
               <span className={`font-semibold ${strength.color.replace('bg-', 'text-')}`}>
@@ -104,6 +116,10 @@ export function SignupForm() {
               <div
                 className={`h-full ${strength.color} transition-all duration-300`}
                 style={{ width: strength.width }}
+                role="progressbar"
+                aria-valuenow={parseInt(strength.width)}
+                aria-valuemin={0}
+                aria-valuemax={100}
               />
             </div>
           </div>
@@ -122,6 +138,8 @@ export function SignupForm() {
           className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
           required
           minLength={8}
+          aria-required="true"
+          autoComplete="new-password"
         />
       </div>
 

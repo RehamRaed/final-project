@@ -20,7 +20,7 @@ export default function WelcomeClient({ user, displayName }: WelcomeClientProps)
             </p>
 
             <Link
-                href={user ? "/dashboard" : "/auth/login"}
+                href={user ? "/dashboard" : "/login"}
                 className="px-8 py-3 rounded-xl shadow-lg transition font-semibold text-lg"
                 style={{
                     backgroundColor: "var(--color-primary)",

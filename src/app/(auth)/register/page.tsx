@@ -2,6 +2,13 @@ import Link from 'next/link'
 import { SignupForm } from '@/components/ui/auth/signup-form'
 import { OAuthButtons } from '@/components/ui/auth/oauth-buttons'
 import { UserPlus } from 'lucide-react'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+    title: 'Create Account | StudyMate',
+    description: 'Join StudyMate today and start your personalized learning journey with roadmaps and courses.',
+    keywords: ['register', 'sign up', 'create account', 'StudyMate', 'join'],
+}
 
 export default function RegisterPage() {
     return (

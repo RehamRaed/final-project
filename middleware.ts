@@ -37,13 +37,16 @@ export async function middleware(request: NextRequest) {
 
     if (!user && isProtectedPath) {
         const redirectUrl = request.nextUrl.clone()
-        redirectUrl.pathname = '/auth/login'
+        redirectUrl.pathname = '/login'
         redirectUrl.searchParams.set('redirectedFrom', request.nextUrl.pathname)
         return NextResponse.redirect(redirectUrl)
     }
 
     // Redirect to dashboard if authenticated and trying to access auth pages
-    if (user && request.nextUrl.pathname.startsWith('/auth/')) {
+    const authPaths = ['/login', '/register', '/forgot-password', '/reset-password']
+    const isAuthPath = authPaths.some(path => request.nextUrl.pathname.startsWith(path))
+
+    if (user && isAuthPath) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
