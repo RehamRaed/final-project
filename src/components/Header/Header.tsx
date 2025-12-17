@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import LogoutConfirmModal from "./LogoutConfirmModal";
 
+/* ================== Types ================== */
+
 interface HeaderProps {
   currentRoadmapId?: string | null;
 }
@@ -49,9 +51,7 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
 
   const handleLogoutConfirm = async () => {
     setIsLoggingOut(true);
-    try {
-      await supabase.auth.signOut();
-      setConfirmLogoutOpen(false);
+    try {;
       setTimeout(() => router.replace("/login"), 300);
     } catch (e) {
       console.error(e);
@@ -154,7 +154,9 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
                       }}
                       className="w-full text-left px-4 py-2 text-red-400 cursor-pointer hover:bg-red-100 font-semibold flex items-center gap-2"
                     >
-                      <LogOut size={18} /> Logout
+                      <LogOut size=
+      await supabase.auth.signOut();
+      setConfirmLogoutOpen(false){18} /> Logout
                     </button>
                   </div>
                 )}

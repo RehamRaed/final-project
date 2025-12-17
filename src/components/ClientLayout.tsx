@@ -39,6 +39,10 @@ export default function ClientLayout({
   const pathname = usePathname();
   const hideHeaderOn = ["/profile", "/login", "/register", "/roadmaps", "/"];
 
+  const pathname = usePathname();
+  const hideOn = ["/", "/login", "/register", "/profile" , "/roadmaps"];
+  const showHeader = user && !hideOn.includes(pathname);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null);
