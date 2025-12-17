@@ -22,7 +22,6 @@ type CourseData = Tables<'courses'> & {
 
 interface LessonPageClientProps {
     courseData: CourseData;
-    lesson: Lesson;
 
 }
 

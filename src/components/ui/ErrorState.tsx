@@ -16,7 +16,7 @@ export default function ErrorState({
     onRetry
 }: ErrorStateProps) {
     const containerClass = fullScreen
-        ? "fixed inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm z-50"
+        ? "fixed inset-0 flex items-center justify-center bg-bg backdrop-blur-sm z-50"
         : "py-20";
 
     return (
