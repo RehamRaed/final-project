@@ -35,7 +35,7 @@ export function ForgotPasswordForm() {
     }
 
     return (
-        <form action={handleSubmit} className="space-y-4 bg-bg">
+        <form action={handleSubmit} className="space-y-4">
             {message && (
                 <div
                     className={`px-4 py-3 rounded-xl text-sm ${message.type === 'success'
