@@ -1,12 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { supabase } from "@/lib/supabase/client";
+import { Tables } from "@/types/database.types";
 
-export interface Roadmap {
-  id: string;
-  title: string;
-  description: string;
-  icon?: string;
-}
+export type Roadmap = Tables<'roadmaps'>;
 
 interface RoadmapState {
   current: Roadmap | null;

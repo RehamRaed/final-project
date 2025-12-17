@@ -1,10 +1,12 @@
 import LessonCard from "./LessonCard";
+import { Tables } from "@/types/database.types";
 
 interface Props {
-  lessons: any[];
+  lessons: Tables<'lessons'>[];
   selectedLessonId: string | null;
-  onSelectLesson: (lesson: any) => void;
+  onSelectLesson: (lesson: Tables<'lessons'>) => void;
   courseTitle: string;
+  isPending?: boolean;
 }
 
 export default function LessonSidebar({
@@ -14,8 +16,7 @@ export default function LessonSidebar({
   courseTitle
 }: Props) {
   return (
-    <div className="w-full md:w-1/3  border rounded-xl  shadow-md p-4 max-h-[calc(105vh-160px)] overflow-y-auto">
-      <h2 className="text-xl font-bold mb-4 text-primary">{courseTitle} Lessons</h2>
+    <div className="w-full md:w-3/3  border rounded-xl  shadow-md p-4 overflow-y-auto">
 
       {lessons.map((lesson) => (
         <LessonCard

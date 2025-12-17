@@ -38,7 +38,7 @@ export default function LessonPageUI({
   return (
     <div className='max-w-[1200px] mx-auto pt-25 px-5 pb-10'>
       <Link
-        href={`/student/roadmaps/${courseId}/courses`}
+        href={`/roadmaps/${courseId}/courses`}
         className="flex items-center gap-1 font-semibold mb-5"
         style={{ color: "var(--color-primary)" }}
       >

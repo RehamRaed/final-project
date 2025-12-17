@@ -74,7 +74,7 @@ export default function RoadmapsPage() {
       {currentRoadmap && (
         <div className="mt-12 text-center">
           <Link
-            href="/student/dashboard"
+            href="/dashboard"
             className="px-3 py-2 md:px-10 md:py-4 rounded-xl bg-primary text-[14px] md:text-lg  md:font-semibold shadow-md hover:bg-primary-hover"
             style={{ color: "white" }}
           >

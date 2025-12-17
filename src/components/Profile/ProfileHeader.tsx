@@ -4,7 +4,7 @@ import React from 'react';
 const ProfileHeader: React.FC = () => {
   return (
     <header
-  className="w-full py-4 mb-6 bg-primary "
+  className="w-full py-4 bg-primary "
   style={{
     boxShadow: 'var(--shadow-appbar)',
   }}

@@ -1,56 +1,61 @@
 "use client";
 
-export default function ProfileForm({ profile, isEditing, handleChange }: any) {
-  const fields = [
-    { name: "full_name", label: "Full Name" },
-    { name: "email", label: "Email", readOnly: true },
-    { name: "university_id", label: "University ID" },
-    { name: "department", label: "Department" },
-    { name: "bio", label: "Bio", textarea: true },
-  ];
+interface ProfileFormProps {
+  profile: any;
+  isEditing: boolean;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}
 
+export default function ProfileForm({ profile, isEditing, handleChange }: ProfileFormProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-8">
-      {fields.map(({ name, label, readOnly, textarea }) => (
-        <div key={name} className="flex flex-col">
-          <label className="text-sm font-medium mb-1 text-text-secondary" >{label}</label>
-          {textarea ? (
-            <textarea
-              name={name}
-              value={profile[name] ?? ""}
-              onChange={handleChange}
-              readOnly={!isEditing}
-              disabled={!isEditing}
-              rows={4}
-              className="p-3 rounded-lg transition duration-150 focus:outline-none"
-              style={{
-                border: "1px solid",
-                borderColor: isEditing ? "#3B82F6" : "var(--color-border)",
-                backgroundColor: "var(--color-card-bg)",
-                color: isEditing ? "var(--color-text-primary)" : "var(--color-text-secondary)",
-                cursor: isEditing ? "text" : "not-allowed",
-              }}
-            />
-          ) : (
-            <input
-              type={name === "email" ? "email" : "text"}
-              name={name}
-              value={profile[name] ?? ""}
-              onChange={handleChange}
-              readOnly={!isEditing || readOnly}
-              disabled={!isEditing || readOnly}
-              className="p-3 rounded-lg transition duration-150 focus:outline-none"
-              style={{
-                border: "1px solid",
-                borderColor: isEditing && !readOnly ? "#3B82F6" : "var(--color-border)",
-                backgroundColor: "var(--color-card-bg)",
-                color: !isEditing || readOnly ? "var(--color-text-secondary)" : "var(--color-text-primary)",
-                cursor: !isEditing || readOnly ? "not-allowed" : "text",
-              }}
-            />
-          )}
-        </div>
-      ))}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="w-full">
+        <label className="block mb-1 text-sm font-medium text-text-secondary">Full Name</label>
+        <input
+          type="text"
+          name="full_name"
+          value={profile.full_name || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+          className="w-full p-2 sm:p-3 border border-border rounded-md bg-bg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent transition"
+        />
+      </div>
+
+      <div className="w-full">
+        <label className="block mb-1 text-sm font-medium text-text-secondary">Department</label>
+        <input
+          type="text"
+          name="department"
+          value={profile.department || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+          className="w-full p-2 sm:p-3 border border-border rounded-md bg-bg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent transition"
+        />
+      </div>
+
+      <div className="w-full">
+        <label className="block mb-1 text-sm font-medium text-text-secondary">University ID</label>
+        <input
+          type="text"
+          name="university_id"
+          value={profile.university_id || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+          className="w-full p-2 sm:p-3 border border-border rounded-md bg-bg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent transition"
+        />
+      </div>
+
+      <div className="col-span-1 sm:col-span-2">
+        <label className="block mb-1 text-sm font-medium text-text-secondary">Bio</label>
+        <textarea
+          name="bio"
+          value={profile.bio || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+          className="w-full p-2 sm:p-3 border border-border rounded-md bg-bg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent transition"
+          rows={4}
+        />
+      </div>
     </div>
   );
 }

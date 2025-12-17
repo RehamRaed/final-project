@@ -39,7 +39,7 @@ export default function ClientLayout({
   const [loading, setLoading] = useState(true);
 
   const pathname = usePathname();
-  const hideOn = ["/", "/auth/login", "/auth/register", "/student/profile" , "/student/roadmaps"];
+  const hideOn = ["/", "/login", "/register", "/profile" , "/roadmaps"];
   const showHeader = user && !hideOn.includes(pathname);
 
   useEffect(() => {

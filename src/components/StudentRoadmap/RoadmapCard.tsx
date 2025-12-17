@@ -1,29 +1,73 @@
 "use client";
-interface Roadmap {
-  id: string;
-  title: string;
-  description: string;
+
+import React from 'react';
+import { Tables } from "@/types/database.types";
+import { Zap } from 'lucide-react';
+
+interface RoadmapWithCount extends Tables<'roadmaps'> {
+  course_count: number;
 }
 
 interface RoadmapCardProps {
-  roadmap: Roadmap;
+  roadmap: RoadmapWithCount;
   isSelected: boolean;
+  isCurrentActive: boolean;
   onSelect: () => void;
 }
 
-export default function RoadmapCard({ roadmap, isSelected, onSelect }: RoadmapCardProps) {
+export default function RoadmapCard({
+  roadmap,
+  isSelected,
+  isCurrentActive,
+  onSelect
+}: RoadmapCardProps) {
+
+  const cardClass = `
+    p-6 border rounded-xl shadow-md transition-all duration-300 ease-in-out 
+    w-full flex flex-col justify-between items-center text-center
+    bg-white hover:shadow-lg hover:border-gray-300
+    ${isSelected ? "border-2 border-primary scale-[1.02]" : "border-gray-200 scale-100"}
+  `;
+
   return (
-    <div
+    <button
+      className={cardClass}
       onClick={onSelect}
-      className={`cursor-pointer rounded-xl p-6 flex flex-col items-center justify-center
-        border transition-colors duration-300 ease-in-out
-        w-full
-        ${isSelected ? "border-4 border-primary bg-primary/20" : "border border-gray-200 hover:shadow-lg hover:bg-primary-hover/10"}
-      `}
-      style={{ minHeight: "180px" }}
+      aria-pressed={isSelected}
+      aria-label={
+        isCurrentActive
+          ? `Current roadmap: ${roadmap.title}. Click to continue.`
+          : `Roadmap: ${roadmap.title}. Click to select.`
+      }
+      style={{ minHeight: "200px", position: "relative" }} // height ثابت للبطاقة
     >
-      <h3 className="text-lg font-bold text-center text-text-primary">{roadmap.title}</h3>
-      <p className="text-sm text-center text-text-secondary mt-2">{roadmap.description}</p>
-    </div>
+      {/* مكان الباج */}
+      <div style={{ minHeight: "24px" }}>
+        {isCurrentActive ? (
+          <span className="px-3 py-1 text-xs font-semibold text-white bg-green-600 rounded-full">
+            Current
+          </span>
+        ) : isSelected && (
+          <span className="px-3 py-1 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
+            Selected
+          </span>
+        )}
+      </div>
+
+      <h3 className="text-lg font-bold text-gray-800 mt-2" tabIndex={0}>
+        {roadmap.title}
+      </h3>
+
+      <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+        {roadmap.description}
+      </p>
+
+      <div className="mt-4 text-xs font-medium text-gray-500 flex items-center gap-1">
+        <Zap className="w-3 h-3" aria-hidden="true" />
+        <span aria-label={`Number of courses: ${roadmap.course_count}`}>
+          {roadmap.course_count} courses
+        </span>
+      </div>
+    </button>
   );
 }
