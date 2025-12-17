@@ -21,6 +21,7 @@ import { fetchCourses } from '@/lib/search';
 import SearchResults from './SearchResults';
 import { supabase } from '@/lib/supabase/client';
 import { User } from 'next-auth';
+import { useNotifications } from '@/context/NotificationsContext';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -66,16 +67,17 @@ interface Course {
   donePercentage: number;
 }
 
-export default function Header({currentRoadmapId }: HeaderProps) {
+export default function Header({currentRoadmapId}: HeaderProps) {
+  const { notifications, removeNotifcation } = useNotifications();
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // handle click outside
+// handle click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setRes([]); // close search results
-      }
-    };
+    if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      setRes([]); // close search results
+    }
+  };
 
   document.addEventListener("mousedown", handleClickOutside);
 
@@ -91,15 +93,19 @@ export default function Header({currentRoadmapId }: HeaderProps) {
   const searchParams = useSearchParams();
   const roadmapId = searchParams.get('id');
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [profileAnchorEl, setProfileAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [notificationAnchorEl, setNotificationAnchorEl] = React.useState<null | HTMLElement>(null);
+
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const [currentRoadmap, setCurrentRoadmap] = useState<any>(null);
   const [user, setUser] = useState<User | null>(null);
   
-  const isMenuOpen = Boolean(anchorEl);
+  const isProfileMenuOpen = Boolean(profileAnchorEl);
+  const isNotificationMenuOpen = Boolean(notificationAnchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+  
   useEffect(() => {
       const loadUserAndRoadmap = async () => {
         const { supabase } = await import("@/lib/supabase/client");
@@ -136,22 +142,28 @@ export default function Header({currentRoadmapId }: HeaderProps) {
   };
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    setProfileAnchorEl(event.currentTarget);
+  };
+
+  const handleNotifcationMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setNotificationAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
-    setAnchorEl(null);
+    setProfileAnchorEl(null);
+    setNotificationAnchorEl(null);
     setMobileMoreAnchorEl(null);
   };
 
   const handleProfileRedirect = () => {
     handleMenuClose();
-    router.push('/student/profile');
+    router.push('/profile');
   };
 
+  
   const handleMyCourses = () => {
     handleMenuClose();
-    router.push(`/student/roadmaps/${roadmapId}/courses`);
+    router.push(`/roadmaps/${roadmapId}/courses`);
   };
 
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -164,26 +176,7 @@ export default function Header({currentRoadmapId }: HeaderProps) {
     router.push('/auth/login');
   };
 
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-      style={{top:"40px" }}
-    >
-      <MenuItem onClick={handleProfileRedirect}>Profile</MenuItem>
-      <MenuItem onClick={handleMyCourses}>My Courses</MenuItem>
-      <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
-        Logout
-      </MenuItem>
-    </Menu>
-  );
-
+  
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
     <Menu
@@ -195,16 +188,7 @@ export default function Header({currentRoadmapId }: HeaderProps) {
       open={isMobileMenuOpen}
       onClose={handleMenuClose}
     >
-    {/*}  <MenuItem >
-        <IconButton size="large" color="inherit">
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>*/}
       <MenuItem onClick={handleProfileRedirect}>
-        
         <p>Profile</p>
       </MenuItem>
       <MenuItem onClick={handleMyCourses}>
@@ -215,12 +199,53 @@ export default function Header({currentRoadmapId }: HeaderProps) {
       </MenuItem>
     </Menu>
   );
+  const menuId = 'primary-search-account-menu';
+  const renderProfile = (
+    <Menu
+      anchorEl={profileAnchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id="profile-menu"
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isProfileMenuOpen}
+      onClose={handleMenuClose}
+      style={{top:"35px"}}
+    >
+      <MenuItem onClick={handleProfileRedirect}>Profile</MenuItem>
+      <MenuItem onClick={handleMyCourses}>My Courses</MenuItem>
+      <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
+        Logout
+      </MenuItem>
+    </Menu>
+  );
+
+  const renderNotification = (
+    <Menu
+      anchorEl={notificationAnchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id="notification-menu"
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isNotificationMenuOpen}
+      onClose={handleMenuClose}
+      style={{top:"35px"}}
+    >
+      {(notifications.length === 0) &&
+        <MenuItem>No new notifications</MenuItem>
+      }
+      {notifications.map((notification, index) => (
+        <MenuItem onClick={() => removeNotifcation(index)} key={index}>{notification}</MenuItem>
+      ))}
+      
+      
+    </Menu>
+  );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <Link href="/student/dashboard" passHref>
+          <Link href="/student" passHref>
             <Typography
               variant="h6"
               noWrap
@@ -240,11 +265,17 @@ export default function Header({currentRoadmapId }: HeaderProps) {
           <Box sx={{ flexGrow: 1 }} />
 
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          {/*}  <IconButton size="large" color="inherit">
-              <Badge badgeContent={17} color="error">
+            <IconButton 
+              size="large" 
+              color="inherit"
+              aria-haspopup="true"
+              onClick={handleNotifcationMenuOpen}
+            >
+              <Badge badgeContent={notifications.length} color="error">
                 <NotificationsIcon />
               </Badge>
-            </IconButton> */}
+            </IconButton>
+
             <IconButton
               size="large"
               edge="end"
@@ -258,6 +289,17 @@ export default function Header({currentRoadmapId }: HeaderProps) {
           </Box>
 
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <IconButton 
+              size="large" 
+              color="inherit"
+              aria-haspopup="true"
+              onClick={handleNotifcationMenuOpen}
+            >
+              <Badge badgeContent={notifications.length} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+
             <IconButton
               size="large"
               aria-controls={mobileMenuId}
@@ -281,8 +323,9 @@ export default function Header({currentRoadmapId }: HeaderProps) {
         />
       </div>
       )}
+      {renderProfile}
+      {renderNotification}
       {renderMobileMenu}
-      {renderMenu}
     </Box>
   );
 }

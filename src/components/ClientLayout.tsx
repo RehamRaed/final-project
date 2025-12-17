@@ -13,6 +13,8 @@ import Header from "@/components/Header/Header";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 
+import { NotificationsProvider } from "@/context/NotificationsContext";
+
 import { supabase } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
@@ -54,6 +56,7 @@ export default function ClientLayout({
       <Provider store={store}>
         <AuthProvider>
           <AppInitializer>
+            <NotificationsProvider>
             {showHeader && (
               <div className="fixed top-0 left-0 w-full z-50">
                 <Header />
@@ -61,6 +64,7 @@ export default function ClientLayout({
             )}
 
             {children}
+            </NotificationsProvider>
           </AppInitializer>
         </AuthProvider>
       </Provider>
