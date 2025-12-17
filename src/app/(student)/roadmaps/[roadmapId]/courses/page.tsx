@@ -1,115 +1,111 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { Tables } from "@/types/database.types";
 import CourseCard from "@/components/StudentRoadmap/CourseCard";
 
-interface Course {
+// حساب نسبة الإنجاز من الدروس المكتملة
+async function calculateCourseProgress(
+  supabase: any,
+  courseId: string,
+  userId: string
+): Promise<number> {
+  // 1. جلب جميع دروس الكورس
+  const { data: lessons } = await supabase
+    .from("lessons")
+    .select("id")
+    .eq("course_id", courseId);
+
+  if (!lessons || lessons.length === 0) return 0;
+
+  // 2. جلب تقدم المستخدم في هذه الدروس
+  const lessonIds = lessons.map((l: any) => l.id);
+  const { data: progress } = await supabase
+    .from("user_lesson_progress")
+    .select("status")
+    .eq("user_id", userId)
+    .in("lesson_id", lessonIds);
+
+  if (!progress) return 0;
+
+  // 3. حساب النسبة
+  const completedCount = progress.filter(
+    (p: any) => p.status === "completed"
+  ).length;
+  return Math.round((completedCount / lessons.length) * 100);
+}
+
+interface Course extends Tables<'courses'> {
   course_id: string;
-  title: string;
-  description: string;
-  summary: string;
-  instructor: string;
+  summary: string | null;
   donePercentage: number;
 }
 
-export default function RoadmapCoursesPage() {
-  const currentRoadmap = useSelector(
-    (state: RootState) => state.roadmap.current
-  );
+interface PageProps {
+  params: Promise<{ roadmapId: string }>;
+}
 
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showDoneOnly, setShowDoneOnly] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
-  //Get logged-in user
-    // Load logged-in user
-  useEffect(() => {
-    const loadUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (error || !data.user) {
-        console.error('User not authenticated');
-        return;
-      }
-      setUserId(data.user.id);
-    };
+export default async function RoadmapCoursesPage({ params }: PageProps) {
+  const { roadmapId } = await params;
+  const supabase = await createClient();
 
-    loadUser();
-  }, []); // no dependency on currentRoadmap
+  // 1. Get User
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-  useEffect(() => {
-    if (!currentRoadmap?.id || !userId) return; // wait for both
-
-    const fetchCourses = async () => {
-      setLoading(true);
-      try {
-        const { supabase } = await import("@/lib/supabase/client");
-
-        const { data: coursesData, error: coursesError } = await supabase
-        .from("roadmap_courses")
-        .select(`
-          course_id,
-          order_index,
-          courses!inner (
-            title,
-            description,
-            summary,
-            instructor
-          )
-        `)
-        .eq("roadmap_id", currentRoadmap.id)
-        .order("order_index", { ascending: true });
-
-        if (coursesError) throw coursesError;
-
-        //Fetch user_course_progress for these courses
-        const courseIds = coursesData.map(c => c.course_id);
-        const { data: progressData, error: progressError } = await supabase
-          .from("user_course_progress")
-          .select("course_id, done_percentage")
-          .eq("user_id", userId)
-          .in("course_id", courseIds);
-
-        if (progressError) throw progressError;
-
-        //Merge data
-        const formatted: Course[] = coursesData.map((c: any) => {
-          const progress = progressData.find(p => p.course_id === c.course_id);
-          return {
-            course_id: c.course_id,
-            title: c.courses.title,
-            description: c.courses.description,
-            summary: c.courses.summary,
-            instructor: c.courses.instructor,
-            donePercentage: progress?.done_percentage ?? 0,
-          };
-        });
-
-        setCourses(formatted);
-
-      } catch (err: any) {
-        console.error("Error fetching courses:", err.message);
-        setCourses([]);
-      }
-      setLoading(false);
-    };
-
-    fetchCourses();
-  }, [currentRoadmap, userId]);
-
-  if (!currentRoadmap) {
-    return (
-      <p className="text-center py-10 text-gray-500">
-        Please select a roadmap first.
-      </p>
-    );
+  if (userError || !user) {
+    redirect("/login");
   }
 
-  const filteredCourses = showDoneOnly
-    ? courses.filter((c) => c.donePercentage === 100)
-    : courses;
+  // 2. التحقق من الـ roadmap
+  const { data: roadmap } = await supabase
+    .from("roadmaps")
+    .select("*")
+    .eq("id", roadmapId)
+    .single();
+
+  if (!roadmap) {
+    redirect("/roadmaps");
+  }
+
+  // 3. جلب الكورسات
+  const { data: coursesData, error: coursesError } = await supabase
+    .from("roadmap_courses")
+    .select(
+      `
+      course_id,
+      order_index,
+      courses!inner (
+        *
+      )
+    `
+    )
+    .eq("roadmap_id", roadmapId)
+    .order("order_index", { ascending: true });
+
+  if (coursesError) {
+    console.error("Error fetching courses:", coursesError);
+  }
+
+  // 4. حساب نسبة الإنجاز لكل كورس
+  const courses: Course[] = [];
+  if (coursesData) {
+    for (const c of coursesData) {
+      const progress = await calculateCourseProgress(
+        supabase,
+        c.course_id,
+        user.id
+      );
+      const courseData = c.courses as any;
+      courses.push({
+        ...courseData,  // نشر جميع خصائص الكورس
+        course_id: c.course_id,
+        summary: courseData.summary || null,
+        donePercentage: progress,
+      });
+    }
+  }
 
   const doneCount = courses.filter((c) => c.donePercentage === 100).length;
 
@@ -117,40 +113,28 @@ export default function RoadmapCoursesPage() {
     <div className="min-h-screen max-w-[1400px] mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
         <h2 className="font-bold text-primary lg:text-2xl md:text-xl">
-          My Roadmap Courses
-          {showDoneOnly && (
-            <span className="text-green-500 text-sm ml-2">
-              / Done Courses ({doneCount})
-            </span>
-          )}
+          {roadmap.title} - Courses
         </h2>
-
-        <button
-          onClick={() => setShowDoneOnly(!showDoneOnly)}
-          className={`px-4 py-2 rounded-lg text-white font-medium transition ${
-            showDoneOnly
-              ? "bg-gray-500"
-              : "bg-primary hover:opacity-90"
-          }`}
-        >
-          {showDoneOnly ? "Show All" : "Filter Done"}
-        </button>
+        <div className="text-sm text-text-secondary">
+          {doneCount} of {courses.length} completed
+        </div>
       </div>
 
-      {loading ? (
-        <p className="text-center py-10 text-gray-500">
-          Loading courses...
-        </p>
-      ) : filteredCourses.length === 0 ? (
-        <p className="text-center py-10 text-gray-500">
-          {showDoneOnly
-            ? "No completed courses found."
-            : "No courses found for this roadmap."}
-        </p>
+      {courses.length === 0 ? (
+        <div className="text-center py-20">
+          <p className="text-gray-500 text-lg mb-2">No courses found</p>
+          <p className="text-gray-400 text-sm">
+            This roadmap doesn't have any courses yet.
+          </p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 mt-4">
-          {filteredCourses.map((course) => (
-            <CourseCard key={course.course_id} course={course} />
+          {courses.map((course) => (
+            <CourseCard
+              key={course.course_id}
+              course={course}
+              href={`/courses/${course.course_id}`}
+            />
           ))}
         </div>
       )}

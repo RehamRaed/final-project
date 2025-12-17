@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 
 import { Provider, useDispatch } from "react-redux";
 import { store, AppDispatch } from "@/store";
 import { fetchCurrentRoadmap } from "@/store/roadmapSlice";
 
 import { AuthProvider } from "@/components/SessionProvider";
-import Header from "@/components/Header/Header";
 
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import ThemeToggle from "@/components/theme/ThemeToggle";
@@ -36,10 +34,6 @@ export default function ClientLayout({
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const pathname = usePathname();
-  const hideOn = ["/", "/auth/login", "/auth/register", "/profile", "/student/roadmaps"];
-  const showHeader = user && !hideOn.includes(pathname);
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null);
@@ -54,12 +48,6 @@ export default function ClientLayout({
       <Provider store={store}>
         <AuthProvider>
           <AppInitializer>
-            {showHeader && (
-              <div className="fixed top-0 left-0 w-full z-50">
-                <Header />
-              </div>
-            )}
-
             {children}
           </AppInitializer>
         </AuthProvider>

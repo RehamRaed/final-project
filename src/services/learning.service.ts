@@ -162,9 +162,8 @@ export async function upsertLessonProgress(
 }
 
 /**
- * دالة لتحديث قيمة XP للمستخدم عن طريق استدعاء دالة RPC في PostgreSQL
- * (افتراض وجود دالة 'increment_xp' في قاعدة البيانات)
- * إذا لم تكن هناك دالة RPC، فإننا نستخدم تحديث عادي مع التحذير
+ * دالة لتحديث قيمة XP للمستخدم باستخدام RPC function آمنة
+ * تحل مشكلة Race Condition عن طريق Atomic Increment
  */
 export async function updateXp(
     client: SupabaseClient<Database>,
@@ -172,41 +171,24 @@ export async function updateXp(
     xpChange: number // قيمة الزيادة أو النقصان
 ): Promise<ServiceResponse<Profile>> {
 
-    // الخيار الأفضل: استخدام RPC لزيادة آمنة (Atomic Increment)
-    // if (xpChange > 0) {
-    //     const { data, error } = await client.rpc('increment_xp', {
-    //         user_id_input: userId,
-    //         xp_amount: xpChange,
-    //     });
-    //     // هنا نحتاج إلى تحديد كيفية إرجاع البيانات بعد RPC
-    // }
+    // استخدام RPC function للزيادة الآمنة
+    const { data, error } = await client.rpc('increment_xp', {
+        user_id_input: userId,
+        xp_amount: xpChange,
+    });
 
-    // الخيار الحالي (تحديث قيمة مطلقة، وقد يؤدي إلى مشكلة سباق البيانات Race Condition)
-    // الأفضل هو جلب القيمة الحالية ثم تحديثها، لكن هذا الكود الذي قدمته:
+    if (error) {
+        return { data: null, error };
+    }
 
-    // جلب القيمة الحالية
+    // جلب البروفايل المحدث
     const { data: profile, error: fetchError } = await client
         .from('profiles')
-        .select('xp')
+        .select('*')
         .eq('id', userId)
         .single();
 
-    if (fetchError || !profile) {
-        // نرجع خطأ إذا فشل الجلب أو لم يتم العثور على البروفايل
-        return { data: null, error: fetchError };
-    }
-
-    const newXp = (profile.xp || 0) + xpChange;
-
-    const { data, error } = await client
-        .from('profiles')
-        .update({ xp: newXp }) // التحديث بالقيمة الجديدة المحسوبة
-        .select()
-        .eq('id', userId)
-        .single()
-
-    // يجب تحويل النوع ليتناسب مع Profile
-    return { data: data as Profile | null, error };
+    return { data: profile as Profile | null, error: fetchError };
 }
 
 // دالة لجلب XP Reward لدورة معينة (مطلوبة لإكمال toggleLessonCompletion)

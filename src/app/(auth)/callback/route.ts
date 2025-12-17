@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 
         if (error) {
             // Redirect to login with error
-            return NextResponse.redirect(`${origin}/login?error=حدث خطأ في تسجيل الدخول`)
+            return NextResponse.redirect(`${origin}/login?error=Authentication failed. Please try again.`)
         }
     }
 

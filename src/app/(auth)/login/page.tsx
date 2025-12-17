@@ -2,6 +2,13 @@ import Link from 'next/link'
 import { LoginForm } from '@/components/ui/auth/login-form'
 import { OAuthButtons } from '@/components/ui/auth/oauth-buttons'
 import { LogIn } from 'lucide-react'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Login | StudyMate',
+  description: 'Log in to your StudyMate account to continue learning and track your progress.',
+  keywords: ['login', 'sign in', 'authentication', 'StudyMate'],
+}
 
 export default function LoginPage() {
   return (

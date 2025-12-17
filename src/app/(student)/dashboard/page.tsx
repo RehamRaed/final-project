@@ -20,7 +20,7 @@ export default async function StudentPage() {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
     if (userError || !user) {
-        redirect('/auth/login');
+        redirect('/login');
     }
 
     // 2. Fetch Profile and Current Roadmap

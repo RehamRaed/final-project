@@ -39,7 +39,7 @@ export default function StudentHomePage({
     const hasMoreCourses = courses.length > 4;
 
     return (
-        <div className="bg-bg min-h-screen pt-25">
+        <div className="bg-bg min-h-screen">
             <div className="max-w-[1400px] mx-auto px-4 py-8 space-y-8">
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
