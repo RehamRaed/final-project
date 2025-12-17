@@ -43,24 +43,19 @@ export default function RoadmapDetailsClient({
             : "No courses available in this roadmap."
         : null;
 
-    const breadcrumbItems: BreadcrumbItem[] = [
-        { label: 'Roadmaps', href: '/roadmaps' },
-        { label: roadmapTitle }
-    ];
+ 
 
     return (
         <div className="min-h-screen max-w-[1300px] mx-auto px-10 py-25 bg-bg text-text-primary">
           <header className="mb-8 border-b border-border pb-6 flex flex-col gap-4">
-  {/* Back Link */}
   <Link
-    href="/roadmaps"
+    href="/dashboard"
     className="inline-flex items-center gap-2 text-primary hover:text-primary-hover font-medium transition-colors"
   >
     <ArrowLeft className="w-5 h-5" />
-    Back to Roadmaps
+    Back 
   </Link>
 
-  {/* Title & Description */}
   <div className="flex flex-col gap-1">
     <h1 className="text-3xl md:text-4xl font-extrabold">{roadmapTitle}</h1>
     {roadmapDescription && (
@@ -68,9 +63,7 @@ export default function RoadmapDetailsClient({
     )}
   </div>
 
-  {/* Progress + Completed Button */}
   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4">
-    {/* Progress Bar */}
     <div className="flex-1 w-full">
       <div className="flex justify-between items-center mb-1">
         <span className="text-sm font-medium text-text-secondary">Overall Progress</span>
@@ -88,7 +81,6 @@ export default function RoadmapDetailsClient({
       </div>
     </div>
 
-    {/* Completed Button */}
     <div className="text-center px-4 py-2 bg-card-bg rounded-lg border border-border hrink-0">
       <p className="text-xs text-text-secondary font-medium">Completed</p>
       <p className="text-lg font-bold text-primary">{doneCount}/{initialCourses.length}</p>

@@ -11,7 +11,6 @@ export default function ProfileRoadmap({ currentRoadmapTitle }: ProfileRoadmapPr
   const pathname = usePathname();
 
   const handleChangeRoadmap = () => {
-    // إذا كنا بالصفحة الرئيسية للبروفايل، نضيف query param للعودة بعد اختيار Roadmap
     if (pathname === "/profile") {
       router.push("/roadmaps?from=profile");
     } else {
