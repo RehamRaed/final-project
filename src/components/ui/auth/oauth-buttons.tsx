@@ -18,7 +18,7 @@ export function OAuthButton() {
                     <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-white text-text-secondary">OR</span>
+                    <span className="px-4 bg-bg text-text-secondary">OR</span>
                 </div>
             </div>
 
@@ -26,7 +26,7 @@ export function OAuthButton() {
                 type="button"
                 onClick={() => handleOAuth('google')}
                 disabled={loadingProvider !== null}
-                className="w-full flex items-center justify-center gap-3 bg-bg border-2 border-gray-300 text-text-primary py-3 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-3 bg-bg border-2 border-gray-300 text-text-primary py-3 rounded-xl font-semibold cursor-pointer hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {loadingProvider === 'google' ? (
                     <span>Loading...</span>

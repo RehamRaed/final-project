@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { SignupForm } from '@/components/ui/auth/signup-form'
 import { OAuthButton } from '@/components/ui/auth/oauth-buttons'
-import { UserPlus } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -21,7 +20,7 @@ export default function RegisterPage() {
                     </h1>
                 </div>
 
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
+                <div className="bg-bg backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
                     <SignupForm />
 
                     <div className="mt-6">
