@@ -59,11 +59,7 @@ export default function CoursePageClient({
           className="inline-flex items-center gap-2 text-primary mb-4 font-medium transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
-<<<<<<< HEAD
           Back
-=======
-          Back 
->>>>>>> 322d7e96edf59d96ad265f1f0b9bcb46250f02d9
         </Link>
 
         <div className="flex flex-col lg:flex-row gap-6 items-start">
