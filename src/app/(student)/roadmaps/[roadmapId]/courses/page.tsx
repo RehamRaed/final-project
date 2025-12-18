@@ -15,7 +15,7 @@ async function calculateCourseProgress(
 
   if (!lessons || lessons.length === 0) return 0;
 
-  const lessonIds = lessons.map((l: any) => l.id);
+  const lessonIds = lessons.map((l: { id: string }) => l.id);
   const { data: progress } = await supabase
     .from("user_lesson_progress")
     .select("status")
@@ -25,7 +25,7 @@ async function calculateCourseProgress(
   if (!progress) return 0;
 
   const completedCount = progress.filter(
-    (p: any) => p.status === "completed"
+    (p: { status: string | null }) => p.status === "completed"
   ).length;
   return Math.round((completedCount / lessons.length) * 100);
 }
@@ -90,7 +90,7 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
         c.course_id,
         user.id
       );
-      const courseData = c.courses as any;
+      const courseData = c.courses as unknown as Tables<'courses'> & { summary: string | null };
       courses.push({
         ...courseData,
         course_id: c.course_id,

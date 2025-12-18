@@ -50,11 +50,12 @@ export default function RoadmapCoursesPage() {
         if (error) throw error;
 
         const formatted: Course[] = (data || []).map((item) => {
-          const course = item.courses as unknown as Tables<'courses'>;
+          const course = item.courses as unknown as Tables<'courses'> & { summary: string | null };
           return {
             ...course,
             course_id: item.course_id,
-            donePercentage: (course as any).donePercentage ?? 0,
+            donePercentage: 0, // Defaulting to 0 if not provided by query
+            summary: course.summary || null,
           };
         });
 
@@ -116,7 +117,11 @@ export default function RoadmapCoursesPage() {
           </p>
         ) : (
           filteredCourses.map((course) => (
-            <CourseCard key={course.course_id} course={course} />
+            <CourseCard
+              key={course.course_id}
+              course={course}
+              href={`/courses/${course.course_id}`}
+            />
           ))
         )}
       </div>

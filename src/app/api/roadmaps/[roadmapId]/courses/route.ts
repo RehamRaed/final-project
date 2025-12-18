@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { Tables } from "@/types/database.types";
 
 export async function GET(
   request: NextRequest,
@@ -27,10 +28,12 @@ export async function GET(
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const courses = (data || []).map((item: { course: any }) => {
-      const course = item.course;
+    const courses = (data || []).map((item: { course: unknown }) => {
+      const course = item.course as Tables<'courses'> & {
+        lessons: Tables<'lessons'>[]
+      };
       course?.lessons?.sort(
-        (a: { order_index: number | null }, b: { order_index: number | null }) => (a.order_index || 0) - (b.order_index || 0)
+        (a: Tables<'lessons'>, b: Tables<'lessons'>) => (a.order_index || 0) - (b.order_index || 0)
       );
       return course;
     });
