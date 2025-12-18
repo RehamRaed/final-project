@@ -20,11 +20,10 @@ import {
   Bell,
   CheckSquare,
   LogOut,
-  Map as MapIcon // ← (Browse Roadmaps) أيقونة عنصر Browse Roadmaps
+  Map as MapIcon 
 } from "lucide-react";
 import LogoutConfirmModal from "./LogoutConfirmModal";
 
-/* ================== Types ================== */
 
 interface HeaderProps {
   currentRoadmapId?: string | null;
@@ -34,16 +33,11 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
   const router = useRouter();
   const { notifications } = useNotifications();
   const searchRef = useRef<HTMLDivElement>(null);
-<<<<<<< HEAD
   const profileRef = useRef<HTMLDivElement>(null);
 
-  // Get current roadmap from Redux
   const currentRoadmap = useSelector((state: RootState) => state.roadmap.current);
   const activeRoadmapId = currentRoadmap?.id || currentRoadmapId;
 
-=======
-
->>>>>>> 322d7e96edf59d96ad265f1f0b9bcb46250f02d9
   const [searchQuery, setSearchQuery] = useState("");
   const [res, setRes] = useState<CourseSearchResult[]>([]);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -106,12 +100,8 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
 
   const handleLogoutConfirm = async () => {
     setIsLoggingOut(true);
-<<<<<<< HEAD
     try {
       await supabase.auth.signOut();
-=======
-    try {;
->>>>>>> 322d7e96edf59d96ad265f1f0b9bcb46250f02d9
       setTimeout(() => router.replace("/login"), 300);
     } catch (e) {
       console.error(e);
@@ -162,7 +152,7 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
                   }}
                 />
                 {res.length > 0 && (
-                  <div className="absolute top-12 left-0 w-72 bg-white text-gray-800 rounded-md shadow-xl max-h-96 overflow-auto z-50 p-2">
+                  <div className="absolute top-12 left-0 w-72 bg-bg  rounded-md shadow-xl max-h-96 overflow-auto z-50 p-2">
                     <SearchResults
                       res={res}
                       onResultClick={clearSearch}
@@ -233,7 +223,6 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
                       </button>
                        */}
 
-<<<<<<< HEAD
                       <button
                         onClick={() => {
                           setProfileOpen(false);
@@ -256,19 +245,6 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
                         <span>Logout</span>
                       </button>
                     </div>
-=======
-                    <button
-                      onClick={() => {
-                        setProfileOpen(false);
-                        setConfirmLogoutOpen(true);
-                      }}
-                      className="w-full text-left px-4 py-2 text-red-400 cursor-pointer hover:bg-red-100 font-semibold flex items-center gap-2"
-                    >
-                      <LogOut size=
-      await supabase.auth.signOut();
-      setConfirmLogoutOpen(false){18} /> Logout
-                    </button>
->>>>>>> 322d7e96edf59d96ad265f1f0b9bcb46250f02d9
                   </div>
                 )}
               </div>
