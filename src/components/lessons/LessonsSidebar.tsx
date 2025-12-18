@@ -13,7 +13,7 @@ export default function LessonSidebar({
   lessons,
   selectedLessonId,
   onSelectLesson,
-  courseTitle
+  courseTitle: _courseTitle
 }: Props) {
   return (
     <div className="w-full md:w-3/3  border rounded-xl  shadow-md p-4 overflow-y-auto">

@@ -1,7 +1,7 @@
 'use client'
 
 import { resendVerificationEmail, logout } from '@/actions/auth'
-import { Mail, ArrowRight, LogOut } from 'lucide-react'
+import { ArrowRight, LogOut } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 

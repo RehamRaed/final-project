@@ -17,13 +17,15 @@ interface RoadmapDetailsClientProps {
     roadmapDescription: string | null;
     initialCourses: RoadmapCourseForClient[];
     progressPercent: number;
+    userXp: number;
 }
 
 export default function RoadmapDetailsClient({
     roadmapTitle,
     roadmapDescription,
     initialCourses,
-    progressPercent
+    progressPercent,
+    userXp
 }: RoadmapDetailsClientProps) {
     const [showDoneOnly, setShowDoneOnly] = useState(false);
 

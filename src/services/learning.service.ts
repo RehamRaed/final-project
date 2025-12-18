@@ -1,23 +1,20 @@
 // /services/learning.service.ts
-import { Database, Tables, TablesInsert, TablesUpdate } from '@/types/database.types'
+import { Database, Tables } from '@/types/database.types'
 import { PostgrestError, SupabaseClient } from "@supabase/supabase-js"
 
-// استخدام الأنواع من database.types.ts
 type Roadmap = Tables<"roadmaps">;
 type Course = Tables<"courses">;
 type Lesson = Tables<"lessons">;
 type Profile = Tables<"profiles">;
 type UserLessonProgress = Tables<"user_lesson_progress">;
-type RoadmapCourse = Tables<"roadmap_courses">;
-type UniversitySubject = Tables<"university_subjects">;
 
-// الأنواع المركبة كما هي
 type RoadmapWithCourseCount = Roadmap & {
     roadmap_courses: { count: number }[];
 }
 
 type CourseWithProgress = Course & {
-    user_progress: { status: string | null }[] | null
+    user_progress: { status: string | null }[] | null;
+    lessons: { id: string; user_progress: { status: string | null }[] | null }[] | null;
 }
 
 type RoadmapCourseDetails = {
@@ -39,10 +36,6 @@ type DetailedCourse = Course & {
 }
 
 type ServiceResponse<T> = { data: T | null; error: PostgrestError | null }
-
-// ----------------------------------------------------------------------
-// Fetch Functions (إحضار البيانات)
-// ----------------------------------------------------------------------
 
 export async function fetchAllRoadmapsWithCourseCount(
     client: SupabaseClient<Database>
@@ -76,7 +69,11 @@ export async function fetchRoadmapDetails(
                 order_index,
                 course:courses(
                     *,
-                    user_progress:user_course_progress(status)
+                    user_progress:user_course_progress(status),
+                    lessons(
+                        id,
+                        user_progress:user_lesson_progress(status)
+                    )
                 )
             )
             `
@@ -86,7 +83,6 @@ export async function fetchRoadmapDetails(
         .order('order_index', { foreignTable: 'roadmap_courses', ascending: true })
         .single();
 
-    // يجب تحويل النوع ليتناسب مع DetailedRoadmap
     return { data: data as DetailedRoadmap | null, error };
 }
 
@@ -100,7 +96,6 @@ export async function fetchUserCurrentRoadmap(
         .eq('id', userId)
         .single();
 
-    // يجب تحويل النوع ليتناسب مع Pick<Profile, 'current_roadmap_id'>
     return { data: data as Pick<Profile, 'current_roadmap_id'> | null, error };
 }
 
@@ -125,13 +120,8 @@ export async function fetchCourseLessons(
         .order('order_index', { foreignTable: 'lessons', ascending: true })
         .single();
 
-    // يجب تحويل النوع ليتناسب مع DetailedCourse
     return { data: data as DetailedCourse | null, error };
 }
-
-// ----------------------------------------------------------------------
-// Mutation Functions (تعديل البيانات)
-// ----------------------------------------------------------------------
 
 export async function upsertLessonProgress(
     client: SupabaseClient<Database>,
@@ -140,39 +130,45 @@ export async function upsertLessonProgress(
     isCompleted: boolean,
 ): Promise<ServiceResponse<UserLessonProgress>> {
 
-    const status = isCompleted ? 'completed' : 'in_progress';
-    const completed_at = isCompleted ? new Date().toISOString() : null;
+    // const completed_at = isCompleted ? new Date().toISOString() : null;
 
-    const payload: TablesInsert<'user_lesson_progress'> = {
-        user_id: userId,
-        lesson_id: lessonId,
-        status,
-        completed_at,
-        // لا نحتاج لـ id أو created_at في Insert إذا كانا يُولدان تلقائياً
-    };
+    // const payload: TablesInsert<'user_lesson_progress'> = {
+    //     user_id: userId,
+    //     lesson_id: lessonId,
+    //     status,
+    //     completed_at,
+    //     // لا نحتاج لـ id أو created_at في Insert إذا كانا يُولدان تلقائياً
+    // };
+
+    // const { data, error } = await client
+    //     .from('user_lesson_progress')
+    //     .upsert(payload, { onConflict: 'user_id,lesson_id' })
+    //     .select()
+    //     .single()
+
+
 
     const { data, error } = await client
         .from('user_lesson_progress')
-        .upsert(payload, { onConflict: 'user_id, lesson_id' })
+        .upsert({
+            user_id: userId,
+            lesson_id: lessonId,
+            status: isCompleted ? 'Completed' : 'InProgress', // نرسل القيمة مباشرة            completed_at: isCompleted ? new Date().toISOString() : null,
+        }, {
+            onConflict: 'user_id,lesson_id' // تأكد أن هذا القيد موجود في SQL
+        })
         .select()
-        .single()
-
-    // يجب تحويل النوع ليتناسب مع UserLessonProgress
+        .single();
     return { data: data as UserLessonProgress | null, error };
 }
 
-/**
- * دالة لتحديث قيمة XP للمستخدم باستخدام RPC function آمنة
- * تحل مشكلة Race Condition عن طريق Atomic Increment
- */
 export async function updateXp(
     client: SupabaseClient<Database>,
     userId: string,
     xpChange: number // قيمة الزيادة أو النقصان
 ): Promise<ServiceResponse<Profile>> {
 
-    // استخدام RPC function للزيادة الآمنة
-    const { data, error } = await client.rpc('increment_xp', {
+    const { error } = await client.rpc('increment_xp', {
         user_id_input: userId,
         xp_amount: xpChange,
     });
@@ -181,7 +177,6 @@ export async function updateXp(
         return { data: null, error };
     }
 
-    // جلب البروفايل المحدث
     const { data: profile, error: fetchError } = await client
         .from('profiles')
         .select('*')
@@ -191,7 +186,6 @@ export async function updateXp(
     return { data: profile as Profile | null, error: fetchError };
 }
 
-// دالة لجلب XP Reward لدورة معينة (مطلوبة لإكمال toggleLessonCompletion)
 export async function fetchCourseXpReward(
     client: SupabaseClient<Database>,
     courseId: string

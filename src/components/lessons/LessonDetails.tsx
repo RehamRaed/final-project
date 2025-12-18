@@ -22,10 +22,7 @@ function getYoutubeEmbedUrl(url?: string | null) {
   return null;
 }
 
-interface Props {
-  lesson: Lesson;
-  onMarkDone: (lessonId: string) => void;
-}
+
 interface LessonDetailsProps {
   lesson: Lesson;
   onMarkDone: (lessonId: string) => void;

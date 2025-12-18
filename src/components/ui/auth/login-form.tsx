@@ -21,22 +21,28 @@ function SubmitButton() {
 }
 
 export function LoginForm() {
-    const [error, setError] = useState<string>('')
     const searchParams = useSearchParams()
+    const urlError = searchParams?.get('error')
+    const [formError, setFormError] = useState<string>('')
 
+<<<<<<< HEAD
     useEffect(() => {
         const urlError = searchParams?.get('error')
         if (urlError) {
             setError(urlError)
         }
     }, [searchParams])
+=======
+    // Effective error has precedence for form submission errors
+    const error = formError || urlError || ''
+>>>>>>> origin/main
 
     async function handleSubmit(formData: FormData) {
-        setError('')
+        setFormError('')
         const result = await login(formData)
 
         if (result && !result.success) {
-            setError(result.error || 'Login failed')
+            setFormError(result.error || 'Login failed')
         }
     }
 
@@ -54,7 +60,11 @@ export function LoginForm() {
 
             <div>
                 <label htmlFor="email" className="block font-semibold mb-2 text-text-primary">
+<<<<<<< HEAD
                     Email 
+=======
+                    Email
+>>>>>>> origin/main
                 </label>
                 <input
                     id="email"

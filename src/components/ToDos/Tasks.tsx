@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition, useEffect } from 'react'
+import { useState, useTransition } from 'react'
 import {
     getAllTasksAction,
     toggleTaskAction,
@@ -41,7 +41,7 @@ const Tasks = ({ initialTasks }: TasksProps) => {
     const [showAddModal, setShowAddModal] = useState(false)
     const [selectedTask, setSelectedTask] = useState<Task | null>(null)
 
-    const [isPending, startTransition] = useTransition()
+    const [, startTransition] = useTransition()
 
     async function fetchTasks(): Promise<void> {
         setIsLoading(true)
@@ -120,7 +120,11 @@ const Tasks = ({ initialTasks }: TasksProps) => {
 
         setIsLoading(true)
 
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> origin/main
         for (const task of tasks) {
             await deleteTaskAction(task.id)
         }
@@ -204,14 +208,22 @@ const Tasks = ({ initialTasks }: TasksProps) => {
             <AddTaskModal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
+<<<<<<< HEAD
                 onTaskAdded={fetchTasks} 
+=======
+                onTaskAdded={fetchTasks}
+>>>>>>> origin/main
             />
 
             <TaskDetailsModal
                 task={selectedTask}
                 isOpen={!!selectedTask}
                 onClose={() => setSelectedTask(null)}
+<<<<<<< HEAD
                 onTaskUpdated={fetchTasks} 
+=======
+                onTaskUpdated={fetchTasks}
+>>>>>>> origin/main
             />
 
             <AnimatePresence mode="wait">

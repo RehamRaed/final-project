@@ -25,7 +25,7 @@ async function calculateCourseProgress(
   if (!progress) return 0;
 
   const completedCount = progress.filter(
-    (p: any) => p.status === "completed"
+    (p: { status: string | null }) => p.status === "completed"
   ).length;
   return Math.round((completedCount / lessons.length) * 100);
 }
@@ -90,7 +90,7 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
         c.course_id,
         user.id
       );
-      const courseData = c.courses as any;
+      const courseData = c.courses as unknown as Tables<'courses'> & { summary: string | null };
       courses.push({
         ...courseData,  
         course_id: c.course_id,
@@ -117,7 +117,7 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
         <div className="text-center py-20">
           <p className="text-gray-500 text-lg mb-2">No courses found</p>
           <p className="text-gray-400 text-sm">
-            This roadmap doesn't have any courses yet.
+            This roadmap doesn&apos;t have any courses yet.
           </p>
         </div>
       ) : (
