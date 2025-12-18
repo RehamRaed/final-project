@@ -16,11 +16,13 @@ export default function SearchResults({ res, onResultClick }: SearchResultsProps
           key={r.id}
           href={`/courses/${r.id}/lessons`}
           className="text-text-primary no-underline hover:underline"
-<<<<<<< HEAD
           onClick={onResultClick}
+<<<<<<< HEAD
 =======
           onClick={onResultClick} 
 >>>>>>> 3514bc8 (feat: add logout confirmation modal and logic, refactor Header from MUI to Tailwind, chore: adjust project structure)
+=======
+>>>>>>> ef01051 (fix(types): resolve TypeScript errors in AddTaskModal)
         >
           {r.title}
         </Link>

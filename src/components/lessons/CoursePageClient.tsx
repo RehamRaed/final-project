@@ -46,8 +46,12 @@ export default function CoursePageClient({
           className="inline-flex items-center gap-2 text-primary mb-4 font-medium transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
+<<<<<<< HEAD
           Back 
 >>>>>>> 3514bc8 (feat: add logout confirmation modal and logic, refactor Header from MUI to Tailwind, chore: adjust project structure)
+=======
+          Back
+>>>>>>> ef01051 (fix(types): resolve TypeScript errors in AddTaskModal)
         </Link>
 
         <div className="flex flex-col lg:flex-row gap-6 items-start">
