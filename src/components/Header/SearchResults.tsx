@@ -10,7 +10,7 @@ type SearchResultsProps = {
 
 export default function SearchResults({ res, onResultClick }: SearchResultsProps) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className=" flex flex-col gap-3">
       {res.map((r) => (
         <Link
           key={r.id}

@@ -1,8 +1,8 @@
-import { Lesson } from "@/types/lesson";
+import { LessonWithProgress } from "@/types/lesson";
 import TimeNeeded from "./TimeNeeded";
 
 interface LessonCardProps {
-  lesson: Lesson;
+  lesson: LessonWithProgress; 
   selected?: boolean;
   onClick: () => void;
 }
@@ -14,11 +14,12 @@ export default function LessonCard({
 }: LessonCardProps) {
   const statusColors: Record<string, string> = {
     Completed: "text-green-500",
-
-    "In Progress": "text-blue-500",
-
+    InProgress: "text-blue-500",
     "Not Started": "text-gray-400",
   };
+
+  const lessonStatus = lesson.status ?? "Not Started";
+  const duration = lesson.duration_minutes ?? lesson.duration ?? 0;
 
   return (
     <div
@@ -31,11 +32,13 @@ export default function LessonCard({
       <div className="flex justify-between items-center">
         <h4 className="font-semibold text-sm">{lesson.title}</h4>
 
-        <span className={`text-xs ${statusColors[lesson.status]}`}>
-          {lesson.status}
+        <span className={`text-xs ${statusColors[lessonStatus]}`}>
+          {lessonStatus}
         </span>
       </div>
-      <p className="text-xs text-gray-500 mt-1"><TimeNeeded minutes={lesson.duration} /> </p>
+      <p className="text-xs text-gray-500 mt-1">
+        <TimeNeeded minutes={duration} />
+      </p>
     </div>
   );
 }
