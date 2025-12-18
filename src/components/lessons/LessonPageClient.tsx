@@ -49,19 +49,6 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
 
             if (result.success) {
                 toast.success(result.message);
-
-                if (result.xpUpdate && result.xpUpdate.success && result.xpUpdate.xp > 0) {
-                    toast.success(`You earned ${result.xpUpdate.xp} XP! 🎉`, {
-                        duration: 4000,
-                        icon: '⭐',
-                        style: {
-                            borderRadius: '10px',
-                            background: '#333',
-                            color: '#fff',
-                        },
-                    });
-                }
-
                 router.refresh();
 
                 if (selectedLesson?.id === lessonId) {
@@ -114,7 +101,7 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
                     </div>
                     <div className="overflow-y-auto flex-1 p-2">
                         <LessonsSidebar
-                            lessons={lessons}
+                            lessons={lessons as any}
                             selectedLessonId={selectedLesson?.id || null}
                             onSelectLesson={(lesson) => setSelectedLesson(lesson as Lesson)}
                             courseTitle={courseData.title}
@@ -133,10 +120,10 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
                                         : (selectedLesson.user_progress?.[0]?.status === 'InProgress' || selectedLesson.user_progress?.[0]?.status === 'in_progress')
                                             ? 'InProgress'
                                             : 'Not Started',
-                                    duration_minutes: selectedLesson.duration || 0,
-                                    content: selectedLesson.content || '',
-                                    video_url: selectedLesson.video_url || ''
-                                } as Tables<'lessons'> & { status: 'Completed' | 'InProgress' | 'Not Started'; duration_minutes: number | null; content: string | null; video_url: string | null; }}
+                                    duration_minutes: selectedLesson.duration || 0, 
+                                    content: selectedLesson.content || '', 
+                                    video_url: selectedLesson.video_url || '' 
+                                } as any} 
                                 onMarkDone={handleMarkDone}
                                 isMarkingDone={isProcessing}
                             />

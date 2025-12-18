@@ -59,7 +59,7 @@ export default function RoadmapChangeConfirmationModal({
                 }
             }}
         >
-            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transform transition-all">
+            <div className="bg-bg rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transform transition-all">
                 <div className="relative bg-primary text-white p-6 rounded-t-2xl">
                     <button
                         onClick={onClose}
@@ -87,49 +87,49 @@ export default function RoadmapChangeConfirmationModal({
 
                 <div className="p-6 space-y-6">
                     <div className="bg-bg p-6 rounded-xl border-2 border-blue-200">
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">
+                        <h3 className="text-xl font-bold text-text-primary mb-2">
                             {roadmap.title}
                         </h3>
-                        <p className="text-gray-600 leading-relaxed">
+                        <p className="text-text-secondary leading-relaxed">
                             {roadmap.description || "No description available"}
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="bg-bg border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-blue-100 rounded-lg">
-                                    <BookOpen className="w-5 h-5 text-blue-600" />
+                                    <BookOpen className="w-5 h-5 text-primary" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500 font-medium">Total Courses</p>
-                                    <p className="text-2xl font-bold text-gray-800">{roadmap.course_count}</p>
+                                    <p className="text-xs text-text-secondary font-medium">Total Courses</p>
+                                    <p className="text-2xl font-bold text-text-primary">{roadmap.course_count}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="bg-bg border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-green-100 rounded-lg">
                                     <Clock className="w-5 h-5 text-green-600" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500 font-medium">Estimated Time</p>
-                                    <p className="text-2xl font-bold text-gray-800">
+                                    <p className="text-xs text-text-secondary font-medium">Estimated Time</p>
+                                    <p className="text-2xl font-bold text-text-primary">
                                         {roadmap.course_count * 4}h
                                     </p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="bg-bg border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-purple-100 rounded-lg">
                                     <Award className="w-5 h-5 text-purple-600" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500 font-medium">Total XP</p>
-                                    <p className="text-2xl font-bold text-gray-800">
+                                    <p className="text-xs text-text-secondary font-medium">Total XP</p>
+                                    <p className="text-2xl font-bold text-text-primary">
                                         {roadmap.course_count * 100}
                                     </p>
                                 </div>
@@ -137,7 +137,7 @@ export default function RoadmapChangeConfirmationModal({
                         </div>
                     </div>
 
-                    <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg">
+                    <div className="bg-bg border-l-4 border-amber-400 p-4 rounded-lg">
                         <div className="flex gap-3">
                             <div className="shrink-0">
                                 <svg className="w-5 h-5 text-amber-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -145,10 +145,10 @@ export default function RoadmapChangeConfirmationModal({
                                 </svg>
                             </div>
                             <div>
-                                <h4 className="text-sm font-semibold text-amber-800 mb-1">
+                                <h4 className="text-sm font-semibold text-secondary mb-1">
                                     Important Notice
                                 </h4>
-                                <p className="text-sm text-amber-700">
+                                <p className="text-sm text-secondary">
                                     Changing your roadmap will update your learning path. Your progress in the current roadmap will be saved.
                                 </p>
                             </div>
@@ -156,12 +156,11 @@ export default function RoadmapChangeConfirmationModal({
                     </div>
                 </div>
 
-                {/* Footer Actions */}
-                <div className="bg-gray-50 px-6 py-4 rounded-b-2xl flex flex-col-reverse sm:flex-row gap-3 sm:justify-end border-t">
+                <div className="bg-bg px-6 py-4 rounded-b-2xl flex flex-col-reverse sm:flex-row gap-3 sm:justify-end border-t">
                     <button
                         onClick={onClose}
                         disabled={isPending}
-                        className="px-6 py-3 rounded-xl font-semibold text-gray-700 bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                        className="px-6 py-3 rounded-xl font-semibold text-text-primary bg-bg border-2 border-gray-300  hover:border-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                         aria-label="Cancel and close modal"
                     >
                         Cancel

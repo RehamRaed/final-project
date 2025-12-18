@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardPage from "@/components/Dashboard/DashboardPage";
+import { Tables } from "@/types/database.types";
 
 export default async function StudentPage() {
     const supabase = await createClient();
@@ -19,13 +20,7 @@ export default async function StudentPage() {
 
     const currentRoadmap = profile?.roadmaps || null;
 
-    interface DashboardCourse {
-        course_id: string;
-        title: string;
-        summary: string;
-        icon?: string;
-    }
-    let courses: DashboardCourse[] = [];
+    let courses: any[] = [];
     if (currentRoadmap?.id) {
         const { data: rawCourses } = await supabase
             .from("roadmap_courses")
@@ -42,15 +37,12 @@ export default async function StudentPage() {
             .order("order_index");
 
         if (rawCourses) {
-            courses = rawCourses.map(item => {
-                const course = item.courses as unknown as { title: string; summary: string | null; icon: string | null };
-                return {
-                    course_id: item.course_id,
-                    title: course.title,
-                    summary: course.summary || '',
-                    icon: course.icon || undefined,
-                };
-            });
+            courses = (rawCourses as any[]).map(item => ({
+                course_id: item.course_id,
+                title: item.courses.title,
+                summary: item.courses.summary || '',
+                icon: item.courses.icon || undefined,
+            }));
         }
     }
 

@@ -20,6 +20,7 @@ interface CoursesSectionProps {
 export default function CoursesSection({ courses, currentRoadmap }: CoursesSectionProps) {
     const router = useRouter();
     const pathname = usePathname();
+    const searchParams = useSearchParams();
     const hasMoreCourses = courses.length > 4;
 
     return (
