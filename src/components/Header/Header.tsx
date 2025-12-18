@@ -20,7 +20,7 @@ import {
   Bell,
   CheckSquare,
   LogOut,
-  Map as MapIcon
+  Map as MapIcon // ← (Browse Roadmaps) أيقونة عنصر Browse Roadmaps
 } from "lucide-react";
 import LogoutConfirmModal from "./LogoutConfirmModal";
 
@@ -34,12 +34,16 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
   const router = useRouter();
   const { notifications } = useNotifications();
   const searchRef = useRef<HTMLDivElement>(null);
+<<<<<<< HEAD
   const profileRef = useRef<HTMLDivElement>(null);
 
   // Get current roadmap from Redux
   const currentRoadmap = useSelector((state: RootState) => state.roadmap.current);
   const activeRoadmapId = currentRoadmap?.id || currentRoadmapId;
 
+=======
+
+>>>>>>> 322d7e96edf59d96ad265f1f0b9bcb46250f02d9
   const [searchQuery, setSearchQuery] = useState("");
   const [res, setRes] = useState<CourseSearchResult[]>([]);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -48,7 +52,7 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
   const [userInfo, setUserInfo] = useState<{
     avatarUrl: string | null;
     initials: string | null;
-    currentRoadmapId?: string | null
+    currentRoadmapId?: string | null;
   }>({
     avatarUrl: null,
     initials: null,
@@ -59,23 +63,29 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (user) {
         const { data } = await supabase
-          .from('profiles')
-          .select('avatar_url, full_name, current_roadmap_id')
-          .eq('id', user.id)
+          .from("profiles")
+          .select("avatar_url, full_name, current_roadmap_id")
+          .eq("id", user.id)
           .single();
 
         const avatarUrl = data?.avatar_url || null;
         let initials = null;
         if (data?.full_name) {
-          const names = data.full_name.trim().split(' ');
+          const names = data.full_name.trim().split(" ");
           if (names.length === 1) {
             initials = names[0].charAt(0).toUpperCase();
           } else if (names.length > 1) {
-            initials = (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+            initials =
+              (names[0].charAt(0) +
+                names[names.length - 1].charAt(0)).toUpperCase();
           }
         }
 
-        setUserInfo({ avatarUrl, initials, currentRoadmapId: data?.current_roadmap_id });
+        setUserInfo({
+          avatarUrl,
+          initials,
+          currentRoadmapId: data?.current_roadmap_id
+        });
       }
     });
   }, []);
@@ -90,20 +100,24 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleLogoutConfirm = async () => {
     setIsLoggingOut(true);
+<<<<<<< HEAD
     try {
       await supabase.auth.signOut();
+=======
+    try {;
+>>>>>>> 322d7e96edf59d96ad265f1f0b9bcb46250f02d9
       setTimeout(() => router.replace("/login"), 300);
     } catch (e) {
       console.error(e);
       setIsLoggingOut(false);
     }
   };
-
 
   const clearSearch = () => {
     setRes([]);
@@ -129,18 +143,30 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
                 <input
                   type="text"
                   className="bg-white/20 placeholder-white text-white rounded-md pl-10 pr-4 py-2 w-72 focus:outline-none focus:bg-white/30 transition-colors"
-                  placeholder={activeRoadmapId ? "Search in your roadmap..." : "Search courses..."}
+                  placeholder={
+                    activeRoadmapId
+                      ? "Search in your roadmap..."
+                      : "Search courses..."
+                  }
                   value={searchQuery}
                   onChange={async (e) => {
                     const q = e.target.value;
                     setSearchQuery(q);
                     if (!q) return setRes([]);
-                    setRes(await fetchCourses({ query: q, roadmapId: activeRoadmapId || undefined }));
+                    setRes(
+                      await fetchCourses({
+                        query: q,
+                        roadmapId: activeRoadmapId || undefined
+                      })
+                    );
                   }}
                 />
                 {res.length > 0 && (
                   <div className="absolute top-12 left-0 w-72 bg-white text-gray-800 rounded-md shadow-xl max-h-96 overflow-auto z-50 p-2">
-                    <SearchResults res={res} onResultClick={clearSearch} />
+                    <SearchResults
+                      res={res}
+                      onResultClick={clearSearch}
+                    />
                   </div>
                 )}
               </div>
@@ -181,8 +207,8 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
                 </button>
 
                 {profileOpen && (
-                  <div className="absolute right-0 top-12 w-56 bg-white text-gray-700 rounded-lg shadow-xl z-50 overflow-hidden border border-gray-100 ring-1 ring-black ring-opacity-5 animate-in fade-in zoom-in duration-200">
-                    <div className="py-1">
+                  <div className="absolute right-0 top-12 w-40 bg-bg text-gray-500 rounded-lg shadow-xl z-50 overflow-hidden border border-gray-100 ring-1 ring-black ring-opacity-5 animate-in fade-in zoom-in duration-200">
+                    <div >
                       <button
                         onClick={() => {
                           setProfileOpen(false);
@@ -194,16 +220,20 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
                         <span>My Profile</span>
                       </button>
 
+                      {/* 
                       <button
                         onClick={() => {
                           setProfileOpen(false);
-                          router.push("/roadmaps");
+                          router.push("/roadmaps"); // ← Browse Roadmaps navigation
                         }}
                         className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors"
                       >
                         <MapIcon size={18} className="text-gray-500" />
                         <span>Browse Roadmaps</span>
                       </button>
+                       */}
+
+<<<<<<< HEAD
                       <button
                         onClick={() => {
                           setProfileOpen(false);
@@ -226,6 +256,19 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
                         <span>Logout</span>
                       </button>
                     </div>
+=======
+                    <button
+                      onClick={() => {
+                        setProfileOpen(false);
+                        setConfirmLogoutOpen(true);
+                      }}
+                      className="w-full text-left px-4 py-2 text-red-400 cursor-pointer hover:bg-red-100 font-semibold flex items-center gap-2"
+                    >
+                      <LogOut size=
+      await supabase.auth.signOut();
+      setConfirmLogoutOpen(false){18} /> Logout
+                    </button>
+>>>>>>> 322d7e96edf59d96ad265f1f0b9bcb46250f02d9
                   </div>
                 )}
               </div>
@@ -237,7 +280,7 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
       <LogoutConfirmModal
         open={confirmLogoutOpen}
         loading={isLoggingOut}
-        onClose={() => setConfirmLogoutOpen(false)}
+        onClose={() => setConfirmLogoutOpen(false)} 
         onConfirm={handleLogoutConfirm}
       />
     </>

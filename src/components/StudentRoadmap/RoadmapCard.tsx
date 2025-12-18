@@ -25,7 +25,7 @@ export default function RoadmapCard({
   const cardClass = `
     p-6 border rounded-xl shadow-md transition-all duration-300 ease-in-out 
     w-full flex flex-col justify-between items-center text-center
-    bg-white hover:shadow-lg hover:border-gray-300
+    bg-card-bg hover:shadow-lg hover:border-gray-300 cursor-pointer
     ${isSelected ? "border-2 border-primary scale-[1.02]" : "border-gray-200 scale-100"}
   `;
 
@@ -39,9 +39,8 @@ export default function RoadmapCard({
           ? `Current roadmap: ${roadmap.title}. Click to continue.`
           : `Roadmap: ${roadmap.title}. Click to select.`
       }
-      style={{ minHeight: "200px", position: "relative" }} // height ثابت للبطاقة
+      style={{ minHeight: "200px", position: "relative" }}
     >
-      {/* مكان الباج */}
       <div style={{ minHeight: "24px" }}>
         {isCurrentActive ? (
           <span className="px-3 py-1 text-xs font-semibold text-white bg-green-600 rounded-full">
@@ -54,15 +53,15 @@ export default function RoadmapCard({
         )}
       </div>
 
-      <h3 className="text-lg font-bold text-gray-800 mt-2" tabIndex={0}>
+      <h3 className="text-lg font-bold text-text-primary mt-2" tabIndex={0}>
         {roadmap.title}
       </h3>
 
-      <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+      <p className="text-sm text-text-secondary mt-2 line-clamp-2">
         {roadmap.description}
       </p>
 
-      <div className="mt-4 text-xs font-medium text-gray-500 flex items-center gap-1">
+      <div className="mt-4 text-xs font-medium text-text-secondary flex items-center gap-1">
         <Zap className="w-3 h-3" aria-hidden="true" />
         <span aria-label={`Number of courses: ${roadmap.course_count}`}>
           {roadmap.course_count} courses

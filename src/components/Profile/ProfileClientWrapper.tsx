@@ -38,36 +38,24 @@ export default function ProfileClientWrapper({ initialProfile, currentRoadmapTit
     reader.readAsDataURL(file);
   };
 
-  const hasChanges =
-    JSON.stringify(profileData) !== JSON.stringify(originalProfile) ||
-    imagePreview !== (originalProfile.avatar_url || "/avatar.jpg");
-
   const handleSave = async () => {
-    if (!hasChanges) return;
     setStatus("saving");
-    try {
-      const dataToUpdate = {
-        full_name: profileData.full_name,
-        department: profileData.department,
-        university_id: profileData.university_id,
-        bio: profileData.bio,
-        avatar_url: imagePreview,
-      };
+    const dataToUpdate = {
+      full_name: profileData.full_name,
+      department: profileData.department,
+      university_id: profileData.university_id,
+      bio: profileData.bio,
+      avatar_url: imagePreview,
+    };
 
-      const result = await updateProfile(dataToUpdate);
+    const result = await updateProfile(dataToUpdate);
 
-      if (result.success) {
-        setIsEditing(false);
-        // Optimistically update originalProfile if we were doing a real app with context refresher,
-        // but for now relying on parent re-render or just closing edit mode is fine.
-        console.log(result.message);
-      } else {
-        console.error(result.message);
-      }
-    } catch (error) {
-      console.error("An unexpected error occurred:", error);
-    } finally {
-      setStatus("idle");
+    setStatus("idle");
+    if (result.success) {
+      setIsEditing(false);
+      console.log(result.message);
+    } else {
+      console.error(result.message);
     }
   };
 
@@ -78,32 +66,31 @@ export default function ProfileClientWrapper({ initialProfile, currentRoadmapTit
   };
 
   return (
-
+    
     <>
-      <Link href="/dashboard" className="flex items-center gap-1 font-semibold text-primary mb-5">
+    <Link href="/dashboard" className="flex items-center gap-1 font-semibold text-primary mb-5">
         <ArrowLeft size={20} /> Back
       </Link>
-      <div className="max-w-5xl mx-auto bg-bg p-8 rounded-xl shadow-md border border-border space-y-6">
+    <div className="max-w-5xl mx-auto bg-bg p-8 rounded-xl shadow-md border border-border space-y-6">
 
-        <h2 className="text-3xl font-bold border-b pb-4 mb-6 text-text-primary border-border">
-          My Profile
-        </h2>
+      <h2 className="text-3xl font-bold border-b pb-4 mb-6 text-text-primary border-border">
+        My Profile
+      </h2>
 
-        <ProfileAvatar imagePreview={imagePreview} onChange={handleImageChange} isEditing={isEditing} />
+      <ProfileAvatar imagePreview={imagePreview} onChange={handleImageChange} isEditing={isEditing} />
 
-        <ProfileForm profile={profileData} isEditing={isEditing} handleChange={handleChange} />
+      <ProfileForm profile={profileData} isEditing={isEditing} handleChange={handleChange} />
 
-        <ProfileActions
-          isEditing={isEditing}
-          handleSave={handleSave}
-          handleCancel={handleCancel}
-          setIsEditing={setIsEditing}
-          isSaving={status === "saving"}
-          disabled={!hasChanges}
-        />
+      <ProfileActions
+        isEditing={isEditing}
+        handleSave={handleSave}
+        handleCancel={handleCancel}
+        setIsEditing={setIsEditing}
+        isSaving={status === "saving"}
+      />
 
-        <ProfileRoadmap currentRoadmapTitle={currentRoadmapTitle} />
-      </div>
+      <ProfileRoadmap currentRoadmapTitle={currentRoadmapTitle} />
+    </div>
     </>
   );
 }

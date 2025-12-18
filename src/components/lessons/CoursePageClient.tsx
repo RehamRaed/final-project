@@ -6,37 +6,44 @@ import { Tables } from "@/types/database.types";
 import { ArrowLeft, BookOpen, Clock, Award } from "lucide-react";
 import Link from "next/link";
 
-interface LessonWithProgress extends Tables<'lessons'> {
-  user_progress: { status: string | null; completed_at: string | null }[] | null;
+interface LessonWithProgress extends Tables<"lessons"> {
+  user_progress:
+    | { status: string | null; completed_at: string | null }[]
+    | null;
 }
 
-interface CourseDataWithLessons extends Tables<'courses'> {
+interface CourseDataWithLessons extends Tables<"courses"> {
   lessons: LessonWithProgress[] | null;
 }
 
 interface CoursePageClientProps {
   courseData: CourseDataWithLessons;
   lessonProgressPercent: number;
-  currentRoadmapId?: string | null;
+  currentRoadmapId?: string;
 }
 
 export default function CoursePageClient({
   courseData,
   lessonProgressPercent,
-  currentRoadmapId
+  currentRoadmapId,
 }: CoursePageClientProps) {
   const router = useRouter();
   const lessons = courseData.lessons || [];
 
-  const backLink = currentRoadmapId ? `/roadmaps/${currentRoadmapId}` : '/dashboard';
-
   const completedLessons = useMemo(
-    () => lessons.filter(l => l.user_progress?.[0]?.status === "completed").length,
+    () =>
+      lessons.filter(
+        (l) => l.user_progress?.[0]?.status === "completed"
+      ).length,
     [lessons]
   );
 
   const totalDuration = useMemo(
-    () => lessons.reduce((sum, lesson) => sum + (lesson.duration || 0), 0),
+    () =>
+      lessons.reduce(
+        (sum, lesson) => sum + (lesson.duration || 0),
+        0
+      ),
     [lessons]
   );
 
@@ -44,16 +51,19 @@ export default function CoursePageClient({
     router.push(`/courses/${courseData.id}/lessons`);
   };
 
-  // ...
   return (
     <div className="min-h-screen max-w-[1300px] mx-auto px-10 pt-30 pb-20">
       <header className="mb-8 border-b border-border pb-6">
         <Link
-          href={backLink}
+          href="/dashboard"
           className="inline-flex items-center gap-2 text-primary mb-4 font-medium transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
+<<<<<<< HEAD
           Back
+=======
+          Back 
+>>>>>>> 322d7e96edf59d96ad265f1f0b9bcb46250f02d9
         </Link>
 
         <div className="flex flex-col lg:flex-row gap-6 items-start">
@@ -76,7 +86,9 @@ export default function CoursePageClient({
               {courseData.instructor && (
                 <div className="flex items-center gap-2">
                   <span className="font-medium">Instructor:</span>
-                  <span className="font-semibold">{courseData.instructor}</span>
+                  <span className="font-semibold">
+                    {courseData.instructor}
+                  </span>
                 </div>
               )}
 
@@ -92,14 +104,19 @@ export default function CoursePageClient({
               {totalDuration > 0 && (
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
-                  <span>{Math.floor(totalDuration / 60)}h {totalDuration % 60}m</span>
+                  <span>
+                    {Math.floor(totalDuration / 60)}h{" "}
+                    {totalDuration % 60}m
+                  </span>
                 </div>
               )}
 
               {courseData.xp_reward && courseData.xp_reward > 0 && (
                 <div className="flex items-center gap-2 text-yellow-600">
                   <Award className="w-4 h-4" />
-                  <span className="font-semibold">{courseData.xp_reward} XP</span>
+                  <span className="font-semibold">
+                    {courseData.xp_reward} XP
+                  </span>
                 </div>
               )}
             </div>
@@ -108,8 +125,12 @@ export default function CoursePageClient({
 
         <div className="mt-6">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-text-secondary">Your Progress</span>
-            <span className="text-sm font-bold text-primary">{lessonProgressPercent}%</span>
+            <span className="text-sm font-medium text-text-secondary">
+              Your Progress
+            </span>
+            <span className="text-sm font-bold text-primary">
+              {lessonProgressPercent}%
+            </span>
           </div>
 
           <div className="w-full bg-border rounded-full h-4 overflow-hidden">
@@ -133,9 +154,12 @@ export default function CoursePageClient({
         <div className="flex justify-center mt-10">
           <button
             onClick={handleStartLearning}
-            className="px-8 py-3 bg-primary cursor-pointer  text-white text-lg font-bold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
+            className="px-8 py-3 bg-primary cursor-pointer text-white text-lg font-bold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
           >
-            {lessonProgressPercent > 0 ? "Continue Learning" : "Start Learning"} →
+            {lessonProgressPercent > 0
+              ? "Continue Learning"
+              : "Start Learning"}{" "}
+            →
           </button>
         </div>
       )}
