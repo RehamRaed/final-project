@@ -16,7 +16,7 @@ export default function WelcomeClient({ user, displayName }: WelcomeClientProps)
             </h1>
 
             <p className="text-xl mb-10 max-w-lg text-primary-primary">
-                Explore roadmaps and build your plan — let's get started!
+                Explore roadmaps and build your plan — let&apos;s get started!
             </p>
 
             <Link

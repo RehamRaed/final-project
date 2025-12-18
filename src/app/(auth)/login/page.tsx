@@ -14,7 +14,7 @@ export default function LoginPage() {
     <div className="min-h-screen bgbg flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-         
+
           <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-primary">
             Log In
           </h1>
@@ -37,7 +37,7 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-6 pt-6 border-t border-gray-200 text-center text-sm">
-            <span className="text-text-secondary">Don't have an account? </span>
+            <span className="text-text-secondary">Don&apos;t have an account? </span>
             <Link
               href="/register"
               className="text-text-primary font-semibold"

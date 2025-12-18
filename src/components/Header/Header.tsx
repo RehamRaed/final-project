@@ -3,11 +3,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { fetchCourses } from "@/lib/search";
-import SearchResults, { CourseSearchResult } from "./SearchResults";
+import { fetchCourses, CourseSearchResult } from "@/lib/search";
+import SearchResults from "./SearchResults";
 import { useNotifications } from "@/context/NotificationsContext";
 import { supabase } from "@/lib/supabase/client";
 import Loading from "@/app/loading";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 import {
   Menu as MenuIcon,
@@ -16,6 +20,7 @@ import {
   Bell,
   CheckSquare,
   LogOut,
+  Map as MapIcon
 } from "lucide-react";
 import LogoutConfirmModal from "./LogoutConfirmModal";
 
@@ -29,20 +34,59 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
   const router = useRouter();
   const { notifications } = useNotifications();
   const searchRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  // Get current roadmap from Redux
+  const currentRoadmap = useSelector((state: RootState) => state.roadmap.current);
+  const activeRoadmapId = currentRoadmap?.id || currentRoadmapId;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [res, setRes] = useState<CourseSearchResult[]>([]);
-
   const [profileOpen, setProfileOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [userInfo, setUserInfo] = useState<{
+    avatarUrl: string | null;
+    initials: string | null;
+    currentRoadmapId?: string | null
+  }>({
+    avatarUrl: null,
+    initials: null,
+    currentRoadmapId: null
+  });
+
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('avatar_url, full_name, current_roadmap_id')
+          .eq('id', user.id)
+          .single();
+
+        const avatarUrl = data?.avatar_url || null;
+        let initials = null;
+        if (data?.full_name) {
+          const names = data.full_name.trim().split(' ');
+          if (names.length === 1) {
+            initials = names[0].charAt(0).toUpperCase();
+          } else if (names.length > 1) {
+            initials = (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+          }
+        }
+
+        setUserInfo({ avatarUrl, initials, currentRoadmapId: data?.current_roadmap_id });
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setRes([]);
+      }
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -51,13 +95,15 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
 
   const handleLogoutConfirm = async () => {
     setIsLoggingOut(true);
-    try {;
+    try {
+      await supabase.auth.signOut();
       setTimeout(() => router.replace("/login"), 300);
     } catch (e) {
       console.error(e);
       setIsLoggingOut(false);
     }
   };
+
 
   const clearSearch = () => {
     setRes([]);
@@ -72,14 +118,7 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center space-x-4">
-              <button
-                className="md:hidden p-2 rounded hover:bg-white/20"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                <MenuIcon size={24} />
-              </button>
-
-              <Link href="/dashboard" className="text-2xl">
+              <Link href="/dashboard" className="text-2xl font-bold">
                 StudyMATE
               </Link>
 
@@ -89,18 +128,18 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
                 </span>
                 <input
                   type="text"
-                  className="bg-white/20 placeholder-white text-white rounded-md pl-10 pr-4 py-2 w-72 focus:outline-none focus:bg-white/30"
-                  placeholder="Search courses…"
+                  className="bg-white/20 placeholder-white text-white rounded-md pl-10 pr-4 py-2 w-72 focus:outline-none focus:bg-white/30 transition-colors"
+                  placeholder={activeRoadmapId ? "Search in your roadmap..." : "Search courses..."}
                   value={searchQuery}
                   onChange={async (e) => {
                     const q = e.target.value;
                     setSearchQuery(q);
                     if (!q) return setRes([]);
-                    setRes(await fetchCourses({ query: q }));
+                    setRes(await fetchCourses({ query: q, roadmapId: activeRoadmapId || undefined }));
                   }}
                 />
                 {res.length > 0 && (
-                  <div className="absolute top-10 left-0 w-72 bg-bg text-text-secondary rounded-md shadow-lg max-h-96 overflow-auto z-50 p-2">
+                  <div className="absolute top-12 left-0 w-72 bg-white text-gray-800 rounded-md shadow-xl max-h-96 overflow-auto z-50 p-2">
                     <SearchResults res={res} onResultClick={clearSearch} />
                   </div>
                 )}
@@ -108,56 +147,85 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
             </div>
 
             <div className="flex items-center space-x-4">
-              <button className="relative p-2 rounded-full cursor-pointer hover:bg-white/20">
+              <button className="relative p-2 rounded-full cursor-pointer hover:bg-white/20 transition-colors">
                 <Bell size={22} />
                 {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-200 text-xs rounded-full px-1">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
                     {notifications.length}
                   </span>
                 )}
               </button>
 
-              <div className="relative">
+              <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="p-2 rounded-full cursor-pointer hover:bg-white/20 flex items-center"
+                  className="p-1 rounded-full cursor-pointer hover:bg-white/20 flex items-center justify-center transition-colors focus:outline-none"
                 >
-                  <User size={25} />
+                  {userInfo.avatarUrl ? (
+                    <Image
+                      src={userInfo.avatarUrl}
+                      alt="Profile"
+                      width={36}
+                      height={36}
+                      className="w-9 h-9 rounded-full object-cover border-2 border-white/50"
+                    />
+                  ) : userInfo.initials ? (
+                    <div className="w-9 h-9 rounded-full bg-white text-primary flex items-center justify-center font-bold text-sm border-2 border-white/50">
+                      {userInfo.initials}
+                    </div>
+                  ) : (
+                    <div className="bg-white/20 p-1.5 rounded-full">
+                      <User size={20} />
+                    </div>
+                  )}
                 </button>
 
                 {profileOpen && (
-                  <div className="absolute right-0 w-38 bg-bg text-text-secondary rounded-md shadow-lg z-50 overflow-hidden">
-                    <button
-                      onClick={() => {
-                        setProfileOpen(false);
-                        router.push("/profile");
-                      }}
-                      className="w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center gap-2 "
-                    >
-                      <User size={18} /> My Profile
-                    </button>
+                  <div className="absolute right-0 top-12 w-56 bg-white text-gray-700 rounded-lg shadow-xl z-50 overflow-hidden border border-gray-100 ring-1 ring-black ring-opacity-5 animate-in fade-in zoom-in duration-200">
+                    <div className="py-1">
+                      <button
+                        onClick={() => {
+                          setProfileOpen(false);
+                          router.push("/profile");
+                        }}
+                        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                      >
+                        <User size={18} className="text-gray-500" />
+                        <span>My Profile</span>
+                      </button>
 
-                    <button
-                      onClick={() => {
-                        setProfileOpen(false);
-                        router.push("/tasklist");
-                      }}
-                      className="w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center gap-2"
-                    >
-                      <CheckSquare size={18} /> My Tasks
-                    </button>
+                      <button
+                        onClick={() => {
+                          setProfileOpen(false);
+                          router.push("/roadmaps");
+                        }}
+                        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                      >
+                        <MapIcon size={18} className="text-gray-500" />
+                        <span>Browse Roadmaps</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setProfileOpen(false);
+                          router.push("/tasklist");
+                        }}
+                        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100"
+                      >
+                        <CheckSquare size={18} className="text-gray-500" />
+                        <span>My Tasks</span>
+                      </button>
 
-                    <button
-                      onClick={() => {
-                        setProfileOpen(false);
-                        setConfirmLogoutOpen(true);
-                      }}
-                      className="w-full text-left px-4 py-2 text-red-400 cursor-pointer hover:bg-red-100 font-semibold flex items-center gap-2"
-                    >
-                      <LogOut size=
-      await supabase.auth.signOut();
-      setConfirmLogoutOpen(false){18} /> Logout
-                    </button>
+                      <button
+                        onClick={() => {
+                          setProfileOpen(false);
+                          setConfirmLogoutOpen(true);
+                        }}
+                        className="w-full text-left px-4 py-3 text-red-600 cursor-pointer hover:bg-red-50 font-medium flex items-center gap-3 transition-colors"
+                      >
+                        <LogOut size={18} />
+                        <span>Logout</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

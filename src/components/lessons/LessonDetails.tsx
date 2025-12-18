@@ -9,7 +9,7 @@ interface Lesson extends Tables<'lessons'> {
   content: string | null;
   video_url: string | null;
 }
-function getYoutubeEmbedUrl(url?: string | null) { 
+function getYoutubeEmbedUrl(url?: string | null) {
   if (!url) return null;
   if (url.includes('youtube.com/embed')) return url;
 
@@ -22,10 +22,7 @@ function getYoutubeEmbedUrl(url?: string | null) {
   return null;
 }
 
-interface Props {
-  lesson: Lesson;
-  onMarkDone: (lessonId: string) => void;
-}
+
 interface LessonDetailsProps {
   lesson: Lesson;
   onMarkDone: (lessonId: string) => void;
@@ -37,14 +34,14 @@ export default function LessonDetails({ lesson, onMarkDone, isMarkingDone }: Les
     lesson.status === "Completed"
       ? "border-green-500"
       : lesson.status === "InProgress"
-      ? "border-blue-500"
-      : "border-gray-300";
+        ? "border-blue-500"
+        : "border-gray-300";
 
   const embedUrl = getYoutubeEmbedUrl(lesson.video_url);
 
   return (
     <div className={`border-2 ${borderColor} p-5 md:p-12 rounded-xl flex flex-col gap-5 max-h-[calc(105vh-160px)] overflow-y-auto`}>
-      
+
       <div className="flex flex-col md:flex-row items-start md:items-center pb-5 justify-between gap-3">
         <h1 className="text-xl md:text-2xl font-bold text-primary">{lesson.title}</h1>
 
@@ -53,8 +50,8 @@ export default function LessonDetails({ lesson, onMarkDone, isMarkingDone }: Les
             ${lesson.status === 'Completed'
               ? 'bg-gray-500 cursor-not-allowed'
               : isMarkingDone
-              ? 'bg-blue-400 cursor-wait'
-              : 'bg-green-500 hover:opacity-90'
+                ? 'bg-blue-400 cursor-wait'
+                : 'bg-green-500 hover:opacity-90'
             }`}
           disabled={lesson.status === 'Completed' || isMarkingDone}
           onClick={() => onMarkDone(lesson.id)}
@@ -66,8 +63,8 @@ export default function LessonDetails({ lesson, onMarkDone, isMarkingDone }: Les
             {isMarkingDone
               ? 'Saving...'
               : lesson.status === 'Completed'
-              ? 'Completed'
-              : 'Mark Done'}
+                ? 'Completed'
+                : 'Mark Done'}
           </span>
         </button>
       </div>

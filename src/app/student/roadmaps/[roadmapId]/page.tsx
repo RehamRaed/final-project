@@ -5,13 +5,12 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import CourseCard from "@/components/StudentRoadmap/CourseCard";
 
-interface Course {
+import { Tables } from "@/types/database.types";
+
+interface Course extends Tables<'courses'> {
   course_id: string;
-  title: string;
-  description: string;
-  summary: string;
-  instructor: string;
   donePercentage: number;
+  summary: string | null;
 }
 
 export default function RoadmapCoursesPage() {
@@ -50,18 +49,19 @@ export default function RoadmapCoursesPage() {
 
         if (error) throw error;
 
-        const formatted: Course[] = (data as any[]).map((item) => ({
-          course_id: item.course_id,
-          title: item.courses.title,
-          description: item.courses.description,
-          summary: item.courses.summary,
-          instructor: item.courses.instructor,
-          donePercentage: item.courses.donePercentage ?? 0,
-        }));
+        const formatted: Course[] = (data || []).map((item) => {
+          const course = item.courses as unknown as Tables<'courses'>;
+          return {
+            ...course,
+            course_id: item.course_id,
+            donePercentage: (course as any).donePercentage ?? 0,
+          };
+        });
 
         setCourses(formatted);
-      } catch (err: any) {
-        console.error("Error fetching courses:", err.message);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        console.error("Error fetching courses:", message);
         setCourses([]);
       }
       setLoading(false);

@@ -6,13 +6,12 @@ import { RootState } from "@/store";
 import { supabase } from '@/lib/supabase/client';
 import CourseCard from "@/components/StudentRoadmap/CourseCard";
 
-interface Course {
-  course_id: string;
-  title: string;
-  description: string;
-  summary: string;
-  instructor: string;
+import { Tables } from "@/types/database.types";
+
+interface Course extends Tables<'courses'> {
+  course_id: string; // The ID from roadmap_courses
   donePercentage: number;
+  summary: string | null;
 }
 
 export default function RoadmapCoursesPage() {
@@ -25,7 +24,7 @@ export default function RoadmapCoursesPage() {
   const [showDoneOnly, setShowDoneOnly] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   //Get logged-in user
-    // Load logged-in user
+  // Load logged-in user
   useEffect(() => {
     const loadUser = async () => {
       const { data, error } = await supabase.auth.getUser();
@@ -48,8 +47,8 @@ export default function RoadmapCoursesPage() {
         const { supabase } = await import("@/lib/supabase/client");
 
         const { data: coursesData, error: coursesError } = await supabase
-        .from("roadmap_courses")
-        .select(`
+          .from("roadmap_courses")
+          .select(`
           course_id,
           order_index,
           courses!inner (
@@ -59,8 +58,8 @@ export default function RoadmapCoursesPage() {
             instructor
           )
         `)
-        .eq("roadmap_id", currentRoadmap.id)
-        .order("order_index", { ascending: true });
+          .eq("roadmap_id", currentRoadmap.id)
+          .order("order_index", { ascending: true });
 
         if (coursesError) throw coursesError;
 
@@ -75,22 +74,21 @@ export default function RoadmapCoursesPage() {
         if (progressError) throw progressError;
 
         //Merge data
-        const formatted: Course[] = coursesData.map((c: any) => {
+        const formatted: Course[] = coursesData.map((c) => {
+          const course = c.courses as unknown as Tables<'courses'>;
           const progress = progressData.find(p => p.course_id === c.course_id);
           return {
+            ...course,
             course_id: c.course_id,
-            title: c.courses.title,
-            description: c.courses.description,
-            summary: c.courses.summary,
-            instructor: c.courses.instructor,
             donePercentage: progress?.done_percentage ?? 0,
           };
         });
 
         setCourses(formatted);
 
-      } catch (err: any) {
-        console.error("Error fetching courses:", err.message);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        console.error("Error fetching courses:", message);
         setCourses([]);
       }
       setLoading(false);
@@ -127,11 +125,10 @@ export default function RoadmapCoursesPage() {
 
         <button
           onClick={() => setShowDoneOnly(!showDoneOnly)}
-          className={`px-4 py-2 rounded-lg text-white font-medium transition ${
-            showDoneOnly
-              ? "bg-gray-500"
-              : "bg-primary hover:opacity-90"
-          }`}
+          className={`px-4 py-2 rounded-lg text-white font-medium transition ${showDoneOnly
+            ? "bg-gray-500"
+            : "bg-primary hover:opacity-90"
+            }`}
         >
           {showDoneOnly ? "Show All" : "Filter Done"}
         </button>
@@ -150,7 +147,7 @@ export default function RoadmapCoursesPage() {
       ) : (
         <div className="grid grid-cols-1 gap-6 mt-4">
           {filteredCourses.map((course) => (
-            <CourseCard key={course.course_id} course={course} />
+            <CourseCard key={course.course_id} course={course as any} href={`/roadmaps/${currentRoadmap.id}/courses/${course.course_id}`} />
           ))}
         </div>
       )}

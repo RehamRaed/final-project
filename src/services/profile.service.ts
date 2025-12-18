@@ -1,7 +1,7 @@
 // profile.service.ts
 import 'server-only';
 import { createClient } from "@/lib/supabase/server"; // يفترض وجود عميل للسيرفر
-import { Tables, Database } from "@/types/database.types"; // استيراد الأنواع
+import { Tables } from "@/types/database.types"; // استيراد الأنواع
 
 type Profile = Tables<'profiles'>;
 type Roadmap = Tables<'roadmaps'>;

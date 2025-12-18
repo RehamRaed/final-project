@@ -1,17 +1,17 @@
 import Link from 'next/link'
 import { ForgotPasswordForm } from '@/components/ui/auth/forgot-password-form'
-import { KeyRound, ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
     return (
         <div className="min-h-screen bg-bg flex items-center justify-center p-4">
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
-                   
+
                     <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-primary">
                         Forgot your password?
                     </h1>
-                    <p className="text-text-secondary mt-2">Don't worry, we'll help you recover it</p>
+                    <p className="text-text-secondary mt-2">Don&apos;t worry, we&apos;ll help you recover it</p>
                 </div>
 
                 <div className="bg-bg backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">

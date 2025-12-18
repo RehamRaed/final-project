@@ -3,20 +3,22 @@
 interface ProfileActionsProps {
   isEditing: boolean;
   isSaving: boolean;
+  disabled?: boolean;
   setIsEditing: (val: boolean) => void;
   handleSave: () => void;
   handleCancel: () => void;
 }
 
-export default function ProfileActions({ isEditing, isSaving, setIsEditing, handleSave, handleCancel }: ProfileActionsProps) {
+export default function ProfileActions({ isEditing, isSaving, disabled, setIsEditing, handleSave, handleCancel }: ProfileActionsProps) {
   return (
     <div className="flex gap-4 mt-4">
       {isEditing ? (
         <>
           <button
             onClick={handleSave}
-            disabled={isSaving}
-            className="px-4 py-2 bg-accent text-white rounded-md  hover:opacity-90 "
+            disabled={isSaving || disabled}
+            className={`px-4 py-2 text-white rounded-md transition ${isSaving || disabled ? "bg-gray-400 cursor-not-allowed" : "bg-accent hover:opacity-90"
+              }`}
           >
             {isSaving ? "Saving..." : "Save"}
           </button>
