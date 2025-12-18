@@ -17,7 +17,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const saved = localStorage.getItem("theme");
     if (saved === "dark") {
       setDark(true);
-      document.documentElement.classList.add("dark");
     }
     setMounted(true);
   }, []);
@@ -36,7 +35,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const toggleTheme = () => setDark(prev => !prev);
 
-  if (!mounted) return null; 
+  if (!mounted) return null;
 
   return (
     <ThemeContext.Provider value={{ dark, toggleTheme }}>

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ForgotPasswordForm } from '@/components/ui/auth/forgot-password-form'
-import { KeyRound, ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
     return (

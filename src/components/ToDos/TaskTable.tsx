@@ -2,7 +2,7 @@
 
 import { Tables } from '@/types/database.types'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle2, Circle, MoreVertical, Trash2, Calendar, Clock, AlertCircle } from 'lucide-react'
+import { CheckCircle2, Circle, Trash2, Calendar } from 'lucide-react'
 import { useState } from 'react'
 
 type Task = Tables<'tasks'>
@@ -14,7 +14,7 @@ interface TaskTableProps {
     onEdit?: (task: Task) => void
 }
 
-const TaskTable = ({ tasks, onToggle, onDelete, onEdit }: TaskTableProps) => {
+const TaskTable = ({ tasks, onToggle, onDelete }: TaskTableProps) => {
     const [sortConfig, setSortConfig] = useState<{ key: keyof Task; direction: 'asc' | 'desc' } | null>(null)
 
     const sortedTasks = [...tasks].sort((a, b) => {
@@ -128,8 +128,8 @@ const TaskTable = ({ tasks, onToggle, onDelete, onEdit }: TaskTableProps) => {
                                     <td className="px-6 py-4">
                                         {task.due_date && (
                                             <div className={`flex items-center text-sm ${new Date(task.due_date) < new Date() && !task.is_completed
-                                                    ? 'text-red-600 dark:text-red-400 font-medium'
-                                                    : 'text-gray-500 dark:text-gray-400'
+                                                ? 'text-red-600 dark:text-red-400 font-medium'
+                                                : 'text-gray-500 dark:text-gray-400'
                                                 }`}>
                                                 <Calendar className="w-4 h-4 mr-2" />
                                                 {new Date(task.due_date).toLocaleDateString()}

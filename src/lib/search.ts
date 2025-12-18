@@ -4,6 +4,7 @@ import { Tables } from '@/types/database.types';
 export interface CourseFilter {
   query?: string;
   tags?: string[];
+  roadmapId?: string;
 }
 
 export interface CourseSearchResult extends Tables<'courses'> {
@@ -23,7 +24,23 @@ export async function fetchCourses(filter: CourseFilter): Promise<CourseSearchRe
     query = query.ilike('title', `%${filter.query}%`);
   }
 
-  // إذا كان هناك tags، نستخدم inner join للتأكد من وجود tags
+  // If roadmapId is provided, filter courses by roadmap
+  if (filter.roadmapId) {
+    query = query
+      .select(`
+        *,
+        course_tags(
+          id,
+          tag_id
+        ),
+        roadmap_courses!inner(
+          roadmap_id
+        )
+      `)
+      .eq('roadmap_courses.roadmap_id', filter.roadmapId);
+  }
+
+  // If tags are provided, filter courses by tags
   if (filter.tags && filter.tags.length > 0) {
     query = query
       .select(`
@@ -43,5 +60,8 @@ export async function fetchCourses(filter: CourseFilter): Promise<CourseSearchRe
     throw new Error(`Failed to search courses: ${error.message}`);
   }
 
-  return data as CourseSearchResult[] || [];
+  // Transform data to remove the joined roadmap_courses/course_tags inner properties if not needed in result type, 
+  // currently we just cast it. 
+  // However, Supabase return type will include the joined tables.
+  return data as unknown as CourseSearchResult[] || [];
 }

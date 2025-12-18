@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { successResponse, errorResponse, handleApiError } from '@/lib/api-response';
+import { Tables } from '@/types/database.types';
 
 export async function GET(
     request: NextRequest,
@@ -32,7 +33,7 @@ export async function GET(
         }
 
         if (course.lessons) {
-            course.lessons.sort((a: any, b: any) =>
+            course.lessons.sort((a: Tables<'lessons'>, b: Tables<'lessons'>) =>
                 (a.order_index || 0) - (b.order_index || 0)
             );
         }

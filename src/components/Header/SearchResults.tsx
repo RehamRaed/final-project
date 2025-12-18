@@ -1,12 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-
-export interface CourseSearchResult {
-  id: string;
-  title: string;
-  description: string;
-}
+import { CourseSearchResult } from "@/lib/search";
 
 type SearchResultsProps = {
   res: CourseSearchResult[];
@@ -21,7 +16,7 @@ export default function SearchResults({ res, onResultClick }: SearchResultsProps
           key={r.id}
           href={`/courses/${r.id}/lessons`}
           className="text-text-primary no-underline hover:underline"
-          onClick={onResultClick} 
+          onClick={onResultClick}
         >
           {r.title}
         </Link>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Play, Pause, RotateCcw, Timer, Trophy } from 'lucide-react'
 
 const FocusMode = () => {
@@ -71,8 +71,8 @@ const FocusMode = () => {
                     <button
                         onClick={() => setTimerMode('work')}
                         className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${mode === 'work'
-                                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
-                                : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
+                            : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
                             }`}
                     >
                         Pomodoro
@@ -80,8 +80,8 @@ const FocusMode = () => {
                     <button
                         onClick={() => setTimerMode('shortBreak')}
                         className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${mode === 'shortBreak'
-                                ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
-                                : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
+                            : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
                             }`}
                     >
                         Short Break
