@@ -120,11 +120,7 @@ const Tasks = ({ initialTasks }: TasksProps) => {
 
         setIsLoading(true)
 
-<<<<<<< HEAD
   
-=======
-
->>>>>>> origin/main
         for (const task of tasks) {
             await deleteTaskAction(task.id)
         }
@@ -208,22 +204,14 @@ const Tasks = ({ initialTasks }: TasksProps) => {
             <AddTaskModal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
-<<<<<<< HEAD
                 onTaskAdded={fetchTasks} 
-=======
-                onTaskAdded={fetchTasks}
->>>>>>> origin/main
             />
 
             <TaskDetailsModal
                 task={selectedTask}
                 isOpen={!!selectedTask}
                 onClose={() => setSelectedTask(null)}
-<<<<<<< HEAD
                 onTaskUpdated={fetchTasks} 
-=======
-                onTaskUpdated={fetchTasks}
->>>>>>> origin/main
             />
 
             <AnimatePresence mode="wait">
