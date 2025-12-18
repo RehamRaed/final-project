@@ -12,7 +12,7 @@ function SubmitButton() {
         <button
             type="submit"
             disabled={pending}
-            className="w-full bg-primary hover:bg-primary-hover text-white py-3 rounded-xl font-semibold hover:shadow-xl  transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary hover:bg-primary-hover text-white py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label={pending ? 'Logging in, please wait' : 'Log in to your account'}
         >
             {pending ? 'Logging in...' : 'Login'}
@@ -25,17 +25,11 @@ export function LoginForm() {
     const urlError = searchParams?.get('error')
     const [formError, setFormError] = useState<string>('')
 
-<<<<<<< HEAD
     useEffect(() => {
-        const urlError = searchParams?.get('error')
         if (urlError) {
-            setError(urlError)
+            setFormError(urlError)
         }
-    }, [searchParams])
-=======
-    // Effective error has precedence for form submission errors
-    const error = formError || urlError || ''
->>>>>>> origin/main
+    }, [urlError])
 
     async function handleSubmit(formData: FormData) {
         setFormError('')
@@ -48,23 +42,20 @@ export function LoginForm() {
 
     return (
         <form action={handleSubmit} className="space-y-4" aria-label="Login form">
-            {error && (
+            {formError && (
                 <div
+                    id="login-error"
                     className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm"
                     role="alert"
                     aria-live="assertive"
                 >
-                    {error}
+                    {formError}
                 </div>
             )}
 
             <div>
                 <label htmlFor="email" className="block font-semibold mb-2 text-text-primary">
-<<<<<<< HEAD
                     Email 
-=======
-                    Email
->>>>>>> origin/main
                 </label>
                 <input
                     id="email"
@@ -74,7 +65,7 @@ export function LoginForm() {
                     className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     required
                     aria-required="true"
-                    aria-describedby={error ? 'login-error' : undefined}
+                    aria-describedby={formError ? 'login-error' : undefined}
                     autoComplete="email"
                 />
             </div>
@@ -91,7 +82,7 @@ export function LoginForm() {
                     className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     required
                     aria-required="true"
-                    aria-describedby={error ? 'login-error' : undefined}
+                    aria-describedby={formError ? 'login-error' : undefined}
                     autoComplete="current-password"
                 />
             </div>
