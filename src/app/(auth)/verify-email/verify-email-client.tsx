@@ -1,7 +1,7 @@
 'use client'
 
 import { resendVerificationEmail, logout } from '@/actions/auth'
-import { Mail, ArrowRight, LogOut } from 'lucide-react'
+import { ArrowRight, LogOut } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -9,7 +9,7 @@ interface VerifyEmailClientProps {
     email: string
     emailVerified: boolean
 }
-export default function VerifyEmailClient({ email, emailVerified }: VerifyEmailClientProps) {
+export default function VerifyEmailClient({ email }: VerifyEmailClientProps) {
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
@@ -45,7 +45,7 @@ export default function VerifyEmailClient({ email, emailVerified }: VerifyEmailC
         <div className="min-h-screen bg-bg flex items-center justify-center p-4">
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
-                    
+
                     <h1 className="text-3xl font-bold text-text-primary mb-2">
                         Verify Your Email
                     </h1>

@@ -27,16 +27,17 @@ export async function GET(
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const courses = (data || []).map((item: any) => {
+    const courses = (data || []).map((item: { course: any }) => {
       const course = item.course;
       course?.lessons?.sort(
-        (a: any, b: any) => (a.order_index || 0) - (b.order_index || 0)
+        (a: { order_index: number | null }, b: { order_index: number | null }) => (a.order_index || 0) - (b.order_index || 0)
       );
       return course;
     });
 
     return NextResponse.json({ data: courses });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

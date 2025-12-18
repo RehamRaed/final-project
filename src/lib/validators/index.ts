@@ -52,7 +52,7 @@ export const updateProfileSchema = z.object({
                         if (!domain.includes(rules[platform]) && !domain.includes(rules[platform].replace('x.com', 'twitter.com'))) {
                             return false;
                         }
-                    } catch (e) { return false; }
+                    } catch { return false; }
                 }
             }
             return true;

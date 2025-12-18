@@ -1,6 +1,6 @@
 import { getCourseLessonsAction } from "@/actions/learning.actions";
 import { Metadata } from 'next';
-import { redirect } from "next/navigation";
+
 import CoursePageClient from "@/components/lessons/CoursePageClient";
 import ErrorState from "@/components/ui/ErrorState";
 
@@ -67,6 +67,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
         <CoursePageClient
             courseData={courseData}
             lessonProgressPercent={courseData.lesson_progress_percent}
+            currentRoadmapId={courseData.current_roadmap_id}
         />
     );
 }

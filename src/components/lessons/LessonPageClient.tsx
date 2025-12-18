@@ -36,19 +36,32 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
         if (lessons.length > 0 && !selectedLesson) {
             setSelectedLesson(lessons[0]);
         }
-    }, [lessons, selectedLesson]);
+    }, [lessons, selectedLesson, setSelectedLesson]);
 
     const handleMarkDone = async (lessonId: string) => {
         setIsProcessing(true);
         try {
             const currentLesson = lessons.find(l => l.id === lessonId);
-            const isCurrentlyCompleted = currentLesson?.user_progress?.[0]?.status === 'completed';
-            const newStatus: 'in_progress' | 'completed' = isCurrentlyCompleted ? 'in_progress' : 'completed';
+            const isCurrentlyCompleted = currentLesson?.user_progress?.[0]?.status === 'Completed' || currentLesson?.user_progress?.[0]?.status === 'completed';
+            const newStatus: 'InProgress' | 'Completed' = isCurrentlyCompleted ? 'InProgress' : 'Completed';
 
             const result = await toggleLessonCompletion(lessonId, courseData.id, newStatus);
 
             if (result.success) {
                 toast.success(result.message);
+
+                if (result.xpUpdate && result.xpUpdate.success && result.xpUpdate.xp > 0) {
+                    toast.success(`You earned ${result.xpUpdate.xp} XP! 🎉`, {
+                        duration: 4000,
+                        icon: '⭐',
+                        style: {
+                            borderRadius: '10px',
+                            background: '#333',
+                            color: '#fff',
+                        },
+                    });
+                }
+
                 router.refresh();
 
                 if (selectedLesson?.id === lessonId) {
@@ -56,8 +69,9 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
             } else {
                 toast.error(result.error || 'Failed to update lesson progress');
             }
-        } catch (error: any) {
-            console.error('Error marking lesson done:', error);
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'An unknown error occurred';
+            console.error('Error marking lesson done:', message);
             toast.error('An unexpected error occurred');
         } finally {
             setIsProcessing(false);
@@ -76,7 +90,7 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
                     className="flex items-center gap-2 text-primary hover:text-primary/80 font-medium w-fit transition-colors"
                 >
                     <ArrowLeft size={18} />
-                    <span>Back to Course: {courseData.title}</span>
+                    <span>Back to Course</span>
                 </Link>
 
                 <div className="flex items-center gap-4 mt-2">
@@ -100,9 +114,9 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
                     </div>
                     <div className="overflow-y-auto flex-1 p-2">
                         <LessonsSidebar
-                            lessons={lessons as any}
+                            lessons={lessons}
                             selectedLessonId={selectedLesson?.id || null}
-                            onSelectLesson={(lesson) => setSelectedLesson(lesson as any)}
+                            onSelectLesson={(lesson) => setSelectedLesson(lesson as Lesson)}
                             courseTitle={courseData.title}
                         />
                     </div>
@@ -114,15 +128,15 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
                             <LessonDetails
                                 lesson={{
                                     ...selectedLesson,
-                                    status: selectedLesson.user_progress?.[0]?.status === 'completed'
+                                    status: (selectedLesson.user_progress?.[0]?.status === 'Completed' || selectedLesson.user_progress?.[0]?.status === 'completed')
                                         ? 'Completed'
-                                        : selectedLesson.user_progress?.[0]?.status === 'in_progress'
+                                        : (selectedLesson.user_progress?.[0]?.status === 'InProgress' || selectedLesson.user_progress?.[0]?.status === 'in_progress')
                                             ? 'InProgress'
                                             : 'Not Started',
-                                    duration_minutes: selectedLesson.duration || 0, 
-                                    content: selectedLesson.content || '', 
-                                    video_url: selectedLesson.video_url || '' 
-                                } as any} 
+                                    duration_minutes: selectedLesson.duration || 0,
+                                    content: selectedLesson.content || '',
+                                    video_url: selectedLesson.video_url || ''
+                                } as Tables<'lessons'> & { status: 'Completed' | 'InProgress' | 'Not Started'; duration_minutes: number | null; content: string | null; video_url: string | null; }}
                                 onMarkDone={handleMarkDone}
                                 isMarkingDone={isProcessing}
                             />

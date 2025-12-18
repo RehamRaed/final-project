@@ -1,7 +1,7 @@
-"use client";
+import { Tables } from "@/types/database.types";
 
 interface ProfileFormProps {
-  profile: any;
+  profile: Tables<'profiles'>;
   isEditing: boolean;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }

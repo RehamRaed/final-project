@@ -1,5 +1,5 @@
 import { ResetPasswordForm } from '@/components/ui/auth/reset-password-form'
-import { Shield } from 'lucide-react'
+
 
 export default function ResetPasswordPage() {
     return (
@@ -7,7 +7,7 @@ export default function ResetPasswordPage() {
             <div className="w-full max-w-md">
 
                 <div className="text-center mb-8">
-                 
+
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-primary">
                         Reset Password
                     </h1>

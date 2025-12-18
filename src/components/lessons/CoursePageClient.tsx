@@ -17,14 +17,18 @@ interface CourseDataWithLessons extends Tables<'courses'> {
 interface CoursePageClientProps {
   courseData: CourseDataWithLessons;
   lessonProgressPercent: number;
+  currentRoadmapId?: string | null;
 }
 
 export default function CoursePageClient({
   courseData,
-  lessonProgressPercent
+  lessonProgressPercent,
+  currentRoadmapId
 }: CoursePageClientProps) {
   const router = useRouter();
   const lessons = courseData.lessons || [];
+
+  const backLink = currentRoadmapId ? `/roadmaps/${currentRoadmapId}` : '/dashboard';
 
   const completedLessons = useMemo(
     () => lessons.filter(l => l.user_progress?.[0]?.status === "completed").length,
@@ -40,15 +44,16 @@ export default function CoursePageClient({
     router.push(`/courses/${courseData.id}/lessons`);
   };
 
+  // ...
   return (
     <div className="min-h-screen max-w-[1300px] mx-auto px-10 pt-30 pb-20">
       <header className="mb-8 border-b border-border pb-6">
         <Link
-          href="/dashboard"
+          href={backLink}
           className="inline-flex items-center gap-2 text-primary mb-4 font-medium transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
-          Back 
+          Back
         </Link>
 
         <div className="flex flex-col lg:flex-row gap-6 items-start">

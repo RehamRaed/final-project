@@ -5,6 +5,7 @@ import RoadmapDetailsClient from "@/components/Roadmap/RoadmapDetailsClient";
 
 interface CourseWithProgress extends Tables<'courses'> {
   user_progress: { status: string | null }[] | null;
+  lessons: { id: string; user_progress: { status: string | null }[] | null }[] | null;
 }
 
 interface RoadmapCourseDetails {
@@ -15,6 +16,7 @@ interface RoadmapCourseDetails {
 interface DetailedRoadmap extends Tables<'roadmaps'> {
   roadmap_courses: RoadmapCourseDetails[] | null;
   progress_percent: number;
+  xp: number;
 }
 
 interface RoadmapPageProps {
@@ -70,8 +72,23 @@ export default async function RoadmapCoursesPage({ params }: RoadmapPageProps) {
     .filter(rc => rc.course)
     .map(rc => {
       const course = rc.course!;
-      const status = course.user_progress?.[0]?.status;
-      const donePercentage = status === 'completed' ? 100 : 0;
+      const lessons = course.lessons || [];
+      const totalLessons = lessons.length;
+
+      let donePercentage = 0;
+
+      if (totalLessons > 0) {
+        const completedLessons = lessons.filter(l =>
+          l.user_progress?.[0]?.status === 'Completed' || l.user_progress?.[0]?.status === 'completed'
+        ).length;
+        donePercentage = Math.floor((completedLessons / totalLessons) * 100);
+      } else {
+        // Fallback if no lessons are returned but course is marked completed
+        const status = course.user_progress?.[0]?.status;
+        if (status === 'Completed' || status === 'completed') {
+          donePercentage = 100;
+        }
+      }
 
       return {
         ...course,
@@ -87,6 +104,7 @@ export default async function RoadmapCoursesPage({ params }: RoadmapPageProps) {
       roadmapDescription={roadmapData.description}
       initialCourses={courses}
       progressPercent={roadmapData.progress_percent}
+      userXp={roadmapData.xp}
     />
   );
 }
