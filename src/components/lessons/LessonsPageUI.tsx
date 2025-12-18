@@ -4,8 +4,13 @@ import Link from 'next/link';
 import { ArrowLeft } from "lucide-react";
 import LessonsSidebar from '@/components/lessons/LessonsSidebar';
 import LessonDetails from '@/components/lessons/LessonDetails';
-import { Lesson } from '@/types/lesson';
 import LoadingSpinner from '../ui/LoadingSpinner'; 
+import { Tables } from '@/types/database.types';
+
+export interface Lesson extends Tables<'lessons'> {
+  status?: 'Completed' | 'InProgress' | 'Not Started';
+  duration_minutes?: number | null;
+}
 
 interface Props {
   lessons: Lesson[];
@@ -14,7 +19,7 @@ interface Props {
   onMarkDone: (lessonId: string) => void;
   courseTitle: string;
   loading: boolean;
-  courseId: string ;
+  courseId: string;
 }
 
 export default function LessonPageUI({
@@ -52,9 +57,14 @@ export default function LessonPageUI({
           onSelectLesson={setSelectedLesson}
           courseTitle={courseTitle}
         />
+
         <div className="flex-1">
           {selectedLesson ? (
-            <LessonDetails lesson={selectedLesson} onMarkDone={onMarkDone} />
+            <LessonDetails
+              lesson={selectedLesson}
+              onMarkDone={onMarkDone}
+              isMarkingDone={false}
+            />
           ) : (
             <p className="text-gray-500">Select a lesson to view details.</p>
           )}

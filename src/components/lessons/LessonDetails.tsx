@@ -3,12 +3,11 @@ import { Tables } from '@/types/database.types';
 import ReactMarkdown from 'react-markdown';
 import { CheckCircle, Clock } from 'lucide-react';
 
-interface Lesson extends Tables<'lessons'> {
-  status: 'Completed' | 'InProgress' | 'Not Started';
-  duration_minutes: number | null;
-  content: string | null;
-  video_url: string | null;
+export interface Lesson extends Tables<'lessons'> {
+  status?: 'Completed' | 'InProgress' | 'Not Started';
+  duration_minutes?: number | null;
 }
+
 function getYoutubeEmbedUrl(url?: string | null) { 
   if (!url) return null;
   if (url.includes('youtube.com/embed')) return url;
@@ -22,18 +21,25 @@ function getYoutubeEmbedUrl(url?: string | null) {
   return null;
 }
 
-
 interface LessonDetailsProps {
   lesson: Lesson;
   onMarkDone: (lessonId: string) => void;
   isMarkingDone: boolean;
 }
 
-export default function LessonDetails({ lesson, onMarkDone, isMarkingDone }: LessonDetailsProps) {
+export default function LessonDetails({
+  lesson,
+  onMarkDone,
+  isMarkingDone
+}: LessonDetailsProps) {
+
+  const lessonStatus = lesson.status ?? 'Not Started';
+  const duration = lesson.duration_minutes ?? null;
+
   const borderColor =
-    lesson.status === "Completed"
+    lessonStatus === "Completed"
       ? "border-green-500"
-      : lesson.status === "InProgress"
+      : lessonStatus === "InProgress"
       ? "border-blue-500"
       : "border-gray-300";
 
@@ -43,26 +49,28 @@ export default function LessonDetails({ lesson, onMarkDone, isMarkingDone }: Les
     <div className={`border-2 ${borderColor} p-5 md:p-12 rounded-xl flex flex-col gap-5 max-h-[calc(105vh-160px)] overflow-y-auto`}>
       
       <div className="flex flex-col md:flex-row items-start md:items-center pb-5 justify-between gap-3">
-        <h1 className="text-xl md:text-2xl font-bold text-primary">{lesson.title}</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-primary">
+          {lesson.title}
+        </h1>
 
         <button
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold
-            ${lesson.status === 'Completed'
+            ${lessonStatus === 'Completed'
               ? 'bg-gray-500 cursor-not-allowed'
               : isMarkingDone
               ? 'bg-blue-400 cursor-wait'
               : 'bg-green-500 hover:opacity-90'
             }`}
-          disabled={lesson.status === 'Completed' || isMarkingDone}
+          disabled={lessonStatus === 'Completed' || isMarkingDone}
           onClick={() => onMarkDone(lesson.id)}
         >
-          {lesson.status !== 'Completed' && !isMarkingDone && (
+          {lessonStatus !== 'Completed' && !isMarkingDone && (
             <CheckCircle className="w-5 h-5" />
           )}
           <span>
             {isMarkingDone
               ? 'Saving...'
-              : lesson.status === 'Completed'
+              : lessonStatus === 'Completed'
               ? 'Completed'
               : 'Mark Done'}
           </span>
@@ -71,14 +79,14 @@ export default function LessonDetails({ lesson, onMarkDone, isMarkingDone }: Les
 
       <div className="flex items-center gap-2 text-text-secondary">
         <Clock className="w-4 h-4" />
-        <span>
-          <TimeNeeded minutes={lesson.duration_minutes} />
-        </span>
+        <TimeNeeded minutes={duration} />
       </div>
 
-      <div className="prose max-w-none">
-        <ReactMarkdown>{lesson.content}</ReactMarkdown>
-      </div>
+      {lesson.content && (
+        <div className="prose max-w-none">
+          <ReactMarkdown>{lesson.content}</ReactMarkdown>
+        </div>
+      )}
 
       {embedUrl && (
         <iframe
