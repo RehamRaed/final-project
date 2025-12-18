@@ -1,3 +1,5 @@
+'use client';
+
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Tables } from "@/types/database.types";
@@ -27,6 +29,7 @@ async function calculateCourseProgress(
   const completedCount = progress.filter(
     (p: { status: string | null }) => p.status === "completed"
   ).length;
+
   return Math.round((completedCount / lessons.length) * 100);
 }
 
@@ -44,7 +47,6 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
   const { roadmapId } = await params;
   const supabase = await createClient();
 
-  // 1. Get User
   const {
     data: { user },
     error: userError,
@@ -66,15 +68,11 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
 
   const { data: coursesData, error: coursesError } = await supabase
     .from("roadmap_courses")
-    .select(
-      `
+    .select(`
       course_id,
       order_index,
-      courses!inner (
-        *
-      )
-    `
-    )
+      courses!inner (*)
+    `)
     .eq("roadmap_id", roadmapId)
     .order("order_index", { ascending: true });
 
@@ -90,9 +88,11 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
         c.course_id,
         user.id
       );
-      const courseData = c.courses as unknown as Tables<'courses'> & { summary: string | null };
+
+      const courseData = c.courses as Tables<'courses'> & { summary?: string | null };
+
       courses.push({
-        ...courseData,  
+        ...courseData,
         course_id: c.course_id,
         summary: courseData.summary || null,
         donePercentage: progress,
