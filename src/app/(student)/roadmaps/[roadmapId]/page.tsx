@@ -83,7 +83,6 @@ export default async function RoadmapCoursesPage({ params }: RoadmapPageProps) {
         ).length;
         donePercentage = Math.floor((completedLessons / totalLessons) * 100);
       } else {
-        // Fallback if no lessons are returned but course is marked completed
         const status = course.user_progress?.[0]?.status;
         if (status === 'Completed' || status === 'completed') {
           donePercentage = 100;
