@@ -24,7 +24,6 @@ export async function fetchCourses(filter: CourseFilter): Promise<CourseSearchRe
     query = query.ilike('title', `%${filter.query}%`);
   }
 
-  // If roadmapId is provided, filter courses by roadmap
   if (filter.roadmapId) {
     query = query
       .select(`
@@ -40,7 +39,6 @@ export async function fetchCourses(filter: CourseFilter): Promise<CourseSearchRe
       .eq('roadmap_courses.roadmap_id', filter.roadmapId);
   }
 
-  // If tags are provided, filter courses by tags
   if (filter.tags && filter.tags.length > 0) {
     query = query
       .select(`
@@ -60,8 +58,5 @@ export async function fetchCourses(filter: CourseFilter): Promise<CourseSearchRe
     throw new Error(`Failed to search courses: ${error.message}`);
   }
 
-  // Transform data to remove the joined roadmap_courses/course_tags inner properties if not needed in result type, 
-  // currently we just cast it. 
-  // However, Supabase return type will include the joined tables.
   return data as unknown as CourseSearchResult[] || [];
 }
