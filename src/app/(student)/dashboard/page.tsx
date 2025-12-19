@@ -1,7 +1,6 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardPage from "@/components/Dashboard/DashboardPage";
-<<<<<<< HEAD
 import type { Database } from "@/types/database.types";
 
 type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
@@ -12,8 +11,6 @@ interface DashboardCourse {
     summary: string;
     icon?: string;
 }
-=======
->>>>>>> 632faa3 (feat: migrate to server-side supabase client with cookie support)
 
 export default async function StudentPage() {
     const supabase = await createServerSupabase();
