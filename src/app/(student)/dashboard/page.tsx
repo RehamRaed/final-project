@@ -1,7 +1,6 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardPage from "@/components/Dashboard/DashboardPage";
-import { Tables } from "@/types/database.types";
 
 interface DashboardCourse {
     course_id: string;
