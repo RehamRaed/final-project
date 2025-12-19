@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient } from "@/lib/supabase/server";
+import { createServerSupabase } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { Tables } from "@/types/database.types";
 import { z } from "zod";
@@ -20,7 +20,7 @@ export type ActionState = {
 };
 
 export async function updateProfile(formData: Partial<Tables<'profiles'>>): Promise<ActionState> {
-    const supabase = await createClient();
+    const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -37,24 +37,20 @@ export async function updateProfile(formData: Partial<Tables<'profiles'>>): Prom
         };
     }
 
-    // 2. تصفية البيانات (إزالة الحقول غير المعرفة لتجنب مسح البيانات الموجودة)
     const dataToUpdate = result.data;
 
-    // 3. التحديث في قاعدة البيانات
     const { error } = await supabase
         .from("profiles")
         .update({
             ...dataToUpdate,
-            last_active: new Date().toISOString(), // تأكد من تحديث وقت التعديل
+            last_active: new Date().toISOString(),
         })
         .eq("id", user.id);
 
     if (error) {
-        console.error("Error updating profile:", error);
         return { success: false, message: `Failed to save changes: ${error.message}` };
     }
 
-    // 4. إعادة التحقق من الصفحة لتحديث البيانات فوراً
     revalidatePath("/profile");
 
     return {
@@ -65,7 +61,7 @@ export async function updateProfile(formData: Partial<Tables<'profiles'>>): Prom
 }
 
 export async function updateCurrentRoadmap(roadmapId: string): Promise<ActionState> {
-    const supabase = await createClient();
+    const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) return { success: false, message: "User not authenticated." };

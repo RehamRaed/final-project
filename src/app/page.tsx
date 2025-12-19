@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { createClient } from "@/lib/supabase/server";
+import { createServerSupabase } from "@/lib/supabase/server";
 import WelcomeClient from "@/components/WelcomeClient";
 
 export const metadata: Metadata = {
@@ -8,10 +8,11 @@ export const metadata: Metadata = {
 };
 
 export default async function WelcomePage() {
-  const supabase = await createClient();
+  const supabase = await createServerSupabase();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const displayName = user?.user_metadata?.full_name ||
+  const displayName =
+    user?.user_metadata?.full_name ||
     user?.email?.split("@")[0] ||
     "Student";
 
