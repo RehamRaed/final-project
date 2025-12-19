@@ -1,14 +1,12 @@
-// profile.service.ts
 import 'server-only';
-import { createClient } from "@/lib/supabase/server"; // يفترض وجود عميل للسيرفر
-import { Tables } from "@/types/database.types"; // استيراد الأنواع
+import { createServerSupabase } from "@/lib/supabase/server";
+import { Tables } from "@/types/database.types";
 
 type Profile = Tables<'profiles'>;
 type Roadmap = Tables<'roadmaps'>;
 
-
 export async function getFullProfileData(): Promise<{ profile: Profile | null, currentRoadmap: Roadmap | null }> {
-    const supabase = await createClient();
+    const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -22,15 +20,14 @@ export async function getFullProfileData(): Promise<{ profile: Profile | null, c
         .single();
 
     if (error || !profileData) {
-        console.error("Error fetching profile:", error);
         return { profile: null, currentRoadmap: null };
     }
 
     const { roadmaps, ...restProfile } = profileData;
-    const currentRoadmap = (roadmaps as Pick<Roadmap, 'title'>) || null; // التأكد من نوع البيانات
+    const currentRoadmap = (roadmaps as unknown as Roadmap) || null;
 
     return {
         profile: restProfile as Profile,
-        currentRoadmap: currentRoadmap as Roadmap | null,
+        currentRoadmap: currentRoadmap,
     };
 }

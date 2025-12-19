@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createServerSupabase } from "@/lib/supabase/server";
 import { Tables } from "@/types/database.types";
 
 export async function GET(
@@ -9,7 +9,8 @@ export async function GET(
   try {
     const params = await props.params;
     const { roadmapId } = params;
-    const supabase = await createClient();
+    
+    const supabase = await createServerSupabase();
 
     const { data, error } = await supabase
       .from("roadmap_courses")
@@ -22,19 +23,22 @@ export async function GET(
         )
       `)
       .eq("roadmap_id", roadmapId)
-      .order("course.order_index", { ascending: true });
+      .order("course.order_index" as any, { ascending: true }); // أحياناً تتطلب الأنواع استخدام as any هنا حسب إعدادات الـ DB
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const courses = (data || []).map((item: { course: unknown }) => {
+    const courses = (data || []).map((item: any) => {
       const course = item.course as Tables<'courses'> & {
         lessons: Tables<'lessons'>[]
       };
-      course?.lessons?.sort(
-        (a: Tables<'lessons'>, b: Tables<'lessons'>) => (a.order_index || 0) - (b.order_index || 0)
-      );
+      
+      if (course?.lessons) {
+        course.lessons.sort(
+          (a: Tables<'lessons'>, b: Tables<'lessons'>) => (a.order_index || 0) - (b.order_index || 0)
+        );
+      }
       return course;
     });
 

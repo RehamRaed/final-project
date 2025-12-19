@@ -1,6 +1,6 @@
-'use client';
+'use client'; 
 
-import { createClient } from "@/lib/supabase/server";
+import { createServerSupabase } from "@/lib/supabase/server"; 
 import { redirect } from "next/navigation";
 import { Tables } from "@/types/database.types";
 import CourseCard from "@/components/StudentRoadmap/CourseCard";
@@ -45,12 +45,10 @@ interface PageProps {
 
 export default async function RoadmapCoursesPage({ params }: PageProps) {
   const { roadmapId } = await params;
-  const supabase = await createClient();
+  
+  const supabase = await createServerSupabase();
 
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
   if (userError || !user) {
     redirect("/login");
@@ -83,11 +81,7 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
   const courses: Course[] = [];
   if (coursesData) {
     for (const c of coursesData) {
-      const progress = await calculateCourseProgress(
-        supabase,
-        c.course_id,
-        user.id
-      );
+      const progress = await calculateCourseProgress(supabase, c.course_id, user.id);
 
       const courseData = c.courses as Tables<'courses'> & { summary?: string | null };
 
@@ -103,7 +97,7 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
   const doneCount = courses.filter((c) => c.donePercentage === 100).length;
 
   return (
-    <div className="min-h-screen max-w-[1400px] mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
+    <div className="min-h-screen max-w-1400px mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
         <h2 className="font-bold text-primary lg:text-2xl md:text-xl">
           {roadmap.title} - Courses

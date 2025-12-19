@@ -1,9 +1,11 @@
 import { Tables } from "@/types/database.types";
+import { createServerSupabase } from "@/lib/supabase/server"; 
+
 export type Profile = Tables<"profiles">;
-import { createClient } from "@/lib/supabase/server";
+
 
 export async function getCurrentUser(): Promise<Profile | null> {
-  const supabase = await createClient();
+  const supabase = await createServerSupabase();
 
   const { data, error } = await supabase.auth.getUser();
 
@@ -22,14 +24,16 @@ export async function getCurrentUser(): Promise<Profile | null> {
   return profileData as Profile;
 }
 
+
 export async function getUserFromRequest(req: Request): Promise<Profile | null> {
-  const supabase = await createClient();
+  const supabase = await createServerSupabase();
+
 
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
 
-  if (!token) return null;
-
-  const { data, error } = await supabase.auth.getUser(token);
+  const { data, error } = await (token 
+    ? supabase.auth.getUser(token) 
+    : supabase.auth.getUser());
 
   if (error || !data.user) return null;
 

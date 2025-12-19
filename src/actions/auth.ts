@@ -1,10 +1,9 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createServerSupabase } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import type { TablesUpdate } from '@/types/database.types'
-
 
 const registerSchema = z.object({
     fullName: z.string().min(4, 'Full name must be at least 4 characters'),
@@ -34,7 +33,7 @@ const resetPasswordSchema = z.object({
 })
 
 export async function register(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = await createServerSupabase()
 
     const rawData = {
         fullName: formData.get('fullName') as string,
@@ -80,9 +79,8 @@ export async function register(formData: FormData) {
     redirect('/verify-email')
 }
 
-
 export async function login(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = await createServerSupabase()
 
     const rawData = {
         email: formData.get('email') as string,
@@ -105,10 +103,7 @@ export async function login(formData: FormData) {
     })
 
     if (error) {
-        return {
-            success: false,
-            error: 'Invalid email or password'
-        }
+        return { success: false, error: 'Invalid email or password' }
     }
 
     if (!data.user) {
@@ -122,16 +117,14 @@ export async function login(formData: FormData) {
     redirect('/dashboard')
 }
 
-
 export async function logout() {
-    const supabase = await createClient()
+    const supabase = await createServerSupabase()
     await supabase.auth.signOut()
     redirect('/login')
 }
 
-
 export async function loginWithOAuth(provider: 'google' | 'github') {
-    const supabase = await createClient()
+    const supabase = await createServerSupabase()
 
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
@@ -151,9 +144,8 @@ export async function loginWithOAuth(provider: 'google' | 'github') {
     return { success: false, error: 'Login failed' }
 }
 
-
 export async function forgotPassword(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = await createServerSupabase()
 
     const rawData = {
         email: formData.get('email') as string,
@@ -174,10 +166,7 @@ export async function forgotPassword(formData: FormData) {
     })
 
     if (error) {
-        return {
-            success: false,
-            error: 'Error sending password reset link'
-        }
+        return { success: false, error: 'Error sending password reset link' }
     }
 
     return {
@@ -186,9 +175,8 @@ export async function forgotPassword(formData: FormData) {
     }
 }
 
-
 export async function resetPassword(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = await createServerSupabase()
 
     const rawData = {
         password: formData.get('password') as string,
@@ -205,9 +193,7 @@ export async function resetPassword(formData: FormData) {
 
     const { password } = validation.data
 
-    const { error } = await supabase.auth.updateUser({
-        password,
-    })
+    const { error } = await supabase.auth.updateUser({ password })
 
     if (error) {
         return {
@@ -222,17 +208,13 @@ export async function resetPassword(formData: FormData) {
     }
 }
 
-
 export async function resendVerificationEmail() {
-    const supabase = await createClient()
+    const supabase = await createServerSupabase()
 
     const { data: { user }, error: userError } = await supabase.auth.getUser()
 
     if (userError || !user || !user.email) {
-        return {
-            success: false,
-            error: 'You must be logged in'
-        }
+        return { success: false, error: 'You must be logged in' }
     }
 
     const { error } = await supabase.auth.resend({
@@ -244,21 +226,14 @@ export async function resendVerificationEmail() {
     })
 
     if (error) {
-        return {
-            success: false,
-            error: 'Error resending verification email'
-        }
+        return { success: false, error: 'Error resending verification email' }
     }
 
-    return {
-        success: true,
-        message: 'Verification email sent'
-    }
+    return { success: true, message: 'Verification email sent' }
 }
 
-
 export async function updateProfile(formData: FormData) {
-    const supabase = await createClient()
+    const supabase = await createServerSupabase()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -277,7 +252,7 @@ export async function updateProfile(formData: FormData) {
 
     const { error } = await supabase
         .from('profiles')
-        .update(profileUpdate) 
+        .update(profileUpdate)
         .eq('id', user.id)
 
     if (error) {
@@ -286,7 +261,7 @@ export async function updateProfile(formData: FormData) {
     }
 
     await supabase.auth.updateUser({
-        data: { full_name: fullName } 
+        data: { full_name: fullName }
     })
 
     return { success: true, message: 'Profile updated successfully.' }

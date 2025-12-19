@@ -5,19 +5,15 @@ import {
   fetchRoadmapDetails,
   fetchUserCurrentRoadmap,
   fetchCourseLessons,
-  upsertLessonProgress,
   updateXp,
-  fetchCourseXpReward,
 } from '@/services/learning.service';
 
-import { createClient } from '@/lib/supabase/server';
+import { createServerSupabase } from '@/lib/supabase/server';
 import { Tables } from '@/types/database.types';
 import { revalidatePath } from 'next/cache';
 
-/* -------------------- Helpers -------------------- */
-
 async function getCurrentUserId(): Promise<string | null> {
-  const supabase = await createClient();
+  const supabase = await createServerSupabase();
   const { data } = await supabase.auth.getUser();
   return data.user?.id || null;
 }
@@ -27,13 +23,11 @@ type RoadmapWithStatus = Tables<'roadmaps'> & {
   is_current: boolean;
 };
 
-/* -------------------- Roadmaps -------------------- */
-
 export async function getRoadmapsListAction() {
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
-  const supabase = await createClient();
+  const supabase = await createServerSupabase();
 
   const { data: roadmapsData, error: roadmapsError } =
     await fetchAllRoadmapsWithCourseCount(supabase);
@@ -64,7 +58,7 @@ export async function getRoadmapDetailsAction(roadmapId: string) {
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
-  const supabase = await createClient();
+  const supabase = await createServerSupabase();
 
   const { data, error } = await fetchRoadmapDetails(
     supabase,
@@ -104,13 +98,11 @@ export async function getRoadmapDetailsAction(roadmapId: string) {
   };
 }
 
-/* -------------------- Update Current Roadmap -------------------- */
-
 export async function updateCurrentRoadmapAction(newRoadmapId: string) {
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
-  const supabase = await createClient();
+  const supabase = await createServerSupabase();
 
   const { error } = await supabase
     .from('profiles')
@@ -123,13 +115,11 @@ export async function updateCurrentRoadmapAction(newRoadmapId: string) {
   return { success: true, message: 'Roadmap updated successfully.' };
 }
 
-/* -------------------- Course Lessons -------------------- */
-
 export async function getCourseLessonsAction(courseId: string) {
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
-  const supabase = await createClient();
+  const supabase = await createServerSupabase();
 
   const { data, error } = await fetchCourseLessons(
     supabase,
@@ -168,8 +158,6 @@ export async function getCourseLessonsAction(courseId: string) {
   };
 }
 
-/* -------------------- Toggle Lesson Completion -------------------- */
-
 export async function toggleLessonCompletion(
   lessonId: string,
   courseId: string,
@@ -178,7 +166,7 @@ export async function toggleLessonCompletion(
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
-  const supabase = await createClient();
+  const supabase = await createServerSupabase();
 
   const isCompleted = newStatus === 'Completed';
   const now = new Date().toISOString();
