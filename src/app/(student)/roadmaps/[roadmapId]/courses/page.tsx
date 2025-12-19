@@ -1,4 +1,3 @@
-'use client'; 
 
 import { createServerSupabase } from "@/lib/supabase/server"; 
 import { redirect } from "next/navigation";
