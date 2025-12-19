@@ -2,6 +2,13 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardPage from "@/components/Dashboard/DashboardPage";
 
+interface DashboardCourse {
+    course_id: string;
+    title: string;
+    summary: string;
+    icon?: string;
+}
+
 export default async function StudentPage() {
     const supabase = await createServerSupabase();
 
@@ -17,9 +24,10 @@ export default async function StudentPage() {
         .eq("id", user.id)
         .single();
 
-    const currentRoadmap = profile?.roadmaps || null;
+    const currentRoadmap = profile?.roadmaps as Tables<'roadmaps'> | null;
 
-    let courses: any[] = [];
+    let courses: DashboardCourse[] = [];
+
     if (currentRoadmap?.id) {
         const { data: rawCourses } = await supabase
             .from("roadmap_courses")
