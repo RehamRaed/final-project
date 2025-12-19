@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createServerSupabase } from "@/lib/supabase/server";
 
 export async function GET(
   request: NextRequest,
@@ -14,7 +14,8 @@ export async function GET(
 ) {
   try {
     const { courseId } = await params;
-    const supabase = await createClient();
+    
+    const supabase = await createServerSupabase();
 
     const { data, error } = await supabase
       .from("lessons")

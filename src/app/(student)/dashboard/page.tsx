@@ -1,10 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
+import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardPage from "@/components/Dashboard/DashboardPage";
-import { Tables } from "@/types/database.types";
 
 export default async function StudentPage() {
-    const supabase = await createClient();
+    const supabase = await createServerSupabase();
 
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 

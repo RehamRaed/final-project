@@ -1,6 +1,5 @@
-
 import { NextRequest } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServerSupabase } from '@/lib/supabase/server';
 import { successResponse, errorResponse, handleApiError } from '@/lib/api-response';
 
 export async function POST(
@@ -11,7 +10,7 @@ export async function POST(
         const params = await props.params;
         const { id: courseId } = params;
 
-        const supabase = await createClient();
+        const supabase = await createServerSupabase();
 
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (authError || !user) {
