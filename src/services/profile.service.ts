@@ -1,4 +1,3 @@
-import 'server-only';
 import { createServerSupabase } from "@/lib/supabase/server";
 import { Tables } from "@/types/database.types";
 
