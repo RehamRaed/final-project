@@ -22,7 +22,7 @@ export default async function LessonsPage({ params }: LessonsPageProps) {
 
   if (!result.success) {
     return (
-      <main className="min-h-screen max-w-[1400px] mx-auto px-5 pt-30">
+      <main className="min-h-screen max-w-1400px mx-auto px-5 pt-30">
         <ErrorState
           title="Course Not Found"
           message="Sorry, we could not load the lessons for this course."
@@ -36,7 +36,7 @@ export default async function LessonsPage({ params }: LessonsPageProps) {
 
   if (!courseData) {
     return (
-      <main className="min-h-screen max-w-[1400px] mx-auto px-5 pt-30">
+      <main className="min-h-screen max-w-1400px mx-auto px-5 pt-30">
         <ErrorState
           title="No Data"
           message="No course data available."
@@ -46,6 +46,6 @@ export default async function LessonsPage({ params }: LessonsPageProps) {
   }
 
   return (
-    <LessonPageClient courseData={courseData as any} />
+    <LessonPageClient courseData={courseData} />
   );
 }

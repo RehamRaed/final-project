@@ -1,9 +1,10 @@
-import { createClient } from "@/lib/supabase/server"
+import { createServerSupabase } from "@/lib/supabase/server"
 import { successResponse, handleApiError } from "@/lib/api-response"
 
 export async function GET() {
   try {
-    const supabase = await createClient()
+    const supabase = await createServerSupabase()
+    
     const { data, error } = await supabase
       .from("roadmaps")
       .select("*")
