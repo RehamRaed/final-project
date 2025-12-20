@@ -24,35 +24,34 @@ type RoadmapWithStatus = Tables<'roadmaps'> & {
   is_current: boolean;
 };
 
-export async function getRoadmapsListAction(): Promise<ActionResponse<unknown>> {
-  const userId = await getCurrentUserId();
-  if (!userId) return { success: false, error: 'User not authenticated.' };
+const userId = await getCurrentUserId();
+if (!userId) return { success: false, error: 'User not authenticated.' };
 
-  const supabase = await createServerSupabase();
+const supabase = await createServerSupabase();
 
-  const { data: roadmapsData, error: roadmapsError } =
-    await fetchAllRoadmapsWithCourseCount(supabase);
+const { data: roadmapsData, error: roadmapsError } =
+  await fetchAllRoadmapsWithCourseCount(supabase);
 
-  if (roadmapsError) {
-    return { success: false, error: roadmapsError.message };
-  }
+if (roadmapsError) {
+  return { success: false, error: roadmapsError.message };
+}
 
-  const { data: profileData } = await fetchUserCurrentRoadmap(
-    supabase,
-    userId
-  );
+const { data: profileData } = await fetchUserCurrentRoadmap(
+  supabase,
+  userId
+);
 
-  const currentRoadmapId = profileData?.current_roadmap_id;
+const currentRoadmapId = profileData?.current_roadmap_id;
 
-  const roadmaps: RoadmapWithStatus[] = (roadmapsData || []).map(
-    (roadmap) => ({
-      ...roadmap,
-      course_count: roadmap.roadmap_courses?.[0]?.count || 0,
-      is_current: roadmap.id === currentRoadmapId,
-    })
-  );
+const roadmaps: RoadmapWithStatus[] = (roadmapsData || []).map(
+  (roadmap) => ({
+    ...roadmap,
+    course_count: roadmap.roadmap_courses?.[0]?.count || 0,
+    is_current: roadmap.id === currentRoadmapId,
+  })
+);
 
-  return { success: true, data: roadmaps };
+return { success: true, data: roadmaps };
 }
 
 export async function getRoadmapDetailsAction(roadmapId: string): Promise<ActionResponse<unknown>> {
@@ -73,7 +72,7 @@ export async function getRoadmapDetailsAction(roadmapId: string): Promise<Action
   const coursesInRoadmap = data.roadmap_courses || [];
 
   const completedCourses = coursesInRoadmap.filter(
-    (rc) => rc.course?.user_progress?.[0]?.status === 'completed'
+    (rc) => rc.course?.user_progress?.[0]?.status?.toLowerCase() === 'completed'
   ).length;
 
   const totalCourses = coursesInRoadmap.length;
@@ -131,13 +130,11 @@ export async function getCourseLessonsAction(courseId: string): Promise<ActionRe
   if (error) return { success: false, error: error.message };
   if (!data) return { success: false, error: 'Course not found.' };
 
-  const lessonsInCourse = data.lessons || [];
+  const lessonsInCourse: LessonWithProgress[] = data.lessons || [];
   const totalLessons = lessonsInCourse.length;
 
   const completedLessons = lessonsInCourse.filter(
-    (l) =>
-      l.user_progress?.[0]?.status === 'Completed' ||
-      l.user_progress?.[0]?.status === 'completed'
+    (l) => l.user_progress?.[0]?.status?.toLowerCase() === 'completed'
   ).length;
 
   const { data: profile } = await supabase
@@ -269,12 +266,10 @@ export async function toggleLessonCompletion(
     );
 
     if (courseData) {
-      const lessons = courseData.lessons || [];
+      const lessons: LessonWithProgress[] = courseData.lessons || [];
 
       const allCompleted = lessons.every(
-        (lesson) =>
-          lesson.user_progress?.[0]?.status === 'Completed' ||
-          lesson.user_progress?.[0]?.status === 'completed'
+        (lesson) => lesson.user_progress?.[0]?.status?.toLowerCase() === 'completed'
       );
 
       if (allCompleted) {
@@ -317,8 +312,8 @@ export async function toggleLessonCompletion(
     message: courseCompleted
       ? 'Congratulations! Course completed and XP awarded.'
       : isCompleted
-      ? 'Lesson completed.'
-      : 'Lesson marked as in progress.',
+        ? 'Lesson completed.'
+        : 'Lesson marked as in progress.',
     data: {
       progress: progressData,
       courseCompleted,
