@@ -5,7 +5,8 @@ interface Props {
   lessons: Tables<'lessons'>[];
   selectedLessonId: string | null;
   onSelectLesson: (lesson: Tables<'lessons'>) => void;
-  courseTitle: string;
+  // courseTitle is accepted for API compatibility but not used here
+  courseTitle?: string;
   isPending?: boolean;
 }
 
@@ -13,7 +14,6 @@ export default function LessonSidebar({
   lessons,
   selectedLessonId,
   onSelectLesson,
-  courseTitle: _courseTitle
 }: Props) {
   return (
     <div className="w-full md:w-3/3  border rounded-xl  shadow-md p-4 overflow-y-auto">

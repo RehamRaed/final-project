@@ -10,17 +10,14 @@ import { supabase } from "@/lib/supabase/client";
 import Loading from "@/app/loading";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { toast } from "react-hot-toast";
 import Image from "next/image";
 
 import {
-  Menu as MenuIcon,
   Search as SearchIcon,
   User,
   Bell,
   CheckSquare,
   LogOut,
-  Map as MapIcon 
 } from "lucide-react";
 import LogoutConfirmModal from "./LogoutConfirmModal";
 
@@ -101,8 +98,18 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
   const handleLogoutConfirm = async () => {
     setIsLoggingOut(true);
     try {
-      await supabase.auth.signOut();
-      setTimeout(() => router.replace("/login"), 300);
+      // clear server-side cookies first
+      await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+      // clear client session store as well
+      await supabase.auth.signOut().catch(() => {});
+      // navigate with full reload to ensure client state and cache are cleared
+      setTimeout(() => {
+        try {
+          window.location.href = '/login';
+        } catch {
+          router.replace('/login');
+        }
+      }, 300);
     } catch (e) {
       console.error(e);
       setIsLoggingOut(false);

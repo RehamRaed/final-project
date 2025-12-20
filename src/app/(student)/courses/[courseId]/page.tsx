@@ -3,6 +3,7 @@ import { Metadata } from "next";
 
 import CoursePageClient from "@/components/lessons/CoursePageClient";
 import ErrorState from "@/components/ui/ErrorState";
+import type { Tables } from '@/types/database.types';
 
 interface CoursePageProps {
   params: Promise<{ courseId: string }>;
@@ -21,7 +22,7 @@ export async function generateMetadata({
     };
   }
 
-  const course = result.data;
+  const course = result.data as Tables<'courses'>;
 
   return {
     title: `${course.title} | StudyMate`,
@@ -51,13 +52,23 @@ export default async function CoursePage({ params }: CoursePageProps) {
         <ErrorState
           title="Course Not Found"
           message="Sorry, we could not find the requested course or you do not have access."
-          details={result.error}
+          details={result.error ?? result.message}
         />
       </main>
     );
   }
 
-  const courseData = result.data;
+  type LessonWithProgress = Tables<'lessons'> & {
+    user_progress: { status: string | null; completed_at: string | null }[] | null;
+  };
+
+  type CourseDataWithLessons = Tables<'courses'> & {
+    lessons: LessonWithProgress[] | null;
+    lesson_progress_percent?: number;
+    current_roadmap_id?: string | null;
+  };
+
+  const courseData = result.data as CourseDataWithLessons;
 
   if (!courseData) {
     return (

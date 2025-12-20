@@ -25,25 +25,17 @@ interface CoursePageClientProps {
 export default function CoursePageClient({
   courseData,
   lessonProgressPercent,
-  currentRoadmapId,
 }: CoursePageClientProps) {
   const router = useRouter();
-  const lessons = courseData.lessons || [];
+  const lessons = useMemo(() => courseData.lessons || [], [courseData.lessons]);
 
   const completedLessons = useMemo(
-    () =>
-      lessons.filter(
-        (l) => l.user_progress?.[0]?.status === "completed"
-      ).length,
+    () => lessons.filter((l) => l.user_progress?.[0]?.status === "completed").length,
     [lessons]
   );
 
   const totalDuration = useMemo(
-    () =>
-      lessons.reduce(
-        (sum, lesson) => sum + (lesson.duration || 0),
-        0
-      ),
+    () => lessons.reduce((sum, lesson) => sum + (lesson.duration || 0), 0),
     [lessons]
   );
 

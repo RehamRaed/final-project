@@ -46,7 +46,7 @@ const Tasks = ({ initialTasks }: TasksProps) => {
     async function fetchTasks(): Promise<void> {
         setIsLoading(true)
         const result = await getAllTasksAction()
-        if (result.success && result.data) {
+        if (result && result.success && result.data) {
             setTasks(result.data)
         }
         setIsLoading(false)
@@ -58,7 +58,7 @@ const Tasks = ({ initialTasks }: TasksProps) => {
 
         startTransition(async () => {
             const result = await toggleTaskAction(id)
-            if (!result.success) {
+            if (!result || !result.success) {
                 setTasks(prev => prev.map(t => t.id === id ? { ...t, is_completed: !t.is_completed } : t))
             } else {
                 await fetchTasks();
@@ -71,7 +71,7 @@ const Tasks = ({ initialTasks }: TasksProps) => {
 
         startTransition(async () => {
             const result = await deleteTaskAction(id)
-            if (!result.success) {
+            if (!result || !result.success) {
                 await fetchTasks()
             } else {
                 await fetchTasks();

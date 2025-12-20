@@ -7,9 +7,8 @@ import { useRouter } from 'next/navigation'
 
 interface VerifyEmailClientProps {
     email: string
-    emailVerified: boolean
 }
-export default function VerifyEmailClient({ email, emailVerified }: VerifyEmailClientProps) {
+export default function VerifyEmailClient({ email }: VerifyEmailClientProps) {
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
@@ -17,15 +16,16 @@ export default function VerifyEmailClient({ email, emailVerified }: VerifyEmailC
     async function handleResend() {
         setLoading(true)
         setMessage(null)
-
         const result = await resendVerificationEmail()
 
         setLoading(false)
 
-        if (result.success) {
-            setMessage({ type: 'success', text: result.message || 'Verification email sent' })
+        if (result && result.success) {
+            setMessage({ type: 'success', text: result.message ?? 'Verification email sent' })
+        } else if (result) {
+            setMessage({ type: 'error', text: result.error ?? result.message ?? 'An error occurred' })
         } else {
-            setMessage({ type: 'error', text: result.error || 'An error occurred' })
+            setMessage({ type: 'error', text: 'An error occurred' })
         }
     }
 

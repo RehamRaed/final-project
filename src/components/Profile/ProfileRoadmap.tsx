@@ -27,7 +27,7 @@ export default function ProfileRoadmap({ currentRoadmapTitle }: ProfileRoadmapPr
         </p>
         <button
           onClick={handleChangeRoadmap}
-          className="px-4 py-2 bg-accent text-white rounded-lg text-sm font-semibold hover:opacity-90 transition"
+          className="px-4 hover:cursor-pointer py-2 bg-accent text-white rounded-lg text-sm font-semibold hover:opacity-90 transition"
         >
           Change Roadmap
         </button>

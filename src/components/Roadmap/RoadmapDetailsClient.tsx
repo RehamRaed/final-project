@@ -23,9 +23,7 @@ interface RoadmapDetailsClientProps {
 export default function RoadmapDetailsClient({
     roadmapTitle,
     roadmapDescription,
-    initialCourses,
-    progressPercent,
-    userXp
+    initialCourses
 }: RoadmapDetailsClientProps) {
     const [showDoneOnly, setShowDoneOnly] = useState(false);
 
@@ -66,7 +64,7 @@ export default function RoadmapDetailsClient({
   </div>
 
   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4">
-    <div className="flex-1 w-full">
+    {/* <div className="flex-1 w-full">
       <div className="flex justify-between items-center mb-1">
         <span className="text-sm font-medium text-text-secondary">Overall Progress</span>
         <span className="text-sm font-bold text-primary">{progressPercent}%</span>
@@ -81,7 +79,7 @@ export default function RoadmapDetailsClient({
           aria-valuemax={100}
         />
       </div>
-    </div>
+    </div> */}
 
     <div className="text-center px-4 py-2 bg-card-bg rounded-lg border border-border hrink-0">
       <p className="text-xs text-text-secondary font-medium">Completed</p>

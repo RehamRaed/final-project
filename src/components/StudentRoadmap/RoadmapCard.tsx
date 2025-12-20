@@ -5,7 +5,7 @@ import { Tables } from "@/types/database.types";
 import { Zap } from 'lucide-react';
 
 interface RoadmapWithCount extends Tables<'roadmaps'> {
-  course_count: number;
+  course_count?: number;
 }
 
 interface RoadmapCardProps {
@@ -63,8 +63,8 @@ export default function RoadmapCard({
 
       <div className="mt-4 text-xs font-medium text-text-secondary flex items-center gap-1">
         <Zap className="w-3 h-3" aria-hidden="true" />
-        <span aria-label={`Number of courses: ${roadmap.course_count}`}>
-          {roadmap.course_count} courses
+        <span aria-label={`Number of courses: ${roadmap.course_count ?? 0}`}>
+          {roadmap.course_count ?? 0} courses
         </span>
       </div>
     </button>

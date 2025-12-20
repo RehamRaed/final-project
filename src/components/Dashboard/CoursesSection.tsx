@@ -2,7 +2,7 @@
 
 import { Tables } from "@/types/database.types";
 import { ArrowRight } from "lucide-react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import CourseCard from "./CourseCard";
 
 interface Course {
@@ -20,13 +20,13 @@ interface CoursesSectionProps {
 export default function CoursesSection({ courses, currentRoadmap }: CoursesSectionProps) {
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
+    // const searchParams = useSearchParams(); // unused
     const hasMoreCourses = courses.length > 4;
 
     return (
         <>
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-primary">My Courses:</h2>
+                <h2 className="text-2xl hover:cursor-pointer font-bold text-primary">My Courses:</h2>
                 {hasMoreCourses && currentRoadmap && (
                     <button
                         className="flex items-center gap-2 text-primary font-semibold hover:underline"

@@ -4,6 +4,7 @@ import { createServerSupabase } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import type { TablesUpdate } from '@/types/database.types'
+import type { ActionResponse } from '@/types/actionResponse'
 
 const registerSchema = z.object({
     fullName: z.string().min(4, 'Full name must be at least 4 characters'),
@@ -32,7 +33,7 @@ const resetPasswordSchema = z.object({
     path: ['confirmPassword'],
 })
 
-export async function register(formData: FormData) {
+export async function register(formData: FormData): Promise<ActionResponse<unknown> | void> {
     const supabase = await createServerSupabase()
 
     const rawData = {
@@ -79,7 +80,7 @@ export async function register(formData: FormData) {
     redirect('/verify-email')
 }
 
-export async function login(formData: FormData) {
+export async function login(formData: FormData): Promise<ActionResponse<unknown> | void> {
     const supabase = await createServerSupabase()
 
     const rawData = {
@@ -117,13 +118,13 @@ export async function login(formData: FormData) {
     redirect('/dashboard')
 }
 
-export async function logout() {
+export async function logout(): Promise<void> {
     const supabase = await createServerSupabase()
     await supabase.auth.signOut()
     redirect('/login')
 }
 
-export async function loginWithOAuth(provider: 'google' | 'github') {
+export async function loginWithOAuth(provider: 'google' | 'github'): Promise<ActionResponse<unknown> | void> {
     const supabase = await createServerSupabase()
 
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -144,7 +145,7 @@ export async function loginWithOAuth(provider: 'google' | 'github') {
     return { success: false, error: 'Login failed' }
 }
 
-export async function forgotPassword(formData: FormData) {
+export async function forgotPassword(formData: FormData): Promise<ActionResponse<unknown>> {
     const supabase = await createServerSupabase()
 
     const rawData = {
@@ -175,7 +176,7 @@ export async function forgotPassword(formData: FormData) {
     }
 }
 
-export async function resetPassword(formData: FormData) {
+export async function resetPassword(formData: FormData): Promise<ActionResponse<unknown>> {
     const supabase = await createServerSupabase()
 
     const rawData = {
@@ -208,7 +209,7 @@ export async function resetPassword(formData: FormData) {
     }
 }
 
-export async function resendVerificationEmail() {
+export async function resendVerificationEmail(): Promise<ActionResponse<unknown>> {
     const supabase = await createServerSupabase()
 
     const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -232,7 +233,7 @@ export async function resendVerificationEmail() {
     return { success: true, message: 'Verification email sent' }
 }
 
-export async function updateProfile(formData: FormData) {
+export async function updateProfile(formData: FormData): Promise<ActionResponse<unknown>> {
     const supabase = await createServerSupabase()
     const { data: { user } } = await supabase.auth.getUser()
 
