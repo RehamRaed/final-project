@@ -1,9 +1,12 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardPage from "@/components/Dashboard/DashboardPage";
+<<<<<<< HEAD
 import type { Database } from "@/types/database.types";
 
 type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
+=======
+>>>>>>> 7c8cf06d41b54fa3408dc94f77d4f9b13c266a45
 
 interface DashboardCourse {
     course_id: string;
