@@ -1,7 +1,9 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardPage from "@/components/Dashboard/DashboardPage";
-import { Tables } from "@/types/database.types";
+import type { Database } from "@/types/database.types";
+
+type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
 
 interface DashboardCourse {
     course_id: string;
@@ -25,7 +27,7 @@ export default async function StudentPage() {
         .eq("id", user.id)
         .single();
 
-    const currentRoadmap = profile?.roadmaps as Tables<'roadmaps'> | null;
+    const currentRoadmap = (profile as any)?.roadmaps as Tables<'roadmaps'> | null;
 
     let courses: DashboardCourse[] = [];
 
