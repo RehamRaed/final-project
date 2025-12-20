@@ -33,8 +33,7 @@ export async function generateMetadata({ params }: RoadmapPageProps): Promise<Me
       description: 'The requested roadmap could not be found.',
     };
   }
-
-  const roadmap = result.data;
+  const roadmap = result.data as { title: string; description?: string | null };
 
   return {
     title: `${roadmap.title} | StudyMate`,

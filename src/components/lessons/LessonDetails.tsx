@@ -54,7 +54,7 @@ export default function LessonDetails({
         </h1>
 
         <button
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold
+          className={`flex items-center gap-2 px-4 py-2 hover:cursor-pointer rounded-lg text-white font-semibold
             ${lessonStatus === 'Completed'
               ? 'bg-gray-500 cursor-not-allowed'
               : isMarkingDone

@@ -26,7 +26,7 @@ export default function LogoutConfirmModal({ open, loading, onClose, onConfirm }
             Cancel
           </button>
           <button
-            className="px-4 py-2 rounded bg-red-600 text-white font-bold hover:bg-red-700 flex items-center justify-center"
+            className="px-4 py-2 hover:cursor-pointer rounded bg-red-600 text-white font-bold hover:bg-red-700 flex items-center justify-center"
             onClick={onConfirm}
             disabled={loading}
           >

@@ -1,3 +1,4 @@
+// cSpell:ignore roadmaps
 'use client';
 
 import Link from 'next/link';
@@ -41,7 +42,7 @@ export default function LessonPageUI({
   }
 
   return (
-    <div className='max-w-[1200px] mx-auto pt-25 px-5 pb-10'>
+    <div className='max-w-6xl mx-auto pt-25 px-5 pb-10'>
       <Link
         href={`/roadmaps/${courseId}/courses`}
         className="flex items-center gap-1 font-semibold mb-5"

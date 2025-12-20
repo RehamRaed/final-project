@@ -1,9 +1,10 @@
-'use server';
+"use server";
 
 import { revalidatePath } from 'next/cache';
 import { createServerSupabase } from '@/lib/supabase/server';
 import * as tasksService from '@/services/tasks.service';
 import { Tables, TablesInsert, TablesUpdate } from '@/types/database.types';
+import type { ActionResponse } from '@/types/actionResponse';
 
 async function setupAction() {
     const supabase = await createServerSupabase();
@@ -19,10 +20,6 @@ async function setupAction() {
 function invalidateTaskListCache() {
     revalidatePath('/tasklist');
 }
-
-export type ActionResponse<T> =
-    | { success: true; data: T; error?: undefined }
-    | { success: false; error: string; data?: undefined };
 
 function handleActionError(error: unknown, defaultMessage: string): { success: false; error: string } {
     let errorMessage = defaultMessage;
@@ -48,7 +45,7 @@ export async function getAllTasksAction(): Promise<ActionResponse<Tables<'tasks'
     }
 }
 
-export async function getTaskAction(taskId: string) {
+export async function getTaskAction(taskId: string): Promise<ActionResponse<Tables<'tasks'> | null>> {
     try {
         const { supabase } = await setupAction();
         const { data, error } = await tasksService.getTaskById(supabase, taskId);
@@ -59,7 +56,7 @@ export async function getTaskAction(taskId: string) {
     }
 }
 
-export async function createTaskAction(taskData: Omit<TablesInsert<'tasks'>, 'user_id'>) {
+export async function createTaskAction(taskData: Omit<TablesInsert<'tasks'>, 'user_id'>): Promise<ActionResponse<Tables<'tasks'>>> {
     try {
         const { supabase, user } = await setupAction();
         const { data, error } = await tasksService.createTask(supabase, { ...taskData, user_id: user.id });
@@ -71,7 +68,7 @@ export async function createTaskAction(taskData: Omit<TablesInsert<'tasks'>, 'us
     }
 }
 
-export async function updateTaskAction(id: string, updates: TablesUpdate<'tasks'>) {
+export async function updateTaskAction(id: string, updates: TablesUpdate<'tasks'>): Promise<ActionResponse<Tables<'tasks'>>> {
     try {
         const { supabase } = await setupAction();
         const { data, error } = await tasksService.updateTask(supabase, id, updates);
@@ -83,7 +80,7 @@ export async function updateTaskAction(id: string, updates: TablesUpdate<'tasks'
     }
 }
 
-export async function deleteTaskAction(taskId: string) {
+export async function deleteTaskAction(taskId: string): Promise<ActionResponse<null>> {
     try {
         const { supabase } = await setupAction();
         const { error } = await tasksService.deleteTask(supabase, taskId);
@@ -95,7 +92,7 @@ export async function deleteTaskAction(taskId: string) {
     }
 }
 
-export async function toggleTaskAction(taskId: string) {
+export async function toggleTaskAction(taskId: string): Promise<ActionResponse<Tables<'tasks'>>> {
     try {
         const { supabase, user } = await setupAction();
         const { data: task, error } = await tasksService.toggleTaskCompletion(supabase, taskId);
@@ -126,7 +123,7 @@ export async function toggleTaskAction(taskId: string) {
     }
 }
 
-export async function completeTaskAction(taskId: string) {
+export async function completeTaskAction(taskId: string): Promise<ActionResponse<Tables<'tasks'>>> {
     try {
         const { supabase } = await setupAction();
         const { data, error } = await tasksService.updateTask(supabase, taskId, { is_completed: true });
@@ -138,7 +135,7 @@ export async function completeTaskAction(taskId: string) {
     }
 }
 
-export async function uncompleteTaskAction(taskId: string) {
+export async function uncompleteTaskAction(taskId: string): Promise<ActionResponse<Tables<'tasks'>>> {
     try {
         const { supabase } = await setupAction();
         const { data, error } = await tasksService.updateTask(supabase, taskId, { is_completed: false });

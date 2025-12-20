@@ -2,9 +2,11 @@
 
 import { useState, useTransition } from 'react'
 import { updateTaskAction } from '@/actions/tasks.actions'
+import type { ActionResponse } from '@/types/actionResponse'
+import type { Tables, TablesUpdate } from '@/types/database.types'
 import { X, Calendar as CalendarIcon, Loader2, Edit2, Check } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { Tables, TablesUpdate } from '@/types/database.types'
+// types imported above
 
 type Task = Tables<'tasks'>
 
@@ -55,13 +57,13 @@ const TaskDetailsModal = ({ task, isOpen, onClose, onTaskUpdated }: TaskDetailsM
                 due_date: dueDate ? new Date(dueDate).toISOString() : null
             }
 
-            const result = await updateTaskAction(task.id, updates)
+            const result = await updateTaskAction(task.id, updates) as ActionResponse<Tables<'tasks'>>
 
-            if (result.success) {
+            if (result && result.success) {
                 setIsEditing(false)
                 onTaskUpdated()
             } else {
-                setError(result.error || 'Failed to update task')
+                setError(result.error ?? result.message ?? 'Failed to update task')
             }
         })
     }

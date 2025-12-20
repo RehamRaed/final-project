@@ -2,7 +2,7 @@
 
 import { login } from '@/actions/auth'
 import { useFormStatus } from 'react-dom'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 function SubmitButton() {
@@ -23,20 +23,14 @@ function SubmitButton() {
 export function LoginForm() {
     const searchParams = useSearchParams()
     const urlError = searchParams?.get('error')
-    const [formError, setFormError] = useState<string>('')
-
-    useEffect(() => {
-        if (urlError) {
-            setFormError(urlError)
-        }
-    }, [urlError])
+    const [formError, setFormError] = useState<string>(urlError ?? '')
 
     async function handleSubmit(formData: FormData) {
         setFormError('')
         const result = await login(formData)
 
         if (result && !result.success) {
-            setFormError(result.error || 'Login failed')
+            setFormError(result.error ?? result.message ?? 'Login failed')
         }
     }
 

@@ -28,13 +28,15 @@ export function ResetPasswordForm() {
         setMessage(null)
         const result = await resetPassword(formData)
 
-        if (result.success) {
-            setMessage({ type: 'success', text: result.message || 'Password reset successfully' })
+        if (result && result.success) {
+            setMessage({ type: 'success', text: result.message ?? 'Password reset successfully' })
             setTimeout(() => {
                 router.push('/login')
             }, 2000)
+        } else if (result) {
+            setMessage({ type: 'error', text: result.error ?? result.message ?? 'Something went wrong' })
         } else {
-            setMessage({ type: 'error', text: result.error || 'Something went wrong' })
+            setMessage({ type: 'error', text: 'Something went wrong' })
         }
     }
 

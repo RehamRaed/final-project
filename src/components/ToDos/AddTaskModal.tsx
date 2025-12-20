@@ -2,9 +2,11 @@
 
 import { useState, useTransition } from 'react'
 import { createTaskAction } from '@/actions/tasks.actions'
+import type { ActionResponse } from '@/types/actionResponse'
+import type { TablesInsert, Tables } from '@/types/database.types'
 import { X, Calendar as CalendarIcon, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { TablesInsert } from '@/types/database.types'
+// tables types are imported as types above
 
 interface AddTaskModalProps {
     isOpen: boolean
@@ -35,9 +37,9 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                 is_completed: false
             }
 
-            const result = await createTaskAction(taskData)
+            const result = await createTaskAction(taskData) as ActionResponse<Tables<'tasks'>>
 
-            if (result.success) {
+            if (result && result.success) {
                 setTitle('')
                 setDescription('')
                 setPriority('Medium')
@@ -45,7 +47,7 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                 onTaskAdded()
                 onClose()
             } else {
-                setError('error' in result ? result.error : 'Failed to create task')
+                setError(result.error ?? result.message ?? 'Failed to create task')
             }
         })
     }

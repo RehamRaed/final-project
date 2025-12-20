@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import {
   fetchAllRoadmapsWithCourseCount,
@@ -11,6 +11,7 @@ import {
 import { createServerSupabase } from '@/lib/supabase/server';
 import { Tables } from '@/types/database.types';
 import { revalidatePath } from 'next/cache';
+import type { ActionResponse } from '@/types/actionResponse';
 
 async function getCurrentUserId(): Promise<string | null> {
   const supabase = await createServerSupabase();
@@ -23,7 +24,7 @@ type RoadmapWithStatus = Tables<'roadmaps'> & {
   is_current: boolean;
 };
 
-export async function getRoadmapsListAction() {
+export async function getRoadmapsListAction(): Promise<ActionResponse<unknown>> {
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
@@ -54,7 +55,7 @@ export async function getRoadmapsListAction() {
   return { success: true, data: roadmaps };
 }
 
-export async function getRoadmapDetailsAction(roadmapId: string) {
+export async function getRoadmapDetailsAction(roadmapId: string): Promise<ActionResponse<unknown>> {
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
@@ -98,7 +99,7 @@ export async function getRoadmapDetailsAction(roadmapId: string) {
   };
 }
 
-export async function updateCurrentRoadmapAction(newRoadmapId: string) {
+export async function updateCurrentRoadmapAction(newRoadmapId: string): Promise<ActionResponse<unknown>> {
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
@@ -115,7 +116,7 @@ export async function updateCurrentRoadmapAction(newRoadmapId: string) {
   return { success: true, message: 'Roadmap updated successfully.' };
 }
 
-export async function getCourseLessonsAction(courseId: string) {
+export async function getCourseLessonsAction(courseId: string): Promise<ActionResponse<unknown>> {
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
@@ -162,7 +163,7 @@ export async function toggleLessonCompletion(
   lessonId: string,
   courseId: string,
   newStatus: 'InProgress' | 'Completed'
-) {
+): Promise<ActionResponse<unknown>> {
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
@@ -191,6 +192,71 @@ export async function toggleLessonCompletion(
       success: false,
       error: `Failed to update progress: ${progressError.message}`,
     };
+  }
+
+  // Recalculate course-level done percentage for this user
+  try {
+    const { data: lessonsForCourse, error: lessonsError } = await supabase
+      .from('lessons')
+      .select('id')
+      .eq('course_id', courseId);
+
+    if (!lessonsError && lessonsForCourse) {
+      const lessonIds = lessonsForCourse.map((l: { id: string }) => l.id).filter(Boolean);
+      if (lessonIds.length > 0) {
+        const { data: userProgressRows, error: userProgressError } = await supabase
+          .from('user_lesson_progress')
+          .select('lesson_id, status')
+          .eq('user_id', userId)
+          .in('lesson_id', lessonIds);
+
+        if (!userProgressError && userProgressRows) {
+          const completedCount = userProgressRows.filter((r: { status: string | null }) => r.status === 'Completed' || r.status === 'completed').length;
+          const total = lessonIds.length;
+          const donePercentage = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+
+          // determine started_at: preserve existing started_at if present, otherwise set when user has any progress
+          const { data: existingCourseProgress } = await supabase
+            .from('user_course_progress')
+            .select('started_at')
+            .eq('user_id', userId)
+            .eq('course_id', courseId)
+            .single();
+
+          const startedAtToSet = existingCourseProgress?.started_at ?? (donePercentage > 0 ? now : null);
+
+          // upsert course progress row (preserve started_at when available)
+          const { data: upsertCourseProgress, error: upsertError } = await supabase
+            .from('user_course_progress')
+            .upsert(
+              {
+                user_id: userId,
+                course_id: courseId,
+                // Note: do not write `done_percentage` here if the column doesn't exist in the DB schema.
+                status: donePercentage === 100 ? 'Completed' : 'InProgress',
+                completed_at: donePercentage === 100 ? now : null,
+                started_at: startedAtToSet,
+              },
+              { onConflict: 'user_id,course_id' }
+            )
+            .select()
+            .single();
+
+          // Debug logs: print upsert result for troubleshooting
+          try {
+            console.log('user_course_progress upsert result', { upsertCourseProgress, startedAtToSet, donePercentage });
+          } catch {
+            // ignore logging errors
+          }
+
+          if (upsertError) {
+            console.error('user_course_progress upsert error', upsertError.message);
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.error('Failed to recalculate course done percentage', e);
   }
 
   let courseCompleted = false;
@@ -236,6 +302,15 @@ export async function toggleLessonCompletion(
   }
 
   revalidatePath(`/courses/${courseId}`);
+  // Revalidate both course page and lessons route so client-side router.refresh() will pick up changes
+  revalidatePath(`/courses/${courseId}/lessons`);
+  // Revalidate roadmap lists so per-user course percentages update on related pages
+  try {
+    revalidatePath('/student/roadmaps');
+    revalidatePath('/roadmaps');
+  } catch {
+    // ignore revalidate errors
+  }
 
   return {
     success: true,
@@ -244,7 +319,9 @@ export async function toggleLessonCompletion(
       : isCompleted
       ? 'Lesson completed.'
       : 'Lesson marked as in progress.',
-    progress: progressData,
-    courseCompleted,
+    data: {
+      progress: progressData,
+      courseCompleted,
+    },
   };
 }
