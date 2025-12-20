@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://studymate.app',
+    url: '--',
     siteName: 'StudyMate',
     title: 'StudyMate - Your Personal Student Assistant',
     description: 'Manage your learning journey with personalized roadmaps and course tracking',
