@@ -306,6 +306,7 @@ export async function toggleLessonCompletion(
   revalidatePath(`/courses/${courseId}/lessons`);
   // Revalidate roadmap lists so per-user course percentages update on related pages
   try {
+    revalidatePath('/student/roadmaps');
     revalidatePath('/roadmaps');
   } catch {
     // ignore revalidate errors

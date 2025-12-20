@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Tables } from "@/types/database.types";
 import { ArrowRight } from "lucide-react";
