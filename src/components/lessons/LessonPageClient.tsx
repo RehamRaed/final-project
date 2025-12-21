@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { toggleLessonCompletion } from '@/actions/learning.actions';
 import LessonsSidebar from './LessonsSidebar';
-import LessonDetails, { Lesson as LessonDetailType } from './LessonDetails';
+import LessonDetails from './LessonDetails'; 
 import Link from 'next/link';
 import { ArrowLeft } from "lucide-react";
 import LoadingState from '@/components/ui/LoadingState';
@@ -13,7 +13,9 @@ import { Tables } from '@/types/database.types';
 import { useNotifications } from '@/context/NotificationsContext';
 
 type Lesson = Tables<'lessons'> & {
-    user_progress: { status: string | null; completed_at: string | null }[] | null
+    user_progress: { status: string | null; completed_at: string | null }[] | null;
+    duration_minutes?: number;
+    video_url?: string | null;
 };
 
 type CourseData = Tables<'courses'> & {
@@ -23,16 +25,14 @@ type CourseData = Tables<'courses'> & {
 
 interface LessonPageClientProps {
     courseData: CourseData;
-
 }
 
 export default function LessonPageClient({ courseData }: LessonPageClientProps) {
     const { addNotification } = useNotifications();
-
     const router = useRouter();
+
     const lessons = useMemo(() => courseData.lessons || [], [courseData.lessons]);
 
-    // local state for optimistic updates
     const [localLessons, setLocalLessons] = useState<Lesson[]>(lessons);
     const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(localLessons[0] || null);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -40,7 +40,9 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
     const localProgressPercent = useMemo(() => {
         const total = localLessons.length || 0;
         if (total === 0) return 0;
-        const completed = localLessons.filter(l => (l.user_progress?.[0]?.status === 'Completed' || l.user_progress?.[0]?.status === 'completed')).length;
+        const completed = localLessons.filter(
+            l => l.user_progress?.[0]?.status === 'Completed' || l.user_progress?.[0]?.status === 'completed'
+        ).length;
         return Math.round((completed / total) * 100);
     }, [localLessons]);
 
@@ -48,27 +50,22 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
         if (lessons.length > 0 && !selectedLesson) {
             setSelectedLesson(lessons[0]);
         }
-        // sync incoming lessons to local copy
         setLocalLessons(lessons);
     }, [lessons, selectedLesson]);
 
     const handleMarkDone = async (lessonId: string) => {
         setIsProcessing(true);
-
-        // snapshot for revert on failure
         const prevLessons = localLessons.map(l => ({ ...l, user_progress: l.user_progress ? [...l.user_progress] : l.user_progress }));
         try {
             const currentLesson = localLessons.find(l => l.id === lessonId);
             const isCurrentlyCompleted = currentLesson?.user_progress?.[0]?.status === 'Completed' || currentLesson?.user_progress?.[0]?.status === 'completed';
             const newStatus: 'InProgress' | 'Completed' = isCurrentlyCompleted ? 'InProgress' : 'Completed';
 
-            // Optimistically update local state so UI updates immediately
             const updated = localLessons.map(l => {
                 if (l.id !== lessonId) return l;
                 const newProgress = l.user_progress && l.user_progress.length > 0
                     ? [{ ...l.user_progress[0], status: newStatus, completed_at: newStatus === 'Completed' ? new Date().toISOString() : null }]
                     : [{ status: newStatus, completed_at: newStatus === 'Completed' ? new Date().toISOString() : null }];
-
                 return { ...l, user_progress: newProgress };
             });
 
@@ -79,20 +76,17 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
 
             const result = await toggleLessonCompletion(lessonId, courseData.id, newStatus);
 
-            if (result && result.success) {
+            if (result?.success) {
                 toast.success(result.message ?? 'Lesson updated');
-                // ensure server canonical state is fetched
                 router.refresh();
                 addNotification(`Lesson "${currentLesson?.title}" marked as ${newStatus === 'Completed' ? 'completed' : 'in progress'}.`);
             } else {
-                // revert optimistic update
-                setLocalLessons(prevLessons as Lesson[]);
+                setLocalLessons(prevLessons);
                 setSelectedLesson(prevLessons.find(l => l.id === lessonId) ?? null);
                 toast.error(result?.error ?? result?.message ?? 'Failed to update lesson progress');
             }
         } catch (error: unknown) {
-            // revert optimistic update
-            setLocalLessons(prevLessons as Lesson[]);
+            setLocalLessons(prevLessons);
             setSelectedLesson(prevLessons.find(l => l.id === lessonId) ?? null);
             const message = error instanceof Error ? error.message : 'An unknown error occurred';
             console.error('Error marking lesson done:', message);
@@ -102,9 +96,7 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
         }
     };
 
-    if (!courseData) {
-        return <LoadingState />;
-    }
+    if (!courseData) return <LoadingState />;
 
     return (
         <div className='max-w-7xl mx-auto pt-25 px-5 pb-10'>
@@ -130,8 +122,8 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
                 </div>
             </div>
 
-            <div className="flex gap-6 flex-col lg:flex-row h-[calc(100vh-200px)] min-h-[600px]">
-                <div className="lg:w-[350px] hrink-0 bg-bg rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+            <div className="flex gap-6 flex-col lg:flex-row h-[calc(100vh-200px)] min-h-150">
+                <div className="lg:w-87.5 shrink-0 bg-bg rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
                     <div className="p-4 border-b ">
                         <h2 className="font-bold text-lg text-text-primary">Course Content</h2>
                         <p className="text-xs text-gray-500 mt-1">{localLessons.length} Lessons</p>
@@ -149,31 +141,30 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
                 <div className="flex-1 bg-bg rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
                     {selectedLesson ? (
                         <div className="h-full ">
-                            {
-                                (() => {
-                                    const status = (selectedLesson.user_progress?.[0]?.status === 'Completed' || selectedLesson.user_progress?.[0]?.status === 'completed')
+                            {(() => {
+                                const status =
+                                    selectedLesson.user_progress?.[0]?.status === 'Completed' || selectedLesson.user_progress?.[0]?.status === 'completed'
                                         ? ('Completed' as const)
-                                        : (selectedLesson.user_progress?.[0]?.status === 'InProgress' || selectedLesson.user_progress?.[0]?.status === 'in_progress')
+                                        : selectedLesson.user_progress?.[0]?.status === 'InProgress' || selectedLesson.user_progress?.[0]?.status === 'in_progress'
                                             ? ('InProgress' as const)
                                             : ('Not Started' as const);
 
-                                    const lessonProp = {
-                                        ...selectedLesson,
-                                        status,
-                                        duration_minutes: selectedLesson.duration || 0,
-                                        content: selectedLesson.content || '',
-                                        video_url: selectedLesson.video_url || ''
-                                    } as unknown as LessonDetailType;
+                                const lessonProp = {
+                                    ...selectedLesson,
+                                    status,
+                                    duration_minutes: selectedLesson.duration_minutes ?? 0,
+                                    content: selectedLesson.content || '',
+                                    video_url: selectedLesson.video_url ?? null
+                                };
 
-                                    return (
-                                        <LessonDetails
-                                            lesson={lessonProp}
-                                            onMarkDone={handleMarkDone}
-                                            isMarkingDone={isProcessing}
-                                        />
-                                    );
-                                })()
-                            }
+                                return (
+                                    <LessonDetails
+                                        lesson={lessonProp}
+                                        onMarkDone={handleMarkDone}
+                                        isMarkingDone={isProcessing}
+                                    />
+                                );
+                            })()}
                         </div>
                     ) : (
                         <div className="flex flex-col items-center justify-center h-full text-gray-500 bg-gray-50/50">

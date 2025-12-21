@@ -1,10 +1,10 @@
-import { Tables } from "./database.types";
-import { Lesson } from "./lesson";
+import { Tables } from "@/types/database.types";
+import { BaseLesson } from "./lesson";
 
 export type Course = Tables<'courses'>;
 
 export interface CourseWithLessons extends Course {
-  lessons?: Lesson[];
+  lessons?: BaseLesson[]; 
 }
 
 export interface CourseWithProgress extends Course {

@@ -21,7 +21,7 @@ export default async function RoadmapsPage() {
 
   if (!result.success) {
     return (
-      <main className="pt-25 px-10 max-w-[1400px] mx-auto" aria-live="assertive">
+      <main className="pt-25 px-10 max-w-350 mx-auto" aria-live="assertive">
         <h1 className="text-2xl md:text-3xl font-bold text-center mb-12">Choose Your Roadmap</h1>
         <div className="text-center text-red-600 p-8 border border-red-300 rounded-lg">
           <p className="text-lg">
@@ -36,7 +36,7 @@ export default async function RoadmapsPage() {
   const roadmaps: RoadmapWithStatus[] = (result.data as RoadmapWithStatus[]) || [];
 
   return (
-    <main className="pt-20 px-10 max-w-[1400px] mx-auto" aria-label="Roadmap Selection">
+    <main className="pt-20 px-10 max-w-350 mx-auto" aria-label="Roadmap Selection">
       <h1 className="text-2xl md:text-3xl font-bold text-center mb-12" tabIndex={0}>
         Choose Your Roadmap
       </h1>

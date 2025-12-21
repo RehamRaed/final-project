@@ -230,22 +230,6 @@ export async function upsertLessonProgress(
     isCompleted: boolean,
 ): Promise<ServiceResponse<UserLessonProgress>> {
 
-    // const completed_at = isCompleted ? new Date().toISOString() : null;
-
-    // const payload: TablesInsert<'user_lesson_progress'> = {
-    //     user_id: userId,
-    //     lesson_id: lessonId,
-    //     status,
-    //     completed_at,
-    //     // لا نحتاج لـ id أو created_at في Insert إذا كانا يُولدان تلقائياً
-    // };
-
-    // const { data, error } = await client
-    //     .from('user_lesson_progress')
-    //     .upsert(payload, { onConflict: 'user_id,lesson_id' })
-    //     .select()
-    //     .single()
-
 
 
     const { data, error } = await client
