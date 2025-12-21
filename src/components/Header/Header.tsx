@@ -1,48 +1,86 @@
-"use client";
+'use client';
+import * as React from 'react';
+import { styled, alpha } from '@mui/material/styles';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import InputBase from '@mui/material/InputBase';
+import Badge from '@mui/material/Badge';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import MoreIcon from '@mui/icons-material/MoreVert';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState,useRef } from "react";
+import { CourseSearchResult, fetchCourses } from '@/lib/search';
+import SearchResults from './SearchResults';
+import { supabase } from '@/lib/supabase/client';
+import { useNotifications } from '@/context/NotificationsContext';
+import { CheckSquare, LogOut, User } from 'lucide-react';
+import LogoutConfirmModal from './LogoutConfirmModal';
 
-import React, { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { fetchCourses, CourseSearchResult } from "@/lib/search";
-import SearchResults from "./SearchResults";
-import { useNotifications } from "@/context/NotificationsContext";
-import { supabase } from "@/lib/supabase/client";
-import Loading from "@/app/loading";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
-import { toast } from "react-hot-toast";
-import Image from "next/image";
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': { backgroundColor: alpha(theme.palette.common.white, 0.25) },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: { marginLeft: theme.spacing(3), width: 'auto' },
+}));
 
-import {
-  Menu as MenuIcon,
-  Search as SearchIcon,
-  User,
-  Bell,
-  CheckSquare,
-  LogOut,
-  Map as MapIcon 
-} from "lucide-react";
-import LogoutConfirmModal from "./LogoutConfirmModal";
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
 
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: { width: '20ch' },
+  },
+}));
 
 interface HeaderProps {
   currentRoadmapId?: string | null;
 }
 
-export default function Header({ currentRoadmapId }: HeaderProps) {
-  const router = useRouter();
-  const { notifications } = useNotifications();
+
+export default function Header({currentRoadmapId}: HeaderProps) {
+  const { notifications, removeNotifcation } = useNotifications();
   const searchRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
 
-  const currentRoadmap = useSelector((state: RootState) => state.roadmap.current);
-  const activeRoadmapId = currentRoadmap?.id || currentRoadmapId;
-
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [res, setRes] = useState<CourseSearchResult[]>([]);
-  const [profileOpen, setProfileOpen] = useState(false);
+  const router = useRouter();
+
+  const [profileAnchorEl, setProfileAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [notificationAnchorEl, setNotificationAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
+  
+  const isProfileMenuOpen = Boolean(profileAnchorEl);
+  const isNotificationMenuOpen = Boolean(notificationAnchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const [userInfo, setUserInfo] = useState<{
     avatarUrl: string | null;
     initials: string | null;
@@ -52,6 +90,21 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
     initials: null,
     currentRoadmapId: null
   });
+  // handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setRes([]); // close search results
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [searchRef]);
+
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -74,7 +127,6 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
                 names[names.length - 1].charAt(0)).toUpperCase();
           }
         }
-
         setUserInfo({
           avatarUrl,
           initials,
@@ -83,182 +135,297 @@ export default function Header({ currentRoadmapId }: HeaderProps) {
       }
     });
   }, []);
+    
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    if (!query) {
+      setRes([]);
+      return;
+    }
+    const courses = await fetchCourses({ query });
+    setRes(courses);
+  };
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setRes([]);
-      }
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
-        setProfileOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setProfileAnchorEl(event.currentTarget);
+  };
+
+  const handleNotifcationMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setNotificationAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setProfileAnchorEl(null);
+    setNotificationAnchorEl(null);
+    setMobileMoreAnchorEl(null);
+  };
+
+  const handleProfileRedirect = () => {
+    handleMenuClose();
+    router.push('/profile');
+  };
+
+  
+  const handleMyTasks = () => {
+    handleMenuClose();
+    router.push("/tasklist");
+  };
+
+  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const handleLogout = async () => {
+    setConfirmLogoutOpen(true);
+    await supabase.auth.signOut();
+    handleMenuClose();
+  };
 
   const handleLogoutConfirm = async () => {
     setIsLoggingOut(true);
     try {
-      await supabase.auth.signOut();
-      setTimeout(() => router.replace("/login"), 300);
+      // clear server-side cookies first
+      await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+      // clear client session store as well
+      await supabase.auth.signOut().catch(() => {});
+      // navigate with full reload to ensure client state and cache are cleared
+      setTimeout(() => {
+        try {
+          window.location.href = '/login';
+        } catch {
+          router.replace('/login');
+        }
+      }, 300);
     } catch (e) {
       console.error(e);
       setIsLoggingOut(false);
     }
   };
 
-  const clearSearch = () => {
-    setRes([]);
-    setSearchQuery("");
-  };
+  const mobileMenuId = 'primary-search-account-menu-mobile';
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMobileMenuOpen}
+      onClose={handleMenuClose}
+      MenuListProps={{
+        sx: {
+          paddingTop: 0,
+          paddingBottom: 0,
+        },
+      }}
+    >
+      <div
+        className="h-full bg-bg text-text-primary"
+      >
+        <MenuItem 
+          onClick={handleProfileRedirect}
+          className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors"
+        >
+          <User size={18} className="text-text-primary" />
+          Profile
+        </MenuItem>
 
-  if (isLoggingOut) return <Loading />;
+        <MenuItem 
+        onClick={handleMyTasks}
+        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100"
+        >
+          <CheckSquare size={18} className="text-text-primary" />
+          My Tasks
+        </MenuItem>
+        <MenuItem 
+          onClick={handleLogout} 
+          sx={{ color: 'error.main' }}
+          className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100"
+        >
+          <LogOut size={18}/>
+          Logout
+        </MenuItem>
+      </div>
+    </Menu>
+  );
+  const menuId = 'primary-search-account-menu';
+  const renderProfile = (
+    <Menu
+      anchorEl={profileAnchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id="profile-menu"
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isProfileMenuOpen}
+      onClose={handleMenuClose}
+      style={{top:"35px"}}
+      MenuListProps={{
+        sx: {
+          paddingTop: 0,
+          paddingBottom: 0,
+        },
+      }}
+    >
+      <div
+        className="h-full bg-bg text-text-primary"
+      >
+      <MenuItem 
+        onClick={handleProfileRedirect}
+        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors"
+      >
+        <User size={18} className="text-text-primary" />
+        Profile
+      </MenuItem>
 
-  return (
-    <>
-      <header className="bg-primary text-white shadow-md">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center space-x-4">
-              <Link href="/dashboard" className="text-2xl font-bold">
-                StudyMATE
-              </Link>
+      <MenuItem 
+       onClick={handleMyTasks}
+       className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100"
+      >
+        <CheckSquare size={18} className="text-text-primary" />
+        My Tasks
+      </MenuItem>
+      <MenuItem 
+        onClick={handleLogout} 
+        sx={{ color: 'error.main' }}
+        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100"
+      >
+        <LogOut size={18}/>
+        Logout
+      </MenuItem>
+      </div>
+    </Menu>
+  );
 
-              <div className="hidden md:flex relative ml-4" ref={searchRef}>
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
-                  <SearchIcon size={20} />
-                </span>
-                <input
-                  type="text"
-                  className="bg-white/20 placeholder-white text-white rounded-md pl-10 pr-4 py-2 w-72 focus:outline-none focus:bg-white/30 transition-colors"
-                  placeholder={
-                    activeRoadmapId
-                      ? "Search in your roadmap..."
-                      : "Search courses..."
-                  }
-                  value={searchQuery}
-                  onChange={async (e) => {
-                    const q = e.target.value;
-                    setSearchQuery(q);
-                    if (!q) return setRes([]);
-                    setRes(
-                      await fetchCourses({
-                        query: q,
-                        roadmapId: activeRoadmapId || undefined
-                      })
-                    );
-                  }}
-                />
-                {res.length > 0 && (
-                  <div className="absolute top-12 left-0 w-72 bg-bg  rounded-md shadow-xl max-h-96 overflow-auto z-50 p-2">
-                    <SearchResults
-                      res={res}
-                      onResultClick={clearSearch}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
+  const renderNotification = (
+    <Menu
+      anchorEl={notificationAnchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id="notification-menu"
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isNotificationMenuOpen}
+      onClose={handleMenuClose}
+      style={{top:"35px"}}
+      MenuListProps={{
+        sx: {
+          paddingTop: 0,
+          paddingBottom: 0,
+        },
+      }}
+    >
+      <div
+        className="h-full bg-bg text-text-primary"
+      >
+        {(notifications.length === 0) &&
+          <MenuItem>No new notifications</MenuItem>
+        }
+        {notifications.map((notification, index) => (
+          <MenuItem onClick={() => removeNotifcation(index)} key={index}>{notification}</MenuItem>
+        ))}
+      </div>
+      
+    </Menu>
+  );
 
-            <div className="flex items-center space-x-4">
-              <button className="relative p-2 rounded-full cursor-pointer hover:bg-white/20 transition-colors">
-                <Bell size={22} />
-                {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                    {notifications.length}
-                  </span>
-                )}
-              </button>
+  return (<>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Link href="/dashboard" passHref>
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{ display: { xs: 'none', sm: 'block' }, color: 'white', cursor: 'pointer' }}
+            >
+              StudyMATE
+            </Typography>
+          </Link>
 
-              <div className="relative" ref={profileRef}>
-                <button
-                  onClick={() => setProfileOpen(!profileOpen)}
-                  className="p-1 rounded-full cursor-pointer hover:bg-white/20 flex items-center justify-center transition-colors focus:outline-none"
-                >
-                  {userInfo.avatarUrl ? (
-                    <Image
-                      src={userInfo.avatarUrl}
-                      alt="Profile"
-                      width={36}
-                      height={36}
-                      className="w-9 h-9 rounded-full object-cover border-2 border-white/50"
-                    />
-                  ) : userInfo.initials ? (
-                    <div className="w-9 h-9 rounded-full bg-white text-primary flex items-center justify-center font-bold text-sm border-2 border-white/50">
-                      {userInfo.initials}
-                    </div>
-                  ) : (
-                    <div className="bg-white/20 p-1.5 rounded-full">
-                      <User size={20} />
-                    </div>
-                  )}
-                </button>
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase placeholder={searchQuery} onChange={handleSearch} />
+          </Search>
 
-                {profileOpen && (
-                  <div className="absolute right-0 top-12 w-40 bg-bg text-gray-500 rounded-lg shadow-xl z-50 overflow-hidden border border-gray-100 ring-1 ring-black ring-opacity-5 animate-in fade-in zoom-in duration-200">
-                    <div >
-                      <button
-                        onClick={() => {
-                          setProfileOpen(false);
-                          router.push("/profile");
-                        }}
-                        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors"
-                      >
-                        <User size={18} className="text-gray-500" />
-                        <span>My Profile</span>
-                      </button>
+          <Box sx={{ flexGrow: 1 }} />
 
-                      {/* 
-                      <button
-                        onClick={() => {
-                          setProfileOpen(false);
-                          router.push("/roadmaps"); // ← Browse Roadmaps navigation
-                        }}
-                        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors"
-                      >
-                        <MapIcon size={18} className="text-gray-500" />
-                        <span>Browse Roadmaps</span>
-                      </button>
-                       */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            <IconButton 
+              size="large" 
+              color="inherit"
+              aria-haspopup="true"
+              onClick={handleNotifcationMenuOpen}
+            >
+              <Badge badgeContent={notifications.length} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
 
-                      <button
-                        onClick={() => {
-                          setProfileOpen(false);
-                          router.push("/tasklist");
-                        }}
-                        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100"
-                      >
-                        <CheckSquare size={18} className="text-gray-500" />
-                        <span>My Tasks</span>
-                      </button>
+            <IconButton
+              size="large"
+              edge="end"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+          </Box>
 
-                      <button
-                        onClick={() => {
-                          setProfileOpen(false);
-                          setConfirmLogoutOpen(true);
-                        }}
-                        className="w-full text-left px-4 py-3 text-red-600 cursor-pointer hover:bg-red-50 font-medium flex items-center gap-3 transition-colors"
-                      >
-                        <LogOut size={18} />
-                        <span>Logout</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <IconButton 
+              size="large" 
+              color="inherit"
+              aria-haspopup="true"
+              onClick={handleNotifcationMenuOpen}
+            >
+              <Badge badgeContent={notifications.length} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+
+            <IconButton
+              size="large"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+              color="inherit"
+            >
+              <MoreIcon />
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {res.length > 0 && (
+        <div
+          ref={searchRef}
+          className="
+            absolute top-12 left-2 
+            sm:left-4 
+            md:left-37.5
+            w-75
+            bg-bg rounded-md shadow-xl 
+            max-h-96 overflow-auto 
+            z-50 p-4
+          "
+        >
+          <SearchResults res={res} />
         </div>
-      </header>
-
-      <LogoutConfirmModal
+      )}
+      {renderProfile}
+      {renderNotification}
+      {renderMobileMenu}
+    </Box>
+    <LogoutConfirmModal
         open={confirmLogoutOpen}
         loading={isLoggingOut}
         onClose={() => setConfirmLogoutOpen(false)} 
         onConfirm={handleLogoutConfirm}
       />
-    </>
+      </>
   );
 }

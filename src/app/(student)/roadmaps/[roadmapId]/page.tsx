@@ -54,7 +54,7 @@ export default async function RoadmapCoursesPage({ params }: RoadmapPageProps) {
 
   if (!result.success) {
     return (
-      <main className="min-h-screen max-w-[1300px] mx-auto px-10 pt-30" role="alert">
+      <main className="min-h-screen max-w-325 mx-auto px-10 pt-30" role="alert">
         <h1 className="text-3xl font-bold text-red-600 mb-6">Loading Error</h1>
         <p className="text-lg text-gray-700">
           Sorry, we could not find the requested roadmap details or you do not have access.

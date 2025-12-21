@@ -21,7 +21,7 @@ export default function TasksSection({ tasks }: TasksSectionProps) {
                 </Link>
             </div>
 
-            <div className="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-[300px]">
+            <div className="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-75">
                 {tasks.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-40 text-center p-4">
                         <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-3">

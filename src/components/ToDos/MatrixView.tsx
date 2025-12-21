@@ -71,7 +71,7 @@ const MatrixView = ({ tasks, onToggle, onDelete, onEdit }: MatrixViewProps) => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className={`rounded-2xl border-2 p-6 min-h-[400px] flex flex-col ${q.color}`}
+                        className={`rounded-2xl border-2 p-6 min-h-100 flex flex-col ${q.color}`}
                     >
                         <div className="flex items-center gap-3 mb-6">
                             <div className={`p-2 rounded-lg bg-bg shadow-sm ${q.textColor}`}>

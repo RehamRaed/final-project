@@ -24,7 +24,6 @@ const TaskStatus = ({ tasks }: TaskStatusProps) => {
     return (
         <div className="bg-bg rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4">
             <div className="flex flex-wrap items-center justify-between gap-4">
-                {/* Stats */}
                 <div className="flex gap-6">
                     <div className="flex items-center gap-2">
                         <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">

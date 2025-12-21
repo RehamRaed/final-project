@@ -1,8 +1,10 @@
-import { Tables } from './database.types';
+import { Tables } from "@/types/database.types";
 
-export type Lesson = Tables<'lessons'>;
 
-export interface LessonWithProgress extends Lesson {
-  status?: 'NotStarted' | 'InProgress' | 'Completed';
-  duration_minutes?: number; 
+export type BaseLesson = Tables<'lessons'>;
+
+export interface LessonWithProgress extends BaseLesson {
+  status?: 'Completed' | 'InProgress' | 'Not Started';
+  duration_minutes?: number | null;
+  video_url?: string | null;
 }
