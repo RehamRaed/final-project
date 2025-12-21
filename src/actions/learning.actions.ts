@@ -24,7 +24,6 @@ type RoadmapWithStatus = Tables<'roadmaps'> & {
   is_current: boolean;
 };
 
-<<<<<<< HEAD
 type LessonWithProgress = {
   id: string;
   title: string;
@@ -34,9 +33,6 @@ type LessonWithProgress = {
 };
 
 export async function getRoadmapsListAction() {
-=======
-export async function getRoadmapsListAction(): Promise<ActionResponse<unknown>> {
->>>>>>> main
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
