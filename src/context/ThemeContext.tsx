@@ -10,16 +10,14 @@ type ThemeContextType = {
 export const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [dark, setDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved === "dark") {
-      setDark(true);
+  const [dark, setDark] = useState<boolean>(() => {
+    try {
+      return typeof window !== 'undefined' && localStorage.getItem("theme") === "dark";
+    } catch {
+      return false;
     }
-    setMounted(true);
-  }, []);
+  });
+  const [mounted] = useState<boolean>(() => typeof window !== 'undefined');
 
   useEffect(() => {
     if (!mounted) return;

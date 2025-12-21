@@ -168,7 +168,7 @@ export default function RoadmapChangeConfirmationModal({
                     <button
                         onClick={onConfirm}
                         disabled={isPending}
-                        className="px-6 py-3 rounded-xl font-semibold text-white bg-primary hover:bg-primary-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
+                        className="px-6 py-3  rounded-xl font-semibold text-white bg-primary hover:bg-primary-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
                         aria-label={isPending ? "Processing..." : `Confirm change to ${roadmap.title}`}
                     >
                         {isPending ? (

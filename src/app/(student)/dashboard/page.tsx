@@ -1,9 +1,13 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardPage from "@/components/Dashboard/DashboardPage";
+<<<<<<< HEAD
 import type { Database } from "@/types/database.types";
 
 type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
+=======
+import type { Tables } from '@/types/database.types';
+>>>>>>> main
 
 interface DashboardCourse {
     course_id: string;
@@ -27,7 +31,11 @@ export default async function StudentPage() {
         .eq("id", user.id)
         .single();
 
+<<<<<<< HEAD
     const currentRoadmap = (profile as any)?.roadmaps as Tables<'roadmaps'> | null;
+=======
+    const currentRoadmap = profile?.roadmaps as Tables<'roadmaps'> | null;
+>>>>>>> main
 
     let courses: DashboardCourse[] = [];
 
@@ -46,14 +54,15 @@ export default async function StudentPage() {
             .eq("roadmap_id", currentRoadmap.id)
             .order("order_index");
 
-        if (rawCourses) {
-            courses = (rawCourses as any[]).map(item => ({
-                course_id: item.course_id,
-                title: item.courses.title,
-                summary: item.courses.summary || '',
-                icon: item.courses.icon || undefined,
-            }));
-        }
+            if (rawCourses) {
+                type RawCourse = { course_id: string; courses: (Partial<Tables<'courses'>> & { summary?: string | null; title?: string | null; icon?: string | null }) | null };
+                courses = (rawCourses as RawCourse[]).map(item => ({
+                    course_id: item.course_id,
+                    title: item.courses?.title || '',
+                    summary: item.courses?.summary || '',
+                    icon: item.courses?.icon || undefined,
+                }));
+            }
     }
 
     const { data: tasks } = await supabase

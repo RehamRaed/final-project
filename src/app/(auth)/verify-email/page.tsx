@@ -15,7 +15,7 @@ interface UserWithEmailConfirmation {
   last_active: string
   xp: number
   email_confirmed_at?: string | null 
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export default async function VerifyEmailPage() {
@@ -32,7 +32,6 @@ export default async function VerifyEmailPage() {
   return (
     <VerifyEmailClient
       email={user.email || ''}
-      emailVerified={!!user.email_confirmed_at}
     />
   )
 }

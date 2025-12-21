@@ -4,6 +4,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { Tables } from "@/types/database.types";
 import { z } from "zod";
+import type { ActionResponse } from '@/types/actionResponse';
 
 const ProfileSchema = z.object({
     full_name: z.string().min(3, "Full Name must be at least 3 characters").optional(),
@@ -13,13 +14,7 @@ const ProfileSchema = z.object({
     department: z.string().min(2, "Department is required").optional(),
 });
 
-export type ActionState = {
-    success: boolean;
-    message: string;
-    fieldErrors?: Record<string, string[]>;
-};
-
-export async function updateProfile(formData: Partial<Tables<'profiles'>>): Promise<ActionState> {
+export async function updateProfile(formData: Partial<Tables<'profiles'>>): Promise<ActionResponse<unknown>> {
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -60,7 +55,7 @@ export async function updateProfile(formData: Partial<Tables<'profiles'>>): Prom
     };
 }
 
-export async function updateCurrentRoadmap(roadmapId: string): Promise<ActionState> {
+export async function updateCurrentRoadmap(roadmapId: string): Promise<ActionResponse<unknown>> {
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 

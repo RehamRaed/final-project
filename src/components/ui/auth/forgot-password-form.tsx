@@ -25,10 +25,12 @@ export function ForgotPasswordForm() {
         setMessage(null)
         const result = await forgotPassword(formData)
 
-        if (result.success) {
-            setMessage({ type: 'success', text: result.message || 'Sent successfully' })
+        if (result && result.success) {
+            setMessage({ type: 'success', text: result.message ?? 'Sent successfully' })
+        } else if (result) {
+            setMessage({ type: 'error', text: result.error ?? result.message ?? 'An error occurred' })
         } else {
-            setMessage({ type: 'error', text: result.error || 'An error occurred' })
+            setMessage({ type: 'error', text: 'An error occurred' })
         }
     }
 

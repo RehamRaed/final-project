@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import RoadmapCard from "@/components/StudentRoadmap/RoadmapCard";
+import type { Tables } from '@/types/database.types';
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
 import { setCurrentRoadmap } from "@/store/roadmapSlice";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
+<<<<<<< HEAD
 interface RoadmapWithCount {
   id: string;
   title: string;
@@ -18,6 +20,9 @@ interface RoadmapWithCount {
   created_at: string;
   course_count: number; 
 }
+=======
+type Roadmap = Tables<'roadmaps'> & { course_count?: number };
+>>>>>>> main
 
 export default function RoadmapsPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -77,10 +82,15 @@ export default function RoadmapsPage() {
     );
 
   return (
+<<<<<<< HEAD
     <div className="pt-25 px-10 max-w-350 mx-auto">
       <h1 className="text-2xl md:text-3xl font-bold text-center mb-12">
         Choose Your Roadmap
       </h1>
+=======
+    <div className="pt-25 px-10 max-w-7xl mx-auto">
+      <h1 className="text-2xl md:text-3xl   font-bold text-center mb-12">Choose Your Roadmap</h1>
+>>>>>>> main
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {roadmaps.map((roadmap) => (
