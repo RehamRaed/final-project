@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { ArrowLeft } from "lucide-react";
 import LoadingState from '@/components/ui/LoadingState';
 import { Tables } from '@/types/database.types';
+import { useNotifications } from '@/context/NotificationsContext';
 
 type Lesson = Tables<'lessons'> & {
     user_progress: { status: string | null; completed_at: string | null }[] | null
@@ -26,6 +27,8 @@ interface LessonPageClientProps {
 }
 
 export default function LessonPageClient({ courseData }: LessonPageClientProps) {
+    const { addNotification } = useNotifications();
+
     const router = useRouter();
     const lessons = useMemo(() => courseData.lessons || [], [courseData.lessons]);
 
@@ -80,6 +83,7 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
                 toast.success(result.message ?? 'Lesson updated');
                 // ensure server canonical state is fetched
                 router.refresh();
+                addNotification(`Lesson "${currentLesson?.title}" marked as ${newStatus === 'Completed' ? 'completed' : 'in progress'}.`);
             } else {
                 // revert optimistic update
                 setLocalLessons(prevLessons as Lesson[]);
