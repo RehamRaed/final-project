@@ -1,18 +1,8 @@
 'use client';
 
-<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import { createTaskAction, updateTaskAction } from '@/actions/tasks.actions';
 import { Tables } from '@/types/database.types';
-=======
-import { useState, useTransition } from 'react'
-import { updateTaskAction } from '@/actions/tasks.actions'
-import type { ActionResponse } from '@/types/actionResponse'
-import type { Tables, TablesUpdate } from '@/types/database.types'
-import { X, Calendar as CalendarIcon, Loader2, Edit2, Check } from 'lucide-react'
-import { motion } from 'framer-motion'
-// types imported above
->>>>>>> main
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -58,28 +48,15 @@ export default function TaskModal({
       ? await updateTaskAction(task!.id, payload)
       : await createTaskAction(payload);
 
-<<<<<<< HEAD
     setLoading(false);
 
     if (!res.success) {
-      // ✅ طريقة آمنة للوصول للـ error
       const errorMsg = 'error' in res ? res.error : 'Unknown error';
       alert(errorMsg);
       return;
-=======
-            const result = await updateTaskAction(task.id, updates) as ActionResponse<Tables<'tasks'>>
-
-            if (result && result.success) {
-                setIsEditing(false)
-                onTaskUpdated()
-            } else {
-                setError(result.error ?? result.message ?? 'Failed to update task')
-            }
-        })
->>>>>>> main
     }
 
-    if (onTaskUpdated) await onTaskUpdated(); // ✅ تحديث القائمة
+    if (onTaskUpdated) await onTaskUpdated(); 
 
     onClose();
   }

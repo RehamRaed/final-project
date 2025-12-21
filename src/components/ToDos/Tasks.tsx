@@ -62,7 +62,6 @@ export default function Tasks({ initialTasks }: TasksProps) {
     });
   };
 
-<<<<<<< HEAD
   const filteredTasks = tasks.filter(task => {
     const statusMatch =
       filterStatus === 'all' ? true :
@@ -84,15 +83,6 @@ export default function Tasks({ initialTasks }: TasksProps) {
       case 'calendar': return <Calendar {...props} />;
       case 'matrix': return <MatrixView {...props} />;
       default: return <GridList {...props} />;
-=======
-    async function fetchTasks(): Promise<void> {
-        setIsLoading(true)
-        const result = await getAllTasksAction()
-        if (result && result.success && result.data) {
-            setTasks(result.data)
-        }
-        setIsLoading(false)
->>>>>>> main
     }
   };
 
@@ -106,7 +96,6 @@ export default function Tasks({ initialTasks }: TasksProps) {
     setIsLoading(false);
   };
 
-<<<<<<< HEAD
   return (
     <div className="space-y-4" aria-live="polite" aria-busy={isLoading}>
       <div className="flex justify-between items-center gap-4">
@@ -119,17 +108,6 @@ export default function Tasks({ initialTasks }: TasksProps) {
           <span className="group-hover:rotate-12 transition-transform duration-300 " aria-hidden="true">⏱️</span>
           {showFocusMode ? 'Hide Focus Timer' : 'Show Focus Timer'}
         </button>
-=======
-        startTransition(async () => {
-            const result = await toggleTaskAction(id)
-            if (!result || !result.success) {
-                setTasks(prev => prev.map(t => t.id === id ? { ...t, is_completed: !t.is_completed } : t))
-            } else {
-                await fetchTasks();
-            }
-        })
-    }
->>>>>>> main
 
         {tasks.length > 0 && (
           <button
@@ -147,7 +125,6 @@ export default function Tasks({ initialTasks }: TasksProps) {
         )}
       </div>
 
-<<<<<<< HEAD
       <AnimatePresence>
         {showFocusMode && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="overflow-hidden">
@@ -155,17 +132,6 @@ export default function Tasks({ initialTasks }: TasksProps) {
           </motion.div>
         )}
       </AnimatePresence>
-=======
-        startTransition(async () => {
-            const result = await deleteTaskAction(id)
-            if (!result || !result.success) {
-                await fetchTasks()
-            } else {
-                await fetchTasks();
-            }
-        })
-    }
->>>>>>> main
 
       <TaskStatus tasks={tasks} />
       <TaskFilter
