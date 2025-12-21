@@ -221,7 +221,7 @@ export default function Header({currentRoadmapId}: HeaderProps) {
       }}
     >
       <div
-        className="h-full bg-bg text-text-primary text-gray-500"
+        className="h-full bg-bg text-text-primary"
       >
         <MenuItem 
           onClick={handleProfileRedirect}
@@ -268,7 +268,7 @@ export default function Header({currentRoadmapId}: HeaderProps) {
       }}
     >
       <div
-        className="h-full bg-bg text-text-primary text-gray-500"
+        className="h-full bg-bg text-text-primary"
       >
       <MenuItem 
         onClick={handleProfileRedirect}
@@ -315,7 +315,7 @@ export default function Header({currentRoadmapId}: HeaderProps) {
       }}
     >
       <div
-        className="h-full bg-bg text-text-primary text-gray-500"
+        className="h-full bg-bg text-text-primary"
       >
         {(notifications.length === 0) &&
           <MenuItem>No new notifications</MenuItem>
@@ -406,8 +406,8 @@ export default function Header({currentRoadmapId}: HeaderProps) {
           className="
             absolute top-12 left-2 
             sm:left-4 
-            md:left-[150px]
-            w-[300px] 
+            md:left-37.5
+            w-75
             bg-bg rounded-md shadow-xl 
             max-h-96 overflow-auto 
             z-50 p-4

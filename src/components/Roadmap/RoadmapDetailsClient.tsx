@@ -46,7 +46,7 @@ export default function RoadmapDetailsClient({
  
 
     return (
-        <div className="min-h-screen max-w-[1300px] mx-auto px-10 py-25 bg-bg text-text-primary">
+        <div className="min-h-screen max-w-325 mx-auto px-10 py-25 bg-bg text-text-primary">
           <header className="mb-8 border-b border-border pb-6 flex flex-col gap-4">
   <Link
     href="/dashboard"

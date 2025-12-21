@@ -42,7 +42,7 @@ export default function LessonPageUI({
   }
 
   return (
-    <div className='max-w-6xl mx-auto pt-25 px-5 pb-10'>
+    <div className='max-w-300 mx-auto pt-25 px-5 pb-10'>
       <Link
         href={`/roadmaps/${courseId}/courses`}
         className="flex items-center gap-1 font-semibold mb-5"

@@ -1,16 +1,12 @@
 import TimeNeeded from "./TimeNeeded";
-import { Tables } from '@/types/database.types';
-import ReactMarkdown from 'react-markdown';
-import { CheckCircle, Clock } from 'lucide-react';
+import ReactMarkdown from "react-markdown";
+import { CheckCircle, Clock } from "lucide-react";
+import { LessonWithProgress } from "@/types/lesson";
 
-export interface Lesson extends Tables<'lessons'> {
-  status?: 'Completed' | 'InProgress' | 'Not Started';
-  duration_minutes?: number | null;
-}
-
-function getYoutubeEmbedUrl(url?: string | null) { 
+function getYoutubeEmbedUrl(url?: string | null) {
   if (!url) return null;
-  if (url.includes('youtube.com/embed')) return url;
+
+  if (url.includes("youtube.com/embed")) return url;
 
   const watchMatch = url.match(/v=([^&]+)/);
   if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
@@ -22,7 +18,7 @@ function getYoutubeEmbedUrl(url?: string | null) {
 }
 
 interface LessonDetailsProps {
-  lesson: Lesson;
+  lesson: LessonWithProgress;
   onMarkDone: (lessonId: string) => void;
   isMarkingDone: boolean;
 }
@@ -30,11 +26,10 @@ interface LessonDetailsProps {
 export default function LessonDetails({
   lesson,
   onMarkDone,
-  isMarkingDone
+  isMarkingDone,
 }: LessonDetailsProps) {
-
-  const lessonStatus = lesson.status ?? 'Not Started';
-  const duration = lesson.duration_minutes ?? null;
+  const lessonStatus = lesson.status ?? "Not Started";
+  const duration = lesson.duration_minutes ?? 0;
 
   const borderColor =
     lessonStatus === "Completed"
@@ -46,34 +41,27 @@ export default function LessonDetails({
   const embedUrl = getYoutubeEmbedUrl(lesson.video_url);
 
   return (
-    <div className={`border-2 ${borderColor} p-5 md:p-12 rounded-xl flex flex-col gap-5 max-h-[calc(105vh-160px)] overflow-y-auto`}>
-      
-      <div className="flex flex-col md:flex-row items-start md:items-center pb-5 justify-between gap-3">
+    <div className={` p-5 md:p-12 rounded-xl flex flex-col gap-5 max-h-[80vh] overflow-y-auto`}>
+      <div className="flex flex-col md:flex-row justify-between gap-3">
         <h1 className="text-xl md:text-2xl font-bold text-primary">
           {lesson.title}
         </h1>
 
         <button
-          className={`flex items-center gap-2 px-4 py-2 hover:cursor-pointer rounded-lg text-white font-semibold
-            ${lessonStatus === 'Completed'
-              ? 'bg-gray-500 cursor-not-allowed'
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold ${
+            lessonStatus === "Completed"
+              ? "bg-gray-500 cursor-not-allowed"
               : isMarkingDone
-              ? 'bg-blue-400 cursor-wait'
-              : 'bg-green-500 hover:opacity-90'
-            }`}
-          disabled={lessonStatus === 'Completed' || isMarkingDone}
+              ? "bg-blue-400 cursor-wait"
+              : "bg-green-500 hover:opacity-90"
+          }`}
+          disabled={lessonStatus === "Completed" || isMarkingDone}
           onClick={() => onMarkDone(lesson.id)}
         >
-          {lessonStatus !== 'Completed' && !isMarkingDone && (
+          {lessonStatus !== "Completed" && !isMarkingDone && (
             <CheckCircle className="w-5 h-5" />
           )}
-          <span>
-            {isMarkingDone
-              ? 'Saving...'
-              : lessonStatus === 'Completed'
-              ? 'Completed'
-              : 'Mark Done'}
-          </span>
+          {isMarkingDone ? "Saving..." : lessonStatus === "Completed" ? "Completed" : "Mark Done"}
         </button>
       </div>
 
@@ -90,10 +78,9 @@ export default function LessonDetails({
 
       {embedUrl && (
         <iframe
-          className="w-full flex-1 rounded-lg min-h-[300px]"
+          className="w-full min-h-75 rounded-lg"
           src={embedUrl}
           title={lesson.title}
-          frameBorder="0"
           allowFullScreen
         />
       )}
@@ -103,7 +90,7 @@ export default function LessonDetails({
           href={lesson.video_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-primary font-medium underline"
+          className="text-primary underline"
         >
           Open video in YouTube
         </a>

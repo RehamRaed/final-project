@@ -34,7 +34,7 @@ export default function TaskDashboard({
 
     return (
         <div className="bg-bg min-h-screen">
-            <div className="max-w-[1400px] mx-auto px-4 pt-25 space-y-8">
+            <div className="max-w-350 mx-auto px-4 pt-25 space-y-8">
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 p-6 bg-card-bg rounded-xl shadow-md border border-border space-y-4">

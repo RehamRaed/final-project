@@ -9,7 +9,7 @@ import CourseCard from "@/components/StudentRoadmap/CourseCard";
 import { Tables } from "@/types/database.types";
 
 interface Course extends Tables<'courses'> {
-  course_id: string; // The ID from roadmap_courses
+  course_id: string; 
   donePercentage: number;
   summary: string | null;
 }
@@ -23,8 +23,7 @@ export default function RoadmapCoursesPage() {
   const [loading, setLoading] = useState(true);
   const [showDoneOnly, setShowDoneOnly] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  //Get logged-in user
-  // Load logged-in user
+
   useEffect(() => {
     const loadUser = async () => {
       const { data, error } = await supabase.auth.getUser();
@@ -36,10 +35,10 @@ export default function RoadmapCoursesPage() {
     };
 
     loadUser();
-  }, []); // no dependency on currentRoadmap
+  }, []); 
 
   useEffect(() => {
-    if (!currentRoadmap?.id || !userId) return; // wait for both
+    if (!currentRoadmap?.id || !userId) return; 
 
     const fetchCourses = async () => {
       setLoading(true);
@@ -64,9 +63,18 @@ export default function RoadmapCoursesPage() {
 
         if (coursesError) throw coursesError;
 
+<<<<<<< HEAD
+        const courseIds = coursesData.map(c => c.course_id);
+        const { data: progressData, error: progressError } = await supabase
+          .from("user_course_progress")
+          .select("course_id, done_percentage")
+          .eq("user_id", userId)
+          .in("course_id", courseIds);
+=======
         // Build map of course -> lesson ids and collect all lesson ids for a single batch query
         const courseLessonMap = new Map<string, string[]>();
         const allLessonIds: string[] = [];
+>>>>>>> main
 
         type RoadmapCourseRow = {
           course_id: string;
@@ -100,6 +108,13 @@ export default function RoadmapCoursesPage() {
           const completed = progressData.filter((p: { lesson_id: string; status: string | null }) => lessonIds.includes(p.lesson_id) && (p.status === 'Completed' || p.status === 'completed')).length;
           const donePercentage = total > 0 ? Math.round((completed / total) * 100) : 0;
 
+<<<<<<< HEAD
+      
+        const formatted: Course[] = coursesData.map((c) => {
+          const course = c.courses as unknown as Tables<'courses'>;
+          const progress = progressData.find(p => p.course_id === c.course_id);
+=======
+>>>>>>> main
           return {
             ...course,
             course_id: c.course_id,
@@ -136,7 +151,11 @@ export default function RoadmapCoursesPage() {
   const doneCount = courses.filter((c) => c.donePercentage === 100).length;
 
   return (
+<<<<<<< HEAD
+    <div className="min-h-screen max-w-350 mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
+=======
     <div className="min-h-screen max-w-7xl mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
+>>>>>>> main
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
         <h2 className="font-bold text-primary lg:text-2xl md:text-xl">
           My Roadmap Courses

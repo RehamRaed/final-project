@@ -24,7 +24,19 @@ type RoadmapWithStatus = Tables<'roadmaps'> & {
   is_current: boolean;
 };
 
+<<<<<<< HEAD
+type LessonWithProgress = {
+  id: string;
+  title: string;
+  content?: string | null;
+  order_index?: number | null;
+  user_progress?: { status: string }[];
+};
+
+export async function getRoadmapsListAction() {
+=======
 export async function getRoadmapsListAction(): Promise<ActionResponse<unknown>> {
+>>>>>>> main
   const userId = await getCurrentUserId();
   if (!userId) return { success: false, error: 'User not authenticated.' };
 
@@ -73,7 +85,7 @@ export async function getRoadmapDetailsAction(roadmapId: string): Promise<Action
   const coursesInRoadmap = data.roadmap_courses || [];
 
   const completedCourses = coursesInRoadmap.filter(
-    (rc) => rc.course?.user_progress?.[0]?.status === 'completed'
+    (rc) => rc.course?.user_progress?.[0]?.status?.toLowerCase() === 'completed'
   ).length;
 
   const totalCourses = coursesInRoadmap.length;
@@ -131,13 +143,11 @@ export async function getCourseLessonsAction(courseId: string): Promise<ActionRe
   if (error) return { success: false, error: error.message };
   if (!data) return { success: false, error: 'Course not found.' };
 
-  const lessonsInCourse = data.lessons || [];
+  const lessonsInCourse: LessonWithProgress[] = data.lessons || [];
   const totalLessons = lessonsInCourse.length;
 
   const completedLessons = lessonsInCourse.filter(
-    (l) =>
-      l.user_progress?.[0]?.status === 'Completed' ||
-      l.user_progress?.[0]?.status === 'completed'
+    (l) => l.user_progress?.[0]?.status?.toLowerCase() === 'completed'
   ).length;
 
   const { data: profile } = await supabase
@@ -269,12 +279,10 @@ export async function toggleLessonCompletion(
     );
 
     if (courseData) {
-      const lessons = courseData.lessons || [];
+      const lessons: LessonWithProgress[] = courseData.lessons || [];
 
       const allCompleted = lessons.every(
-        (lesson) =>
-          lesson.user_progress?.[0]?.status === 'Completed' ||
-          lesson.user_progress?.[0]?.status === 'completed'
+        (lesson) => lesson.user_progress?.[0]?.status?.toLowerCase() === 'completed'
       );
 
       if (allCompleted) {

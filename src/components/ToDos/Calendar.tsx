@@ -74,7 +74,7 @@ const Calendar = ({ tasks, onEdit }: CalendarProps) => {
 
             <div className="grid grid-cols-7 auto-rows-fr bg-bg gap-px">
                 {emptyDays.map(i => (
-                    <div key={`empty-${i}`} className="bg-bg min-h-[120px]" />
+                    <div key={`empty-${i}`} className="bg-bg min-h-30" />
                 ))}
 
                 {daysArray.map(day => {
@@ -85,7 +85,7 @@ const Calendar = ({ tasks, onEdit }: CalendarProps) => {
                         currentDate.getFullYear() === new Date().getFullYear()
 
                     return (
-                        <div key={day} className={`bg-bg p-2 min-h-[120px] relative group ${isToday ? 'bg-blue-50/30' : ''}`}>
+                        <div key={day} className={`bg-bg p-2 min-h-30 relative group ${isToday ? 'bg-blue-50/30' : ''}`}>
                             <span className={`
                                 w-7 h-7 flex items-center justify-center rounded-full text-sm font-medium mb-1
                                 ${isToday ? 'bg-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300'}
