@@ -21,19 +21,20 @@ export default async function TaskList() {
 
     try {
         const result = await getAllTasksAction();
+
         if (result.success) {
             initialTasks = result.data || [];
         } else {
-            fetchError = result.error;
+            fetchError = (result as { success: false; error: string }).error;
         }
+
     } catch (e) {
         console.error("Server fetch error:", e);
         fetchError = "An unexpected error occurred during data fetching.";
     }
 
-
     return (
-        <div className="container mx-auto max-w-7xl py-25 px-5  min-h-screen">
+        <div className="container mx-auto max-w-7xl py-25 px-5 min-h-screen">
             <header className="mb-6">
                 <h1 className="text-3xl text-center font-bold text-text-primary mb-1">
                     Smart <span className="bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent hover:from-blue-600 hover:to-purple-700 transition-all duration-300">Task</span> Management
@@ -45,7 +46,7 @@ export default async function TaskList() {
 
             <main>
                 {fetchError ? (
-                    <div className="p-4 border border-red-400 bg-red-50  text-red-700  rounded-lg">
+                    <div className="p-4 border border-red-400 bg-red-50 text-red-700 rounded-lg">
                         <p className="font-semibold">Data Load Error:</p>
                         <p>{fetchError}</p>
                     </div>

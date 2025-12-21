@@ -9,7 +9,7 @@ import CourseCard from "@/components/StudentRoadmap/CourseCard";
 import { Tables } from "@/types/database.types";
 
 interface Course extends Tables<'courses'> {
-  course_id: string; // The ID from roadmap_courses
+  course_id: string; 
   donePercentage: number;
   summary: string | null;
 }
@@ -23,8 +23,7 @@ export default function RoadmapCoursesPage() {
   const [loading, setLoading] = useState(true);
   const [showDoneOnly, setShowDoneOnly] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  //Get logged-in user
-  // Load logged-in user
+
   useEffect(() => {
     const loadUser = async () => {
       const { data, error } = await supabase.auth.getUser();
@@ -36,10 +35,10 @@ export default function RoadmapCoursesPage() {
     };
 
     loadUser();
-  }, []); // no dependency on currentRoadmap
+  }, []); 
 
   useEffect(() => {
-    if (!currentRoadmap?.id || !userId) return; // wait for both
+    if (!currentRoadmap?.id || !userId) return; 
 
     const fetchCourses = async () => {
       setLoading(true);
@@ -63,7 +62,6 @@ export default function RoadmapCoursesPage() {
 
         if (coursesError) throw coursesError;
 
-        //Fetch user_course_progress for these courses
         const courseIds = coursesData.map(c => c.course_id);
         const { data: progressData, error: progressError } = await supabase
           .from("user_course_progress")
@@ -73,7 +71,7 @@ export default function RoadmapCoursesPage() {
 
         if (progressError) throw progressError;
 
-        //Merge data
+      
         const formatted: Course[] = coursesData.map((c) => {
           const course = c.courses as unknown as Tables<'courses'>;
           const progress = progressData.find(p => p.course_id === c.course_id);
@@ -112,7 +110,7 @@ export default function RoadmapCoursesPage() {
   const doneCount = courses.filter((c) => c.donePercentage === 100).length;
 
   return (
-    <div className="min-h-screen max-w-[1400px] mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
+    <div className="min-h-screen max-w-350 mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
         <h2 className="font-bold text-primary lg:text-2xl md:text-xl">
           My Roadmap Courses
