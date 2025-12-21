@@ -41,7 +41,7 @@ export default function RoadmapSelectionClient({ initialRoadmaps }: RoadmapSelec
 
         const result = await updateCurrentRoadmapAction(selectedRoadmap.id);
 
-        if (result.success) {
+        if (result && result.success) {
             setRoadmaps(prev => prev.map(r => ({
                 ...r,
                 is_current: r.id === selectedRoadmap.id
@@ -55,7 +55,7 @@ export default function RoadmapSelectionClient({ initialRoadmaps }: RoadmapSelec
                 router.push(`/roadmaps/${selectedRoadmap.id}`); 
             }
         } else {
-            alert(`Failed to change roadmap: ${result.error}`);
+            alert(`Failed to change roadmap: ${result?.error ?? result?.message ?? 'Failed to change roadmap'}`);
             setIsPending(false);
         }
     };

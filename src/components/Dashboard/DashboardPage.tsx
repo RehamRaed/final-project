@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { User } from "@supabase/supabase-js";
 import TasksSection from "@/components/Dashboard/TasksSection";
 import CoursesSection from "@/components/Dashboard/CoursesSection";
@@ -46,7 +47,14 @@ export default function TaskDashboard({
 
                         <SelectedRoadmapCard
                             title={currentRoadmap?.title || "No Active Roadmap"}
-                            description={currentRoadmap ? "This is your current roadmap. Keep progressing!" : "Select a roadmap to get started."}
+                            description={currentRoadmap ? (
+                                <div className="flex items-center gap-3">
+                                    <span>This is your current roadmap , </span>
+                                    <Link href={`/roadmaps/${currentRoadmap.id}`} className="ml-2 inline-block">
+                                        <button className="px-3 py-1 bg-primary hover:cursor-pointer text-white rounded-md text-sm">Keep progressing!</button>
+                                    </Link>
+                                </div>
+                            ) : "Select a roadmap to get started."}
                             color="var(--primary)"
                         />
                     </div>

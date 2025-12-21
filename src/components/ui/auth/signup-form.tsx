@@ -28,7 +28,7 @@ export function SignupForm() {
     const result = await register(formData)
 
     if (result && !result.success) {
-      setError(result.error || 'Registration failed')
+      setError(result.error ?? result.message ?? 'Registration failed')
     }
   }
 

@@ -2,7 +2,11 @@ import { getCourseLessonsAction } from "@/actions/learning.actions";
 import { Metadata } from "next";
 import CoursePageClient from "@/components/lessons/CoursePageClient";
 import ErrorState from "@/components/ui/ErrorState";
+<<<<<<< HEAD
 import { CourseDataWithLessons, LessonWithDuration } from "@/types/learning.types";
+=======
+import type { Tables } from '@/types/database.types';
+>>>>>>> main
 
 interface CoursePageProps {
   params: Promise<{ courseId: string }>;
@@ -16,7 +20,7 @@ export async function generateMetadata({ params }: CoursePageProps): Promise<Met
     return { title: "Course Not Found", description: "The requested course could not be found." };
   }
 
-  const course = result.data;
+  const course = result.data as Tables<'courses'>;
 
   return {
     title: `${course.title} | StudyMate`,
@@ -40,13 +44,27 @@ export default async function CoursePage({ params }: CoursePageProps) {
         <ErrorState
           title="Course Not Found"
           message="Sorry, we could not find the requested course or you do not have access."
-          details={result.error}
+          details={result.error ?? result.message}
         />
       </main>
     );
   }
 
+<<<<<<< HEAD
   const courseDataFromAPI = result.data;
+=======
+  type LessonWithProgress = Tables<'lessons'> & {
+    user_progress: { status: string | null; completed_at: string | null }[] | null;
+  };
+
+  type CourseDataWithLessons = Tables<'courses'> & {
+    lessons: LessonWithProgress[] | null;
+    lesson_progress_percent?: number;
+    current_roadmap_id?: string | null;
+  };
+
+  const courseData = result.data as CourseDataWithLessons;
+>>>>>>> main
 
   if (!courseDataFromAPI) {
     return (

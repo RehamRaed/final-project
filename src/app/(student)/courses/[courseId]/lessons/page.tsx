@@ -2,6 +2,7 @@ import { getCourseLessonsAction } from "@/actions/learning.actions";
 import { Metadata } from 'next';
 import LessonPageClient from "@/components/lessons/LessonPageClient";
 import ErrorState from "@/components/ui/ErrorState";
+import type { Tables } from '@/types/database.types';
 
 interface LessonsPageProps {
   params: Promise<{ courseId: string }>;
@@ -22,17 +23,27 @@ export default async function LessonsPage({ params }: LessonsPageProps) {
 
   if (!result.success) {
     return (
-      <main className="min-h-screen max-w-1400px mx-auto px-5 pt-30">
+      <main className="min-h-screen max-w-7xl mx-auto px-5 pt-30">
         <ErrorState
           title="Course Not Found"
           message="Sorry, we could not load the lessons for this course."
-          details={result.error}
+          details={result.error ?? result.message}
         />
       </main>
     );
   }
 
-  const courseData = result.data;
+  type LessonWithProgress = Tables<'lessons'> & {
+    user_progress: { status: string | null; completed_at: string | null }[] | null;
+  };
+
+  type CourseData = Tables<'courses'> & {
+    lessons: LessonWithProgress[] | null;
+    lesson_progress_percent: number;
+    current_roadmap_id?: string | null;
+  };
+
+  const courseData = result.data as CourseData;
 
   if (!courseData) {
     return (

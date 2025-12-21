@@ -1,6 +1,11 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 import { createServerSupabase } from "@/lib/supabase/server"; 
 import { redirect } from "next/navigation";
 import { Tables } from "@/types/database.types";
+import type { SupabaseClient } from '@supabase/supabase-js';
 import CourseCard from "@/components/StudentRoadmap/CourseCard";
 import { SupabaseClient } from "@supabase/supabase-js";
 
@@ -16,17 +21,26 @@ async function calculateCourseProgress(
 
   if (!lessons || lessons.length === 0) return 0;
 
+<<<<<<< HEAD
   const lessonIds = lessons.map((l) => l.id);
+=======
+  const lessonIds = (lessons as Tables<'lessons'>[]).map((l) => l.id);
+>>>>>>> main
   const { data: progress } = await supabase
     .from("user_lesson_progress")
     .select("status")
     .eq("user_id", userId)
-    .in("lesson_id", lessonIds);
+    .in("lesson_id", lessonIds as string[]);
 
   if (!progress) return 0;
 
+<<<<<<< HEAD
   const completedCount = progress.filter(
     (p) => p.status?.toLowerCase() === "completed"
+=======
+  const completedCount = (progress as Tables<'user_lesson_progress'>[]).filter(
+    (p) => p.status === "completed"
+>>>>>>> main
   ).length;
 
   return Math.round((completedCount / lessons.length) * 100);
@@ -97,7 +111,11 @@ export default async function RoadmapCoursesPage({ params }: PageProps) {
   const doneCount = courses.filter((c) => c.donePercentage === 100).length;
 
   return (
+<<<<<<< HEAD
     <div className="min-h-screen max-w-34 mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
+=======
+    <div className="min-h-screen max-w-7xl mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
+>>>>>>> main
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
         <h2 className="font-bold text-primary lg:text-2xl md:text-xl">
           {roadmap.title} - Courses

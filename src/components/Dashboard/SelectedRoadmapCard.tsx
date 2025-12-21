@@ -1,8 +1,10 @@
 'use client';
 
+import React from 'react';
+
 interface SelectedRoadmapCardProps {
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   icon?: string;
   color?: string;
 }
@@ -21,7 +23,7 @@ export default function SelectedRoadmapCard({
       <div className="flex items-center gap-4 mb-4">
         <h2 className="text-2xl font-bold text-text-primary">{title}</h2>
       </div>
-      {description && <p className="text-text-secondary">{description}</p>}
+      {description && <div className="text-text-secondary">{description}</div>}
     </div>
   );
 }

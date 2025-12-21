@@ -54,7 +54,8 @@ export default function RoadmapCoursesPage() {
             title,
             description,
             summary,
-            instructor
+            instructor,
+            lessons(id)
           )
         `)
           .eq("roadmap_id", currentRoadmap.id)
@@ -62,23 +63,63 @@ export default function RoadmapCoursesPage() {
 
         if (coursesError) throw coursesError;
 
+<<<<<<< HEAD
         const courseIds = coursesData.map(c => c.course_id);
         const { data: progressData, error: progressError } = await supabase
           .from("user_course_progress")
           .select("course_id, done_percentage")
           .eq("user_id", userId)
           .in("course_id", courseIds);
+=======
+        // Build map of course -> lesson ids and collect all lesson ids for a single batch query
+        const courseLessonMap = new Map<string, string[]>();
+        const allLessonIds: string[] = [];
+>>>>>>> main
 
-        if (progressError) throw progressError;
+        type RoadmapCourseRow = {
+          course_id: string;
+          courses: { lessons: { id: string }[] };
+        };
 
+        (coursesData as unknown as RoadmapCourseRow[]).forEach((c) => {
+          const lessonIds = (c.courses?.lessons || []).map((l: { id: string }) => l.id).filter(Boolean);
+          courseLessonMap.set(c.course_id, lessonIds);
+          allLessonIds.push(...lessonIds);
+        });
+
+        // Fetch user's lesson progress for all lessons in these courses in one query
+        let progressData: { lesson_id: string; status: string | null }[] = [];
+        if (allLessonIds.length > 0) {
+          const { data: progressRows, error: progressError } = await supabase
+            .from('user_lesson_progress')
+            .select('lesson_id, status')
+            .eq('user_id', userId)
+            .in('lesson_id', allLessonIds);
+
+          if (progressError) throw progressError;
+          progressData = progressRows || [];
+        }
+
+        // Merge data and compute donePercentage per course from lesson progress
+        const formatted: Course[] = (coursesData as unknown as RoadmapCourseRow[]).map((c) => {
+          const course = c.courses as unknown as Tables<'courses'> & { summary?: string | null };
+          const lessonIds = courseLessonMap.get(c.course_id) || [];
+          const total = lessonIds.length;
+          const completed = progressData.filter((p: { lesson_id: string; status: string | null }) => lessonIds.includes(p.lesson_id) && (p.status === 'Completed' || p.status === 'completed')).length;
+          const donePercentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+<<<<<<< HEAD
       
         const formatted: Course[] = coursesData.map((c) => {
           const course = c.courses as unknown as Tables<'courses'>;
           const progress = progressData.find(p => p.course_id === c.course_id);
+=======
+>>>>>>> main
           return {
             ...course,
             course_id: c.course_id,
-            donePercentage: progress?.done_percentage ?? 0,
+            donePercentage,
+            summary: course.summary ?? null,
           };
         });
 
@@ -110,7 +151,11 @@ export default function RoadmapCoursesPage() {
   const doneCount = courses.filter((c) => c.donePercentage === 100).length;
 
   return (
+<<<<<<< HEAD
     <div className="min-h-screen max-w-350 mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
+=======
+    <div className="min-h-screen max-w-7xl mx-auto px-10 py-25 flex flex-col gap-6 bg-bg">
+>>>>>>> main
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
         <h2 className="font-bold text-primary lg:text-2xl md:text-xl">
           My Roadmap Courses
@@ -145,7 +190,7 @@ export default function RoadmapCoursesPage() {
       ) : (
         <div className="grid grid-cols-1 gap-6 mt-4">
           {filteredCourses.map((course) => (
-            <CourseCard key={course.course_id} course={course as any} href={`/roadmaps/${currentRoadmap.id}/courses/${course.course_id}`} />
+            <CourseCard key={course.course_id} course={course} href={`/roadmaps/${currentRoadmap.id}/courses/${course.course_id}`} />
           ))}
         </div>
       )}

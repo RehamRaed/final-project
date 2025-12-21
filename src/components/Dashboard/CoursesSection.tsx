@@ -18,6 +18,7 @@ interface CoursesSectionProps {
   currentRoadmap: Tables<'roadmaps'> | null;
 }
 
+<<<<<<< HEAD
 export default function CoursesSection({
   courses,
   currentRoadmap,
@@ -26,6 +27,29 @@ export default function CoursesSection({
   const pathname = usePathname();
 
   const hasMoreCourses = courses.length > 4;
+=======
+export default function CoursesSection({ courses, currentRoadmap }: CoursesSectionProps) {
+    const router = useRouter();
+    const pathname = usePathname();
+    // const searchParams = useSearchParams(); // unused
+    const hasMoreCourses = courses.length > 4;
+
+    return (
+        <>
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl hover:cursor-pointer font-bold text-primary">My Courses:</h2>
+                {hasMoreCourses && currentRoadmap && (
+                    <button
+                        className="flex items-center gap-2 text-primary font-semibold hover:underline"
+                        onClick={() =>
+                            router.push(`/roadmaps/${currentRoadmap.id}`)
+                        }
+                    >
+                        Show More <ArrowRight size={18} />
+                    </button>
+                )}
+            </div>
+>>>>>>> main
 
   return (
     <>

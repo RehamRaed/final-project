@@ -17,7 +17,7 @@ export default function CoursePageClient({
   lessonProgressPercent,
 }: CoursePageClientProps) {
   const router = useRouter();
-  const lessons = courseData.lessons || [];
+  const lessons = useMemo(() => courseData.lessons || [], [courseData.lessons]);
 
   const completedLessons = useMemo(
     () => lessons.filter((l) => l.user_progress?.[0]?.status === "completed").length,

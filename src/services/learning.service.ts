@@ -60,6 +60,7 @@ export async function fetchRoadmapDetails(
     roadmapId: string,
     userId: string
 ): Promise<ServiceResponse<DetailedRoadmap>> {
+    // Fetch roadmap with its courses and lessons (no user-specific joins)
     const { data, error } = await client
         .from('roadmaps')
         .select(
@@ -69,21 +70,85 @@ export async function fetchRoadmapDetails(
                 order_index,
                 course:courses(
                     *,
-                    user_progress:user_course_progress(status),
                     lessons(
-                        id,
-                        user_progress:user_lesson_progress(status)
+                        id
                     )
                 )
             )
             `
         )
         .eq('id', roadmapId)
-        .eq('roadmap_courses.course.user_course_progress.user_id', userId)
         .order('order_index', { foreignTable: 'roadmap_courses', ascending: true })
         .single();
 
-    return { data: data as DetailedRoadmap | null, error };
+    if (error || !data) return { data: data as DetailedRoadmap | null, error };
+
+    // Collect course IDs to fetch per-user course progress
+    const courseEntries = (data as { roadmap_courses?: { course?: { id: string } }[] }).roadmap_courses || [];
+    const courseIds: string[] = courseEntries
+        .map((rc: { course?: { id: string } }) => rc.course?.id)
+        .filter(Boolean);
+
+    let progressRows: { course_id: string; status: string | null }[] = [];
+
+    if (courseIds.length > 0) {
+        const { data: progressData, error: progressError } = await client
+            .from('user_course_progress')
+            .select('course_id, status')
+            .eq('user_id', userId)
+            .in('course_id', courseIds);
+
+        if (!progressError && progressData) {
+            progressRows = progressData as { course_id: string; status: string | null }[];
+        }
+    }
+
+    const allLessonIds: string[] = [];
+    (courseEntries as unknown as { course?: { lessons?: { id: string }[] } }[]).forEach((rc) => {
+        const lessonList = rc.course?.lessons || [];
+        lessonList.forEach((l: { id: string }) => {
+            if (l?.id) allLessonIds.push(l.id);
+        });
+    });
+
+    let lessonProgressRows: { lesson_id: string; status: string | null; completed_at: string | null }[] = [];
+    if (allLessonIds.length > 0) {
+        const { data: lessonProgressData, error: lessonProgressError } = await client
+            .from('user_lesson_progress')
+            .select('lesson_id, status, completed_at')
+            .eq('user_id', userId)
+            .in('lesson_id', allLessonIds);
+
+        if (!lessonProgressError && lessonProgressData) {
+            lessonProgressRows = lessonProgressData || [];
+        }
+    }
+
+    const roadmapCourses: RoadmapCourseDetails[] = (courseEntries as unknown as { course?: CourseWithProgress | null; order_index?: number }[]).map((rc) => {
+        const course = rc.course as CourseWithProgress | null;
+        if (!course) return { order_index: rc.order_index ?? null, course: null };
+
+        const userProgress = progressRows.filter((p: { course_id: string; status: string | null }) => p.course_id === course.id).map(p => ({ status: p.status })) || null;
+
+        const lessons = (course.lessons || []).map((l: { id: string; [key: string]: unknown }) => {
+            const progressForLesson = lessonProgressRows.filter((r: { lesson_id: string; status: string | null; completed_at: string | null }) => r.lesson_id === l.id).map(r => ({ status: r.status, completed_at: r.completed_at })) || null;
+            return { ...l, user_progress: progressForLesson };
+        });
+
+        const courseWithProgress: CourseWithProgress = {
+            ...course,
+            user_progress: userProgress,
+            lessons,
+        };
+        return { order_index: rc.order_index ?? null, course: courseWithProgress };
+    });
+
+    const detailed: DetailedRoadmap = {
+        ...(data as unknown as Omit<DetailedRoadmap, 'roadmap_courses'>),
+        roadmap_courses: roadmapCourses,
+    };
+
+    return { data: detailed, error: null };
 }
 
 export async function fetchUserCurrentRoadmap(
@@ -104,23 +169,58 @@ export async function fetchCourseLessons(
     courseId: string,
     userId: string
 ): Promise<ServiceResponse<DetailedCourse>> {
-    const { data, error } = await client
+    // First fetch the course and lessons (without joining user progress)
+    const { data: courseData, error: courseError } = await client
         .from('courses')
         .select(
             `
             *,
             lessons(
-                *,
-                user_progress:user_lesson_progress(status, completed_at)
+                *
             )
             `
         )
         .eq('id', courseId)
-        .eq('lessons.user_lesson_progress.user_id', userId)
         .order('order_index', { foreignTable: 'lessons', ascending: true })
         .single();
 
-    return { data: data as DetailedCourse | null, error };
+    if (courseError) return { data: null, error: courseError };
+
+    const lessons = (courseData?.lessons || []) as Lesson[];
+
+    // Fetch the current user's progress for lessons in this course
+    const lessonIds = lessons.map((l) => l.id).filter(Boolean);
+
+    let progressRows: { lesson_id: string; status: string | null; completed_at: string | null }[] = [];
+
+    if (lessonIds.length > 0) {
+        const { data: progressData, error: progressError } = await client
+            .from('user_lesson_progress')
+            .select('lesson_id, status, completed_at')
+            .eq('user_id', userId)
+            .in('lesson_id', lessonIds);
+
+        if (progressError) {
+            // don't fail the whole request due to missing progress; return course without progress
+            progressRows = [];
+        } else {
+            progressRows = progressData || [];
+        }
+    }
+
+    // Merge progress into lessons
+    const lessonsWithProgress: LessonWithProgress[] = lessons.map((lesson) => ({
+        ...lesson,
+        user_progress: progressRows.filter((p) => p.lesson_id === lesson.id).map((p) => ({ status: p.status, completed_at: p.completed_at })) || null,
+    }));
+
+    const detailed: DetailedCourse = {
+        ...courseData,
+        lessons: lessonsWithProgress,
+        xp_reward: (courseData as { xp_reward?: number | null }).xp_reward ?? null,
+    };
+
+    return { data: detailed as DetailedCourse | null, error: null };
 }
 
 export async function upsertLessonProgress(
