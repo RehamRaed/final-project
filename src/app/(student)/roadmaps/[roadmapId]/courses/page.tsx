@@ -1,7 +1,10 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> main
+=======
+>>>>>>> 08f7c81c21b6e6598fa86527b130af7664943b9d
 import { createServerSupabase } from "@/lib/supabase/server"; 
 import { redirect } from "next/navigation";
 import { Tables } from "@/types/database.types";
