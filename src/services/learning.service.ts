@@ -1,4 +1,3 @@
-// /services/learning.service.ts
 import { Database, Tables } from '@/types/database.types'
 import { PostgrestError, SupabaseClient } from "@supabase/supabase-js"
 
