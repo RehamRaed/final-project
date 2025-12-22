@@ -24,19 +24,18 @@ export default function LessonCard({
   return (
     <div
       onClick={onClick}
-      className={`cursor-pointer p-3 rounded-lg border flex flex-col justify-between mb-2 transition-all ${
-        selected
-          ? "border-2 border-primary bg-primary/10"
-          : "border border-gray-200 hover:shadow-md"
-      }`}
+      className={`cursor-pointer p-3 rounded-lg border flex flex-col justify-between mb-2 transition-all ${selected
+        ? "border-2 border-primary bg-primary/10"
+        : "border border-gray-200 hover:shadow-md"
+        }`}
     >
       <div className="flex justify-between items-center">
         <h4 className="font-semibold text-sm">{lesson.title}</h4>
+
         <span className={`text-xs ${statusColors[lessonStatus]}`}>
           {lessonStatus}
         </span>
       </div>
-
       <p className="text-xs text-gray-500 mt-1">
         <TimeNeeded minutes={duration} />
       </p>

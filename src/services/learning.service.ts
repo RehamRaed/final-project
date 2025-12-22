@@ -50,7 +50,6 @@ export async function fetchAllRoadmapsWithCourseCount(
         .eq('is_active', true)
         .order('created_at', { ascending: true });
 
-    // يجب تحويل النوع ليتناسب مع RoadmapWithCourseCount[]
     return { data: data as RoadmapWithCourseCount[] | null, error };
 }
 
@@ -59,7 +58,6 @@ export async function fetchRoadmapDetails(
     roadmapId: string,
     userId: string
 ): Promise<ServiceResponse<DetailedRoadmap>> {
-    // Fetch roadmap with its courses and lessons (no user-specific joins)
     const { data, error } = await client
         .from('roadmaps')
         .select(
@@ -82,7 +80,6 @@ export async function fetchRoadmapDetails(
 
     if (error || !data) return { data: data as DetailedRoadmap | null, error };
 
-    // Collect course IDs to fetch per-user course progress
     const courseEntries = (data as { roadmap_courses?: { course?: { id: string } }[] }).roadmap_courses || [];
     const courseIds: string[] = courseEntries
         .map((rc: { course?: { id: string } }) => rc.course?.id)
@@ -168,7 +165,6 @@ export async function fetchCourseLessons(
     courseId: string,
     userId: string
 ): Promise<ServiceResponse<DetailedCourse>> {
-    // First fetch the course and lessons (without joining user progress)
     const { data: courseData, error: courseError } = await client
         .from('courses')
         .select(
@@ -187,7 +183,6 @@ export async function fetchCourseLessons(
 
     const lessons = (courseData?.lessons || []) as Lesson[];
 
-    // Fetch the current user's progress for lessons in this course
     const lessonIds = lessons.map((l) => l.id).filter(Boolean);
 
     let progressRows: { lesson_id: string; status: string | null; completed_at: string | null }[] = [];
@@ -200,7 +195,6 @@ export async function fetchCourseLessons(
             .in('lesson_id', lessonIds);
 
         if (progressError) {
-            // don't fail the whole request due to missing progress; return course without progress
             progressRows = [];
         } else {
             progressRows = progressData || [];
@@ -236,9 +230,9 @@ export async function upsertLessonProgress(
         .upsert({
             user_id: userId,
             lesson_id: lessonId,
-            status: isCompleted ? 'Completed' : 'InProgress', // نرسل القيمة مباشرة            completed_at: isCompleted ? new Date().toISOString() : null,
+            status: isCompleted ? 'Completed' : 'InProgress', 
         }, {
-            onConflict: 'user_id,lesson_id' // تأكد أن هذا القيد موجود في SQL
+            onConflict: 'user_id,lesson_id' 
         })
         .select()
         .single();
@@ -248,7 +242,7 @@ export async function upsertLessonProgress(
 export async function updateXp(
     client: SupabaseClient<Database>,
     userId: string,
-    xpChange: number // قيمة الزيادة أو النقصان
+    xpChange: number 
 ): Promise<ServiceResponse<Profile>> {
 
     const { error } = await client.rpc('increment_xp', {
