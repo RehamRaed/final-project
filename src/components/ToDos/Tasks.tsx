@@ -159,7 +159,7 @@ export default function Tasks({ initialTasks }: TasksProps) {
         isOpen={showAddModal || !!selectedTask}
         onClose={() => { setShowAddModal(false); setSelectedTask(null); }}
         task={selectedTask ?? undefined}
-        onTaskUpdated={fetchTasks} // ✅ هنا آمنة
+        onTaskUpdated={fetchTasks}
       />
 
       <AnimatePresence mode="wait">
