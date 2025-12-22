@@ -26,11 +26,7 @@ export default function LogoutConfirmModal({ open, loading, onClose, onConfirm }
             Cancel
           </button>
           <button
-<<<<<<< HEAD
             className="px-4 py-2 hover:cursor-pointer rounded bg-red-600 text-white font-bold hover:bg-red-700 flex items-center justify-center"
-=======
-            className="px-4 py-2 rounded bg-red-600 text-white font-bold hover:bg-red-700 flex items-center justify-center"
->>>>>>> 3514bc8 (feat: add logout confirmation modal and logic, refactor Header from MUI to Tailwind, chore: adjust project structure)
             onClick={onConfirm}
             disabled={loading}
           >
