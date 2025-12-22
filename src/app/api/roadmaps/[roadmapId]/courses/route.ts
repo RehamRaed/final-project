@@ -23,7 +23,7 @@ export async function GET(
         )
       `)
       .eq("roadmap_id", roadmapId)
-      .order("course.order_index" as any, { ascending: true }); // أحياناً تتطلب الأنواع استخدام as any هنا حسب إعدادات الـ DB
+      .order("course.order_index" as any, { ascending: true }); 
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
