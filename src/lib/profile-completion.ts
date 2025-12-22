@@ -17,7 +17,6 @@ export function calculateProfileCompletion(profile: Profile): CompletionResult {
     let score = 0;
     const missingFields: string[] = [];
 
-   
 
     const adjustedFields = [
         { key: 'full_name', label: 'Full Name', weight: 20 },
