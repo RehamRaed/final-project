@@ -6,7 +6,6 @@ import type { ActionResponse } from '@/types/actionResponse'
 import type { TablesInsert, Tables } from '@/types/database.types'
 import { X, Calendar as CalendarIcon, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
-// tables types are imported as types above
 
 interface AddTaskModalProps {
     isOpen: boolean

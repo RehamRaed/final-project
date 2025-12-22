@@ -2,11 +2,8 @@ import { getCourseLessonsAction } from "@/actions/learning.actions";
 import { Metadata } from "next";
 import CoursePageClient from "@/components/lessons/CoursePageClient";
 import ErrorState from "@/components/ui/ErrorState";
-<<<<<<< HEAD
 import { CourseDataWithLessons, LessonWithDuration } from "@/types/learning.types";
-=======
-import type { Tables } from '@/types/database.types';
->>>>>>> main
+import { Tables } from '@/types/database.types';
 
 interface CoursePageProps {
   params: Promise<{ courseId: string }>;
@@ -44,27 +41,17 @@ export default async function CoursePage({ params }: CoursePageProps) {
         <ErrorState
           title="Course Not Found"
           message="Sorry, we could not find the requested course or you do not have access."
-          details={result.error ?? result.message}
+          details={'error' in result ? result.error : 'Unknown error'}
         />
       </main>
     );
   }
 
-<<<<<<< HEAD
-  const courseDataFromAPI = result.data;
-=======
-  type LessonWithProgress = Tables<'lessons'> & {
-    user_progress: { status: string | null; completed_at: string | null }[] | null;
-  };
-
-  type CourseDataWithLessons = Tables<'courses'> & {
-    lessons: LessonWithProgress[] | null;
+  const courseDataFromAPI: Tables<'courses'> & {
+    lessons?: LessonWithDuration[];
     lesson_progress_percent?: number;
     current_roadmap_id?: string | null;
-  };
-
-  const courseData = result.data as CourseDataWithLessons;
->>>>>>> main
+  } = result.data as any;
 
   if (!courseDataFromAPI) {
     return (
@@ -77,7 +64,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
   const lessons: LessonWithDuration[] =
     courseDataFromAPI.lessons?.map((lesson) => ({
       ...lesson,
-      duration: typeof (lesson as any).duration === "number" ? (lesson as any).duration : 0, 
+      duration: typeof lesson.duration === "number" ? lesson.duration : 0,
       description: lesson.content ?? null,
       user_progress: lesson.user_progress ?? [],
     })) || [];

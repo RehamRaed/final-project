@@ -1,5 +1,5 @@
 import { getFullProfileData } from "@/services/profile.service";
-import ProfileClientWrapper from "@/components/Profile/ProfileClientWrapper"; // <--- هذا هو الكمبوننت الجديد
+import ProfileClientWrapper from "@/components/Profile/ProfileClientWrapper";
 
 export default async function ProfilePage() {
   const { profile, currentRoadmap } = await getFullProfileData();
