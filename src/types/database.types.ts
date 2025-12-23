@@ -532,7 +532,6 @@ export type Database = {
   }
 }
 
-// Helpers
 export type Tables<TableName extends keyof Database["public"]["Tables"]> =
   Database["public"]["Tables"][TableName]["Row"]
 

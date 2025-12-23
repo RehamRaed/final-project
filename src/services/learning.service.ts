@@ -201,7 +201,6 @@ export async function fetchCourseLessons(
         }
     }
 
-    // Merge progress into lessons
     const lessonsWithProgress: LessonWithProgress[] = lessons.map((lesson) => ({
         ...lesson,
         user_progress: progressRows.filter((p) => p.lesson_id === lesson.id).map((p) => ({ status: p.status, completed_at: p.completed_at })) || null,
