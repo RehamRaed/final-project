@@ -29,7 +29,6 @@ export async function middleware(request: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser()
 
-    // Redirect to login if not authenticated and trying to access protected routes
     const protectedPaths = ['/dashboard', '/profile', '/roadmaps', '/courses', '/tasklist']
     const isProtectedPath = protectedPaths.some(path =>
         request.nextUrl.pathname.startsWith(path)
@@ -42,7 +41,6 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(redirectUrl)
     }
 
-    // Redirect to dashboard if authenticated and trying to access auth pages
     const authPaths = ['/login', '/register', '/forgot-password', '/reset-password']
     const isAuthPath = authPaths.some(path => request.nextUrl.pathname.startsWith(path))
 

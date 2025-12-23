@@ -4,6 +4,8 @@ StudyMate is a comprehensive, modern learning management platform designed to he
 
 ---
 
+[Live Demo](https://studymate-phi-ten.vercel.app/)
+
 ## 🚀 Features
 
 - **Personalized Roadmaps**: Visualize your learning path with interactive roadmaps tailored to your goals.
@@ -82,8 +84,8 @@ To get started with StudyMate locally, follow these steps:
 
 This project was developed with passion and dedication by:
 
-- **Reham Al-Maghari** 
-- **Basma Kaheel** - 
+- **Reham Al-Magharee** 
+- **Basma Kuhail** - 
 - **Ashraf Al-Kahlout** - 
 
 ---
