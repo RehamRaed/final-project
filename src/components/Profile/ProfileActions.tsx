@@ -16,13 +16,13 @@ export default function ProfileActions({ isEditing, isSaving, setIsEditing, hand
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="px-4 py-2 bg-accent text-white rounded-md  hover:opacity-90 "
+            className="px-4 py-2 bg-accent text-white rounded-md  hover:opacity-90 cursor-pointer "
           >
             {isSaving ? "Saving..." : "Save"}
           </button>
           <button
             onClick={handleCancel}
-            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 cursor-pointer"
           >
             Cancel
           </button>
@@ -30,7 +30,7 @@ export default function ProfileActions({ isEditing, isSaving, setIsEditing, hand
       ) : (
         <button
           onClick={() => setIsEditing(true)}
-          className="px-4 py-2 hover:cursor-pointer bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="px-4 py-2  bg-primary text-white rounded-md hover:bg-primary-hover cursor-pointer"
         >
           Edit Profile
         </button>

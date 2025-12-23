@@ -141,7 +141,7 @@ const FilterButton = ({
     style={{
       backgroundColor: showDoneOnly ? "gray" : "var(--primary)",
     }}
-    className="text-white px-4 py-2 rounded-lg hover:opacity-90 transition"
+    className="text-white px-4 py-2 rounded-lg hover:opacity-90 transition cursor-pointer"
   >
     {showDoneOnly ? "Show All" : "Filter Done"}
   </button>

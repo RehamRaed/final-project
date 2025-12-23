@@ -96,7 +96,7 @@ const TaskTable = ({ tasks, onToggle, onDelete }: TaskTableProps) => {
                                         <button
                                             onClick={() => onToggle(task.id)}
                                             className={`
-                                                transition-colors duration-200
+                                                transition-colors duration-200 cursor-pointer
                                                 ${task.is_completed ? 'text-green-500' : 'text-gray-300 hover:text-blue-500'}
                                             `}
                                         >
@@ -139,7 +139,7 @@ const TaskTable = ({ tasks, onToggle, onDelete }: TaskTableProps) => {
                                     <td className="px-6 py-4 text-right">
                                         <button
                                             onClick={() => onDelete(task.id)}
-                                            className="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                                            className="cursor-pointer text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
                                             title="Delete task"
                                         >
                                             <Trash2 className="w-4 h-4" />

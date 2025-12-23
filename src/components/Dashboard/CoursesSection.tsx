@@ -34,7 +34,7 @@ export default function CoursesSection({
 
         {hasMoreCourses && currentRoadmap && (
           <button
-            className="flex items-center gap-2 text-primary font-semibold hover:underline"
+            className="flex items-center gap-2 text-primary font-semibold hover:underline cursor-pointer"
             onClick={() =>
               router.push(`/roadmaps/${currentRoadmap.id}`)
             }

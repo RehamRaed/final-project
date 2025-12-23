@@ -26,7 +26,7 @@ export function OAuthButton() {
                 type="button"
                 onClick={() => handleOAuth('google')}
                 disabled={loadingProvider !== null}
-                className="w-full flex items-center justify-center gap-3 bg-bg border-2 border-gray-300 text-text-primary py-3 rounded-xl font-semibold cursor-pointer hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="cursor-pointerw-full flex items-center justify-center gap-3 bg-bg border-2 border-gray-300 text-text-primary py-3 rounded-xl font-semibold cursor-pointer hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {loadingProvider === 'google' ? (
                     <span>Loading...</span>
