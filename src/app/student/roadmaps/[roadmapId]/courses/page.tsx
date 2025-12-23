@@ -123,7 +123,7 @@ export default function RoadmapCoursesPage() {
 
         <button
           onClick={() => setShowDoneOnly(!showDoneOnly)}
-          className={`px-4 py-2 rounded-lg text-white font-medium transition ${showDoneOnly
+          className={`px-4 py-2 rounded-lg text-white font-medium transition cursor-pointer ${showDoneOnly
             ? "bg-gray-500"
             : "bg-primary hover:opacity-90"
             }`}

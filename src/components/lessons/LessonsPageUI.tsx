@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from "react";
 import Link from 'next/link';
 import { ArrowLeft } from "lucide-react";
 import LessonsSidebar from '@/components/lessons/LessonsSidebar';
@@ -23,14 +24,32 @@ interface Props {
 }
 
 export default function LessonPageUI({
-  lessons,
+  lessons: initialLessons,
   selectedLesson,
   setSelectedLesson,
-  onMarkDone,
   courseTitle,
   loading,
   courseId
 }: Props) {
+
+  const [lessons, setLessons] = useState<Lesson[]>(initialLessons);
+
+  const handleMarkDone = (lessonId: string) => {
+    setLessons(prev =>
+      prev.map(lesson =>
+        lesson.id === lessonId
+          ? { ...lesson, status: "Completed" }
+          : lesson
+      )
+    );
+
+    if (selectedLesson?.id === lessonId) {
+      setSelectedLesson({
+        ...selectedLesson,
+        status: "Completed",
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -52,7 +71,7 @@ export default function LessonPageUI({
 
       <div className="flex gap-6 flex-col md:flex-row">
         <LessonsSidebar
-          lessons={lessons}
+          lessons={lessons} 
           selectedLessonId={selectedLesson?.id || null}
           onSelectLesson={setSelectedLesson}
           courseTitle={courseTitle}
@@ -62,7 +81,7 @@ export default function LessonPageUI({
           {selectedLesson ? (
             <LessonDetails
               lesson={selectedLesson}
-              onMarkDone={onMarkDone}
+              onMarkDone={handleMarkDone} 
               isMarkingDone={false}
             />
           ) : (

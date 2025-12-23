@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useCallback, useTransition, ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
 import ProfileForm from "./ProfileForm";
 import ProfileAvatar from "./ProfileAvatar";
 import ProfileActions from "./ProfileActions";
 import ProfileRoadmap from "./ProfileRoadmap";
 import { updateProfile } from "@/actions/profile.actions";
 import type { Tables } from "@/types/database.types";
+import { ArrowLeft } from "lucide-react";
 
 type InitialProfile = Tables<'profiles'>;
 
@@ -16,6 +18,8 @@ interface ProfileClientWrapperProps {
 }
 
 export default function ProfileClientWrapper({ initialProfile, currentRoadmapTitle }: ProfileClientWrapperProps) {
+  const router = useRouter();
+
   const [profileData, setProfileData] = useState(initialProfile);
   const [imagePreview, setImagePreview] = useState(initialProfile.avatar_url || "/avatar.jpg");
   const [isEditing, setIsEditing] = useState(false);
@@ -38,7 +42,6 @@ export default function ProfileClientWrapper({ initialProfile, currentRoadmapTit
   const handleSave = useCallback(async () => {
     setErrorMessage(null);
     startTransition(async () => {
-      // Sanitize null values
       const sanitizedData = {
         full_name: profileData.full_name ?? "",
         avatar_url: imagePreview ?? "",
@@ -73,21 +76,34 @@ export default function ProfileClientWrapper({ initialProfile, currentRoadmapTit
   }, [initialProfile]);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6 bg-bg border border-border rounded-xl shadow-md">
-      {errorMessage && <div className="text-red-600 bg-red-100 p-3 rounded">{errorMessage}</div>}
+    <>
+      <button
+        onClick={() => router.back()}
+        className="flex items-center gap-1 font-semibold text-primary mb-5 cursor-pointer"
+      >
+        <ArrowLeft size={20} /> Back
+      </button>
 
-      <ProfileAvatar imagePreview={imagePreview} onChange={handleImageChange} isEditing={isEditing} />
-      <ProfileForm profile={profileData} handleChange={handleChange} isEditing={isEditing} />
+      <div className="max-w-5xl mx-auto p-6 space-y-6 bg-bg border border-border rounded-xl shadow-md">
+        {errorMessage && (
+          <div className="text-red-600 bg-red-100 p-3 rounded">
+            {errorMessage}
+          </div>
+        )}
 
-      <ProfileActions
-        isEditing={isEditing}
-        isSaving={isPending}
-        setIsEditing={setIsEditing}
-        handleCancel={handleCancel}
-        handleSave={handleSave}
-      />
+        <ProfileAvatar imagePreview={imagePreview} onChange={handleImageChange} isEditing={isEditing} />
+        <ProfileForm profile={profileData} handleChange={handleChange} isEditing={isEditing} />
 
-      <ProfileRoadmap currentRoadmapTitle={currentRoadmapTitle} />
-    </div>
+        <ProfileActions
+          isEditing={isEditing}
+          isSaving={isPending}
+          setIsEditing={setIsEditing}
+          handleCancel={handleCancel}
+          handleSave={handleSave}
+        />
+
+        <ProfileRoadmap currentRoadmapTitle={currentRoadmapTitle} />
+      </div>
+    </>
   );
 }

@@ -51,7 +51,7 @@ export default function TaskDashboard({
         <div className="flex items-center gap-3">
             <span>This is your current roadmap , </span>
             <Link href={`/roadmaps/${currentRoadmap.id}`} className="ml-2 inline-block">
-                <button className="px-3 py-1 bg-primary hover:cursor-pointer text-white rounded-md text-sm">Keep progressing!</button>
+                <button className="cursor-pointer px-3 py-1 bg-primary hover:cursor-pointer text-white rounded-md text-sm">Keep progressing!</button>
             </Link>
         </div>
     ) : "Select a roadmap to get started."}

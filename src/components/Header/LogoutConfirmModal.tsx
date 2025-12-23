@@ -19,14 +19,14 @@ export default function LogoutConfirmModal({ open, loading, onClose, onConfirm }
         <p className="mb-6">Are you sure you want to log out?</p>
         <div className="flex justify-end gap-2">
           <button
-            className="px-4 py-2 rounded bg-gray-200 text-gray-600"
+            className="px-4 py-2 rounded bg-gray-200 text-gray-600 cursor-pointer"
             onClick={onClose}
             disabled={loading}
           >
             Cancel
           </button>
           <button
-            className="px-4 py-2 hover:cursor-pointer rounded bg-red-600 text-white font-bold hover:bg-red-700 flex items-center justify-center"
+            className="cursor-pointer px-4 py-2 hover:cursor-pointer rounded bg-red-600 text-white font-bold hover:bg-red-700 flex items-center justify-center"
             onClick={onConfirm}
             disabled={loading}
           >
