@@ -1,7 +1,9 @@
 import { getRoadmapsListAction } from "@/actions/learning.actions";
 import RoadmapSelectionClient from "@/components/Roadmap/RoadmapSelectionClient";
+import { getCurrentUser } from "@/actions/user.actions";
 import { Tables } from "@/types/database.types";
 import { Metadata } from "next";
+import { redirect } from "next/navigation"; 
 
 interface RoadmapWithStatus extends Tables<'roadmaps'> {
   course_count: number;
@@ -17,8 +19,10 @@ export const metadata: Metadata = {
 };
 
 export default async function RoadmapsPage() {
-  const result = await getRoadmapsListAction();
+  const user = await getCurrentUser();
+  if (!user) redirect('/login'); 
 
+  const result = await getRoadmapsListAction();
   if (!result.success) {
     return (
       <main className="pt-25 px-10 max-w-350 mx-auto" aria-live="assertive">

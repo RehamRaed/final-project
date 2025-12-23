@@ -37,7 +37,7 @@ export default function ClientLayout({
 }) {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
-  const hideHeaderOn = ["/login", "/register", "/" ,"/profile" ];
+  const hideHeaderOn = ["/login", "/register", "/" ,"/profile" , "/roadmaps"];
 
   useEffect(() => {
     const checkUser = async () => {

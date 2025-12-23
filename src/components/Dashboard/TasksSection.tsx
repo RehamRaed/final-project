@@ -43,16 +43,16 @@ export default function TasksSection({ tasks }: TasksSectionProps) {
                                     </h4>
                                     <span className={`
                                         text-[10px] px-2 py-0.5 rounded-full font-medium border
-                                        ${task.priority === 'High' ? 'bg-red-50 text-red-600 border-red-100 dark:bg-red-900/20 dark:border-red-900/30' :
-                                            task.priority === 'Medium' ? 'bg-orange-50 text-orange-600 border-orange-100 dark:bg-orange-900/20 dark:border-orange-900/30' :
-                                            'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-900/20 dark:border-blue-900/30'}
+                                        ${task.priority === 'High' ? 'bg-red-50 text-red-600 border-red-100 ' :
+                                            task.priority === 'Medium' ? 'bg-orange-50 text-orange-600 border-orange-100' :
+                                            'bg-blue-50 text-blue-600 border-blue-100 '}
                                     `}>
                                         {task.priority || 'Low'}
                                     </span>
                                 </div>
                                 <div className="flex items-center text-xs text-text-secondary gap-2">
                                     {task.due_date && (
-                                        <span className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800/50 px-2 py-1 rounded-md">
+                                        <span className="flex items-center gap-1.5 bg-gray-50 text-gray-500  px-2 py-1 rounded-md">
                                             <CalendarIcon className="w-3 h-3" />
                                             {new Date(task.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                         </span>
