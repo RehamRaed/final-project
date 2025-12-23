@@ -1,17 +1,20 @@
 'use client';
-import Link from 'next/link';
-import { ListCheck , ArrowLeft } from 'lucide-react';
+
+import { useRouter } from 'next/navigation';
+import { ListCheck, ArrowLeft } from 'lucide-react';
 
 export default function ToDoPageTop({ remainingTasks }: { remainingTasks: number }) {
+  const router = useRouter();
+
   return (
     <>
-      <Link
-        href="/dashboard"
-        className="flex items-center gap-1 font-semibold transition duration-150"
+      <button
+        onClick={() => router.back()}
+        className="flex items-center gap-1 font-semibold transition duration-150 cursor-pointer"
         style={{ color: 'var(--color-primary)' }}
       >
-        <ArrowLeft size={20} /> Back 
-      </Link>
+        <ArrowLeft size={20} /> Back
+      </button>
 
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 flex items-center gap-2 text-primary">
         <ListCheck className="w-5 h-5 sm:w-6 md:w-8" /> My Full Task List

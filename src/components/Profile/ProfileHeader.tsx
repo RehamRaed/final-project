@@ -1,5 +1,5 @@
-'use client';
 import React from 'react';
+import Link from 'next/link';
 
 const ProfileHeader: React.FC = () => {
   return (
@@ -9,7 +9,7 @@ const ProfileHeader: React.FC = () => {
     boxShadow: 'var(--shadow-appbar)',
   }}
 >
-  <span className="text-2xl text-white">StudyMATE</span>
+  <Link href="/dashboard" className="text-2xl text-white">StudyMATE</Link>
 </header>
 
   );
