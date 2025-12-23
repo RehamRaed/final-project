@@ -52,7 +52,7 @@ export default function LessonDetails({
         </h1>
 
         <button
-  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition ${
+  className={` cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition ${
     lessonStatus === "Completed"
       ? "bg-gray-500 cursor-not-allowed"
       : isMarkingDone

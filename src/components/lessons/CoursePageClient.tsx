@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, BookOpen, Clock, Award } from "lucide-react";
 import Link from "next/link";
-import { CourseDataWithLessons, LessonWithDuration } from "@/types/learning.types";
+import { CourseDataWithLessons } from "@/types/learning.types";
 
 interface CoursePageClientProps {
   courseData: CourseDataWithLessons;
@@ -36,10 +36,13 @@ export default function CoursePageClient({
   return (
     <div className="min-h-screen max-w-325 mx-auto px-10 pt-30 pb-20">
       <header className="mb-8 border-b border-border pb-6">
-        <Link href="/dashboard" className="inline-flex items-center gap-2 text-primary mb-4 font-medium transition-colors">
+        <button
+          onClick={() => router.back()}
+          className="cursor-pointer inline-flex items-center gap-2 text-primary mb-4 font-medium transition-colors"
+        >
           <ArrowLeft className="w-5 h-5" />
           Back
-        </Link>
+        </button>
 
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           <div className="w-24 h-24 rounded-xl bg-primary flex items-center justify-center shadow-lg">

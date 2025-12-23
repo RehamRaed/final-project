@@ -52,7 +52,7 @@ export default function SelectedRoadmapCard({
       {!title && (
         <button
           onClick={handleSelectRoadmap}
-          className="px-3 py-1 bg-primary text-white rounded-md text-sm font-semibold hover:opacity-90 transition self-start mt-auto"
+          className="cursor-pointer px-3 py-1 bg-primary text-white rounded-md text-sm font-semibold hover:opacity-90 transition self-start mt-auto"
         >
           Select a Roadmap
         </button>

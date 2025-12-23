@@ -50,7 +50,7 @@ export default function Error({
                 <div className="flex gap-4 justify-center">
                     <button
                         onClick={() => reset()}
-                        className="px-6 py-2 rounded-lg transition"
+                        className="px-6 py-2 rounded-lg transition cursor-pointer"
                         style={{ backgroundColor: 'var(--primary)', color: 'white' }}
                     >
                         Try again
