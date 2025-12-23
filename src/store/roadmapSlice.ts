@@ -38,7 +38,6 @@ export const fetchCurrentRoadmap = createAsyncThunk<Roadmap | null>(
   }
 );
 
-// 🔹 Slice
 const roadmapSlice = createSlice({
   name: "roadmap",
   initialState,

@@ -116,7 +116,7 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label className="block text-sm font-medium text-text-primary  mb-1">
                                 Due Date
                             </label>
                             <div className="relative">

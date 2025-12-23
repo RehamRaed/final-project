@@ -13,7 +13,7 @@ import TaskStatus from './TaskStatus';
 import MatrixView from './MatrixView';
 import Calendar from './Calendar';
 import FocusMode from './FocusMode';
-import TaskModal from "./TaskDetailsModal";
+import AddTaskModal from './AddTaskModal';
 import { Tables } from '@/types/database.types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus } from 'lucide-react';
@@ -155,11 +155,10 @@ export default function Tasks({ initialTasks }: TasksProps) {
         </button>
       </div>
 
-      <TaskModal
-        isOpen={showAddModal || !!selectedTask}
-        onClose={() => { setShowAddModal(false); setSelectedTask(null); }}
-        task={selectedTask ?? undefined}
-        onTaskUpdated={fetchTasks}
+      <AddTaskModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onTaskAdded={fetchTasks} 
       />
 
       <AnimatePresence mode="wait">
