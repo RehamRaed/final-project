@@ -5,6 +5,10 @@ import { redirect } from 'next/navigation';
 import type { ActionResponse } from '@/types/actionResponse';
 import { registerSchema, loginSchema } from '@/lib/validators/validation';
 
+const getBaseUrl = () => {
+  return process.env.NEXT_PUBLIC_APP_URL || '';
+};
+
 // ================= REGISTER =================
 export async function register(formData: FormData): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
@@ -32,9 +36,9 @@ export async function register(formData: FormData): Promise<ActionResponse<unkno
       data: {
         full_name: fullName,
         has_selected_roadmap: false,
-        isNewUser: true, // ← علامة المستخدم الجديد
+        isNewUser: true, 
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/roadmaps`,
+      emailRedirectTo: `${getBaseUrl()}/callback?next=/roadmaps`,
     },
   });
 
@@ -52,7 +56,7 @@ export async function register(formData: FormData): Promise<ActionResponse<unkno
   redirect('/roadmaps');
 }
 
-// ================= LOGIN =================
+// ================= LOGIN (Email/Password) =================
 export async function login(formData: FormData): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
 
@@ -71,34 +75,33 @@ export async function login(formData: FormData): Promise<ActionResponse<unknown>
   const { email, password } = validation.data;
 
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  
   if (error || !data.user) return { success: false, error: 'Invalid email or password' };
 
-  // تحقق من العلامة الجديدة أو اختيار roadmap
   const userMetadata = data.user.user_metadata || {};
   const hasSelectedRoadmap = userMetadata.has_selected_roadmap as boolean ?? false;
   const isNewUser = userMetadata.isNewUser as boolean ?? false;
 
   if (isNewUser || !hasSelectedRoadmap) {
-    redirect('/roadmaps'); // المستخدم جديد أو لم يختار roadmap بعد
+    redirect('/roadmaps'); 
   } else {
-    redirect('/dashboard'); // مستخدم سابق
+    redirect('/dashboard'); 
   }
 }
 
-// ================= LOGIN WITH OAUTH =================
+// ================= LOGIN WITH OAUTH (Google/Github) =================
 export async function loginWithOAuth(provider: 'google' | 'github'): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/roadmaps`,
+      redirectTo: `${getBaseUrl()}/callback?next=/roadmaps`,
     },
   });
 
   if (error) return { success: false, error: 'Login failed' };
   if (data.url) redirect(data.url);
-  return { success: false, error: 'Login failed' };
 }
 
 // ================= LOGOUT =================
@@ -116,7 +119,7 @@ export async function forgotPassword(formData: FormData): Promise<ActionResponse
   if (!email) return { success: false, error: 'Email is required' };
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/reset-password`,
+    redirectTo: `${getBaseUrl()}/callback?next=/reset-password`,
   });
 
   if (error) return { success: false, error: 'Error sending password reset link' };
@@ -124,6 +127,7 @@ export async function forgotPassword(formData: FormData): Promise<ActionResponse
   return { success: true, message: 'Password reset link sent to your email' };
 }
 
+// ================= RESET PASSWORD =================
 export async function resetPassword(formData: FormData): Promise<ActionResponse<unknown>> {
   const supabase = await createServerSupabase()
 
@@ -133,7 +137,6 @@ export async function resetPassword(formData: FormData): Promise<ActionResponse<
   if (!password || !confirmPassword) return { success: false, error: 'Both fields are required' }
   if (password !== confirmPassword) return { success: false, error: 'Passwords do not match' }
 
-  // تحديث كلمة المرور للمستخدم الحالي
   const { data, error } = await supabase.auth.updateUser({ password })
 
   if (error) return { success: false, error: error.message }
@@ -142,7 +145,7 @@ export async function resetPassword(formData: FormData): Promise<ActionResponse<
   return { success: true, message: 'Password has been reset successfully' }
 }
 
-
+// ================= RESEND VERIFICATION =================
 export async function resendVerificationEmail(): Promise<ActionResponse<unknown>> {
   const supabase = await createServerSupabase()
 
@@ -156,7 +159,7 @@ export async function resendVerificationEmail(): Promise<ActionResponse<unknown>
   const { error } = await supabase.auth.signInWithOtp({
     email: user.email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/verify-email?email=${encodeURIComponent(user.email)}`,
+      emailRedirectTo: `${getBaseUrl()}/callback?next=/verify-email`,
     }
   })
 
