@@ -185,11 +185,8 @@ export default function Header({currentRoadmapId}: HeaderProps) {
   const handleLogoutConfirm = async () => {
     setIsLoggingOut(true);
     try {
-      // clear server-side cookies first
       await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
-      // clear client session store as well
       await supabase.auth.signOut().catch(() => {});
-      // navigate with full reload to ensure client state and cache are cleared
       setTimeout(() => {
         try {
           window.location.href = '/login';
