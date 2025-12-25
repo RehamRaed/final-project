@@ -38,7 +38,7 @@ export async function register(formData: FormData): Promise<ActionResponse<unkno
         has_selected_roadmap: false,
         isNewUser: true, 
       },
-      emailRedirectTo: `${getBaseUrl()}/auth/callback?next=/roadmaps`,
+      emailRedirectTo: `${getBaseUrl()}/callback?next=/`,
     },
   });
 
@@ -51,9 +51,7 @@ export async function register(formData: FormData): Promise<ActionResponse<unkno
     };
   }
 
-  if (!data.user) return { success: false, error: 'Error creating account' };
-
-  redirect('/roadmaps');
+  redirect('/');
 }
 
 export async function login(formData: FormData): Promise<ActionResponse<unknown> | void> {
@@ -79,12 +77,11 @@ export async function login(formData: FormData): Promise<ActionResponse<unknown>
 
   const userMetadata = data.user.user_metadata || {};
   const hasSelectedRoadmap = userMetadata.has_selected_roadmap as boolean ?? false;
-  const isNewUser = userMetadata.isNewUser as boolean ?? false;
 
-  if (isNewUser || !hasSelectedRoadmap) {
-    redirect('/roadmaps'); 
-  } else {
+  if (hasSelectedRoadmap) {
     redirect('/dashboard'); 
+  } else {
+    redirect('/'); 
   }
 }
 
@@ -94,7 +91,7 @@ export async function loginWithOAuth(provider: 'google' | 'github'): Promise<Act
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${getBaseUrl()}/auth/callback?next=/roadmaps`,
+      redirectTo: `${getBaseUrl()}/callback`,
     },
   });
 

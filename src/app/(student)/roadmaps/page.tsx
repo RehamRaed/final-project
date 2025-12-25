@@ -20,9 +20,16 @@ export const metadata: Metadata = {
 
 export default async function RoadmapsPage() {
   const user = await getCurrentUser();
+  
   if (!user) redirect('/login'); 
 
+
+  if (user.current_roadmap_id) {
+    redirect('/dashboard');
+  }
+
   const result = await getRoadmapsListAction();
+  
   if (!result.success) {
     return (
       <main className="pt-25 px-10 max-w-350 mx-auto" aria-live="assertive">
