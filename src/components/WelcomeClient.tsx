@@ -9,6 +9,14 @@ interface WelcomeClientProps {
 }
 
 export default function WelcomeClient({ user, displayName }: WelcomeClientProps) {
+    const getDestination = () => {
+        if (!user) return "/login";
+        
+        const hasSelectedRoadmap = user.user_metadata?.has_selected_roadmap === true;
+        
+        return hasSelectedRoadmap ? "/dashboard" : "/roadmaps";
+    };
+
     return (
         <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
             <h1 className="text-5xl font-extrabold mb-4 text-primary">
@@ -20,7 +28,7 @@ export default function WelcomeClient({ user, displayName }: WelcomeClientProps)
             </p>
 
             <Link
-                href={user ? "/dashboard" : "/login"}
+                href={getDestination()}
                 className="px-8 py-3 rounded-xl shadow-lg transition font-semibold text-lg"
                 style={{
                     backgroundColor: "var(--color-primary)",

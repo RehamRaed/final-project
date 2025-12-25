@@ -34,27 +34,31 @@ export default function SelectedRoadmapCard({
     }
   };
 
+  const hasNoActiveRoadmap = !roadmapId || title === "No Active Roadmap";
+
   return (
-    <div className="relative p-6 bg-card-bg border border-border rounded-2xl shadow-lg mx-auto flex flex-col justify-between">
+    <div className="relative p-6 bg-card-bg border border-border rounded-2xl shadow-lg mx-auto flex flex-col justify-between min-h-40">
       <div
-        className="absolute left-[-1] top-0 h-full w-3 rounded-l-2xl"
+        className="absolute left-0 top-0 h-full w-2 rounded-l-2xl"
         style={{ backgroundColor: color }}
       />
 
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex flex-col gap-2">
         <h2 className="text-2xl font-bold text-text-primary">
-          {title ?? "No Active Roadmap"}
+          {title || "No Active Roadmap"}
         </h2>
+        
+        <div className="text-text-secondary text-sm">
+          {description}
+        </div>
       </div>
 
-      {description && <div className="text-text-secondary mb-4">{description}</div>}
-
-      {!title && (
+      {hasNoActiveRoadmap && (
         <button
           onClick={handleSelectRoadmap}
-          className="cursor-pointer px-3 py-1 bg-primary text-white rounded-md text-sm font-semibold hover:opacity-90 transition self-start mt-auto"
+          className="mt-6 px-5 py-2 bg-primary text-white rounded-xl text-sm font-bold hover:shadow-lg transition-all duration-200 cursor-pointer self-start uppercase tracking-wide"
         >
-          Select a Roadmap
+          Select Your First Roadmap →
         </button>
       )}
     </div>

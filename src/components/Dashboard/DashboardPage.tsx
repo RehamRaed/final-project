@@ -45,17 +45,21 @@ export default function TaskDashboard({
                             Every step you take brings you closer to mastering your roadmap
                         </p>
 
-                       <SelectedRoadmapCard
-    title={currentRoadmap?.title || "No Active Roadmap"}
+<SelectedRoadmapCard
+    title={currentRoadmap?.title} 
     description={currentRoadmap ? (
         <div className="flex items-center gap-3">
-            <span>This is your current roadmap , </span>
+            <span>This is your current roadmap, </span>
             <Link href={`/roadmaps/${currentRoadmap.id}`} className="ml-2 inline-block">
-                <button className="cursor-pointer px-3 py-1 bg-primary hover:cursor-pointer text-white rounded-md text-sm">Keep progressing!</button>
+                <button className="cursor-pointer px-3 py-1 bg-primary text-white rounded-md text-sm font-medium hover:opacity-90 transition">
+                    Keep progressing!
+                </button>
             </Link>
         </div>
-    ) : "Select a roadmap to get started."}
-    color="var(--primary)"
+    ) : (
+        "You haven't selected a learning path yet. Start your journey now!"
+    )}
+    color="var(--color-primary)"
     userId={user.id}  
     roadmapId={currentRoadmap?.id}
 />

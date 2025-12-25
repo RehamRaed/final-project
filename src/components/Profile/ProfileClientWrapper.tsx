@@ -42,31 +42,33 @@ export default function ProfileClientWrapper({ initialProfile, currentRoadmapTit
   const handleSave = useCallback(async () => {
     setErrorMessage(null);
     startTransition(async () => {
-      const sanitizedData = {
-        full_name: profileData.full_name ?? "",
-        avatar_url: imagePreview ?? "",
-        bio: profileData.bio ?? "",
-        university_id: profileData.university_id ?? "",
-        department: profileData.department ?? "",
-      };
+     
+      const result = await updateProfile({
+        full_name: profileData.full_name || "",
+        avatar_url: imagePreview, 
+        bio: profileData.bio || "",
+        university_id: profileData.university_id || "",
+        department: profileData.department || "",
+      });
 
-      const result = await updateProfile(sanitizedData);
       if (result.success) {
         setIsEditing(false);
+        router.refresh();
       } else {
         let msg = result.message ?? "Failed to save changes.";
         if (result.fieldErrors) {
           const parts: string[] = [];
           for (const [key, val] of Object.entries(result.fieldErrors)) {
-            if (Array.isArray(val)) parts.push(`${key}: ${val.join(', ')}`);
-            else parts.push(`${key}: ${String(val)}`);
+            const fieldName = key.replace('_', ' ');
+            if (Array.isArray(val)) parts.push(`${fieldName}: ${val.join(', ')}`);
+            else parts.push(`${fieldName}: ${String(val)}`);
           }
           if (parts.length) msg += " — " + parts.join(" | ");
         }
         setErrorMessage(msg);
       }
     });
-  }, [profileData, imagePreview]);
+  }, [profileData, imagePreview, router]);
 
   const handleCancel = useCallback(() => {
     setProfileData(initialProfile);
@@ -79,20 +81,29 @@ export default function ProfileClientWrapper({ initialProfile, currentRoadmapTit
     <>
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-1 font-semibold text-primary mb-5 cursor-pointer"
+        className="flex items-center gap-1 font-semibold text-primary mb-5 cursor-pointer hover:underline transition-all"
       >
         <ArrowLeft size={20} /> Back
       </button>
 
-      <div className="max-w-5xl mx-auto p-6 space-y-6 bg-bg border border-border rounded-xl shadow-md">
+      <div className="max-w-5xl mx-auto p-6 space-y-6 bg-card-bg border border-border rounded-xl shadow-md">
         {errorMessage && (
-          <div className="text-red-600 bg-red-100 p-3 rounded">
-            {errorMessage}
+          <div className="text-red-600 bg-red-50 border border-red-200 p-4 rounded-xl text-sm font-medium animate-in fade-in slide-in-from-top-1">
+            ⚠️ {errorMessage}
           </div>
         )}
 
-        <ProfileAvatar imagePreview={imagePreview} onChange={handleImageChange} isEditing={isEditing} />
-        <ProfileForm profile={profileData} handleChange={handleChange} isEditing={isEditing} />
+        <ProfileAvatar 
+          imagePreview={imagePreview} 
+          onChange={handleImageChange} 
+          isEditing={isEditing} 
+        />
+        
+        <ProfileForm 
+          profile={profileData} 
+          handleChange={handleChange} 
+          isEditing={isEditing} 
+        />
 
         <ProfileActions
           isEditing={isEditing}
