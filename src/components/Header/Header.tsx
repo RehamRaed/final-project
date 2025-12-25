@@ -58,10 +58,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 interface HeaderProps {
   currentRoadmapId?: string | null;
+  profile: boolean;
 }
 
 
-export default function Header({currentRoadmapId}: HeaderProps) {
+export default function Header({currentRoadmapId, profile}: HeaderProps) {
   const { notifications, removeNotifcation } = useNotifications();
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -327,7 +328,12 @@ export default function Header({currentRoadmapId}: HeaderProps) {
 
   return (<>
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar 
+        position="static" 
+        sx={{
+          backgroundColor: 'var(--primary)',
+        }}
+      >
         <Toolbar>
           <Link href="/dashboard" passHref>
             <Typography
@@ -339,16 +345,16 @@ export default function Header({currentRoadmapId}: HeaderProps) {
             </Typography>
           </Link>
 
-          <Search>
+          {!profile && <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase placeholder={searchQuery} onChange={handleSearch} />
-          </Search>
+          </Search>}
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          {!profile && <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton 
               size="large" 
               color="inherit"
@@ -370,9 +376,9 @@ export default function Header({currentRoadmapId}: HeaderProps) {
             >
               <AccountCircle />
             </IconButton>
-          </Box>
+          </Box>}
 
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+          {!profile && <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton 
               size="large" 
               color="inherit"
@@ -393,7 +399,7 @@ export default function Header({currentRoadmapId}: HeaderProps) {
             >
               <MoreIcon />
             </IconButton>
-          </Box>
+          </Box>}
         </Toolbar>
       </AppBar>
 

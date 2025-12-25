@@ -1,5 +1,7 @@
 import "@/app/globals.css";
+// mounting react-hot-toast for notifications
 import { Toaster } from 'react-hot-toast';
+
 import ClientLayout from "@/components/ClientLayout";
 import type { Metadata } from 'next';
 

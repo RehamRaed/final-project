@@ -37,7 +37,7 @@ export default function ClientLayout({
 }) {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
-  const hideHeaderOn = ["/login", "/register", "/" ,"/profile" , "/roadmaps"];
+  const hideHeaderOn = ["/login", "/register", "/", "/roadmaps", "/profile"];
 
   useEffect(() => {
     const checkUser = async () => {
@@ -84,7 +84,7 @@ export default function ClientLayout({
             <NotificationsProvider>
               {!hideHeaderOn.includes(pathname) && (
                 <div className="fixed top-0 left-0 w-full z-50">
-                  <Header />
+                  <Header profile={false}/>
                 </div>
               )}
 
