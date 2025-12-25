@@ -6,10 +6,10 @@ import type { ActionResponse } from '@/types/actionResponse';
 import { registerSchema, loginSchema } from '@/lib/validators/validation';
 
 const getBaseUrl = () => {
-  return process.env.NEXT_PUBLIC_APP_URL || '';
+  let url = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  return url.endsWith('/') ? url.slice(0, -1) : url;
 };
 
-// ================= REGISTER =================
 export async function register(formData: FormData): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
 
@@ -38,7 +38,7 @@ export async function register(formData: FormData): Promise<ActionResponse<unkno
         has_selected_roadmap: false,
         isNewUser: true, 
       },
-      emailRedirectTo: `${getBaseUrl()}/callback?next=/roadmaps`,
+      emailRedirectTo: `${getBaseUrl()}/auth/callback?next=/roadmaps`,
     },
   });
 
@@ -56,7 +56,6 @@ export async function register(formData: FormData): Promise<ActionResponse<unkno
   redirect('/roadmaps');
 }
 
-// ================= LOGIN (Email/Password) =================
 export async function login(formData: FormData): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
 
@@ -89,14 +88,13 @@ export async function login(formData: FormData): Promise<ActionResponse<unknown>
   }
 }
 
-// ================= LOGIN WITH OAUTH (Google/Github) =================
 export async function loginWithOAuth(provider: 'google' | 'github'): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${getBaseUrl()}/callback?next=/roadmaps`,
+      redirectTo: `${getBaseUrl()}/auth/callback?next=/roadmaps`,
     },
   });
 
@@ -104,14 +102,12 @@ export async function loginWithOAuth(provider: 'google' | 'github'): Promise<Act
   if (data.url) redirect(data.url);
 }
 
-// ================= LOGOUT =================
 export async function logout(): Promise<void> {
   const supabase = await createServerSupabase();
   await supabase.auth.signOut();
   redirect('/login');
 }
 
-// ================= FORGOT PASSWORD =================
 export async function forgotPassword(formData: FormData): Promise<ActionResponse<unknown>> {
   const supabase = await createServerSupabase();
 
@@ -119,7 +115,7 @@ export async function forgotPassword(formData: FormData): Promise<ActionResponse
   if (!email) return { success: false, error: 'Email is required' };
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${getBaseUrl()}/callback?next=/reset-password`,
+    redirectTo: `${getBaseUrl()}/auth/callback?next=/reset-password`,
   });
 
   if (error) return { success: false, error: 'Error sending password reset link' };
@@ -127,7 +123,6 @@ export async function forgotPassword(formData: FormData): Promise<ActionResponse
   return { success: true, message: 'Password reset link sent to your email' };
 }
 
-// ================= RESET PASSWORD =================
 export async function resetPassword(formData: FormData): Promise<ActionResponse<unknown>> {
   const supabase = await createServerSupabase()
 
@@ -145,7 +140,6 @@ export async function resetPassword(formData: FormData): Promise<ActionResponse<
   return { success: true, message: 'Password has been reset successfully' }
 }
 
-// ================= RESEND VERIFICATION =================
 export async function resendVerificationEmail(): Promise<ActionResponse<unknown>> {
   const supabase = await createServerSupabase()
 
@@ -159,7 +153,7 @@ export async function resendVerificationEmail(): Promise<ActionResponse<unknown>
   const { error } = await supabase.auth.signInWithOtp({
     email: user.email,
     options: {
-      emailRedirectTo: `${getBaseUrl()}/callback?next=/verify-email`,
+      emailRedirectTo: `${getBaseUrl()}/auth/callback?next=/verify-email`,
     }
   })
 

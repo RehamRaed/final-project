@@ -7,11 +7,17 @@ import type { Tables } from "@/types/database.types";
 import type { ActionResponse } from '@/types/actionResponse';
 
 const ProfileSchema = z.object({
-  full_name: z.string().min(3).optional(),
-  avatar_url: z.string().url().optional().nullable(),  
-  bio: z.string().max(500).optional().nullable(),
-  university_id: z.string().min(5).optional().nullable(),
-  department: z.string().min(2).optional().nullable(),
+  full_name: z.string().min(3).or(z.literal("")).optional(),
+  avatar_url: z.string().url().or(z.literal("")).optional().nullable(),
+  bio: z.string().max(50).or(z.literal("")).optional().nullable(),
+  university_id: z.string()
+    .refine((val) => val === "" || val.length >= 5, {
+      message: "University ID must be at least 5 characters"
+    }).optional().nullable(),
+  department: z.string()
+    .refine((val) => val === "" || val.length >= 2, {
+      message: "Department must be at least 2 characters"
+    }).optional().nullable(),
 });
 
 export async function updateProfile(formData: Partial<Tables<'profiles'>>): Promise<ActionResponse<unknown>> {
@@ -25,7 +31,7 @@ export async function updateProfile(formData: Partial<Tables<'profiles'>>): Prom
   if (!parsed.success) {
     return {
       success: false,
-      message: "Validation failed.",
+      message: "Validation failed. Please check your inputs.",
       fieldErrors: parsed.error.flatten().fieldErrors,
     };
   }
