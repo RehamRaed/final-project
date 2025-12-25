@@ -11,6 +11,10 @@
   --border: #D1D5DB;
   --primary-hover :#2a73ea;
   --font-family-base: 'Poppins', sans-serif;
+  --red-card:#ffadad4d;
+  --blue-card:#adc4ff63;
+  --orange-card:#ffcaad6e;
+  --green-card:#cbffad62;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -31,6 +35,10 @@
   --color-text-secondary: var(--text-secondary);
   --color-border: var(--border);
   --color-primary-hover :var(--primary-hover);
+  --color-red-card:var(--red-card);
+  --color-blue-card:var(--blue-card);
+  --color-orange-card:var(--orange-card);
+  --color-green-card:var(--green-card);
 }
 
 
@@ -44,6 +52,10 @@
   --text-secondary: #e3e3e3;
   --text-blue: #6ca4fd;
   --border: #D1D5DB;
+  --red-card:#ff57571a;
+  --blue-card:#5885f62d;
+  --orange-card:#ff813e30;
+  --green-card:#8efa501d;
 }
 
 

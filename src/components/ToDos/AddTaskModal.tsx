@@ -85,7 +85,6 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                             required
                         />
                     </div>
-
                     <div>
                         <label className="block text-sm font-medium text-text-primary mb-1">
                             Description
@@ -124,7 +123,7 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                                     type="date"
                                     value={dueDate}
                                     onChange={(e) => setDueDate(e.target.value)}
-                                    className="w-full px-3 py-2 border text-gray-600 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/80"
+                                    className="w-full px-3 py-2 border text-text-primary border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/80"
                                 />
                                 <CalendarIcon className="absolute right-3 top-2.5 w-4 h-4 text-gray-500 pointer-events-none" />
                             </div>
@@ -141,7 +140,7 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                            className="px-4 py-2 text-sm font-medium text-text-primary hover:bg-gray-100 rounded-lg transition-colors"
                         >
                             Cancel
                         </button>
