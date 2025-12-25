@@ -18,9 +18,9 @@ const Card = ({ task, onToggle, onDelete, onEdit }: CardProps) => {
     const [isLoading, setIsLoading] = useState(false)
 
     const priorityColors = {
-        High: 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800',
-        Medium: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800',
-        Low: 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800'
+        High: 'bg-red-100/50 text-red-700 border-red-200',
+        Medium: 'bg-yellow-100/50 text-yellow-700 border-yellow-200',
+        Low: 'bg-green-100/50 text-green-700 border-green-200'
     }
 
     const handleToggle = async (e: React.MouseEvent) => {
