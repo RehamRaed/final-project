@@ -123,6 +123,7 @@ export async function forgotPassword(formData: FormData): Promise<ActionResponse
   return { success: true, message: 'Password reset link sent to your email' };
 }
 
+// ================= RESET PASSWORD =================
 export async function resetPassword(formData: FormData): Promise<ActionResponse<unknown>> {
   const supabase = await createServerSupabase()
 
