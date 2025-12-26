@@ -64,19 +64,18 @@ To get started with StudyMate locally, follow these steps:
    
 
 3. Set up Environment Variables:
-   Create a `.env.local` file in the root directory and add your Supabase credentials:
-   ```env
-   # ===== Supabase =====
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   Create a .env.local file in the root directory and add your Supabase credentials:
+      # ===== Supabase =====
+NEXT_PUBLIC_SUPABASE_URL=****************
+NEXT_PUBLIC_SUPABASE_ANON_KEY=****************
 
 # ONLY FOR SERVER-SIDE 
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+SUPABASE_SERVICE_ROLE_KEY=****************
 
 
 # ===== Google OAuth =====
-AUTH_GOOGLE_ID=your_google_client_id
-AUTH_GOOGLE_SECRET=your_google_client_secret
+AUTH_GOOGLE_ID=****************
+AUTH_GOOGLE_SECRET=****************
 
 
 # ===== App Config =====
