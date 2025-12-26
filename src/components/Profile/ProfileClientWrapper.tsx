@@ -2,13 +2,14 @@
 
 import { useState, useCallback, useTransition, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
+import type { Tables } from "@/types/database.types";
+import { ArrowLeft } from "lucide-react";
+import { useNotifications } from "@/context/NotificationsContext";
 import ProfileForm from "./ProfileForm";
 import ProfileAvatar from "./ProfileAvatar";
 import ProfileActions from "./ProfileActions";
 import ProfileRoadmap from "./ProfileRoadmap";
 import { updateProfile } from "@/actions/profile.actions";
-import type { Tables } from "@/types/database.types";
-import { ArrowLeft } from "lucide-react";
 
 type InitialProfile = Tables<'profiles'>;
 
@@ -19,6 +20,7 @@ interface ProfileClientWrapperProps {
 
 export default function ProfileClientWrapper({ initialProfile, currentRoadmapTitle }: ProfileClientWrapperProps) {
   const router = useRouter();
+  const { addNotification } = useNotifications();
 
   const [profileData, setProfileData] = useState(initialProfile);
   const [imagePreview, setImagePreview] = useState(initialProfile.avatar_url || "/avatar.jpg");
@@ -42,7 +44,6 @@ export default function ProfileClientWrapper({ initialProfile, currentRoadmapTit
   const handleSave = useCallback(async () => {
     setErrorMessage(null);
     startTransition(async () => {
-     
       const result = await updateProfile({
         full_name: profileData.full_name || "",
         avatar_url: imagePreview, 
@@ -53,6 +54,7 @@ export default function ProfileClientWrapper({ initialProfile, currentRoadmapTit
 
       if (result.success) {
         setIsEditing(false);
+        addNotification("Profile updated successfully!");
         router.refresh();
       } else {
         let msg = result.message ?? "Failed to save changes.";
@@ -68,7 +70,7 @@ export default function ProfileClientWrapper({ initialProfile, currentRoadmapTit
         setErrorMessage(msg);
       }
     });
-  }, [profileData, imagePreview, router]);
+  }, [profileData, imagePreview, router, addNotification]);
 
   const handleCancel = useCallback(() => {
     setProfileData(initialProfile);

@@ -8,7 +8,6 @@ StudyMate is a comprehensive, modern learning management platform designed to he
 
 ## 🚀 Features
 
-<<<<<<< HEAD
 - Personalized Roadmaps: Visualize your learning path with interactive roadmaps tailored to your goals.
 - Course Management: Track your progress through various courses and lessons.
 - XP & Progress System: Stay motivated with a gamified experience, earning XP as you complete lessons.
@@ -29,34 +28,11 @@ StudyMate is a comprehensive, modern learning management platform designed to he
 - State Management: [Redux Toolkit](https://redux-toolkit.js.org/)
 - Animations: [Framer Motion](https://www.framer.com/motion/)
 - Notifications: [React Hot Toast](https://react-hot-toast.com/)
-=======
-- **Personalized Roadmaps**: Visualize your learning path with interactive roadmaps tailored to your goals.
-- **Course Management**: Track your progress through various courses and lessons.
-- **XP & Progress System**: Stay motivated with a gamified experience, earning XP as you complete lessons.
-- **Smart Task List**: Organize your daily study tasks and stay on top of your schedule.
-- **Responsive Dashboard**: A beautiful, user-centric dashboard providing a quick overview of your learning status.
-- **Secure Authentication**: Complete auth system integrated with Supabase, including email verification and password recovery.
-- **Professional Profile**: Manage your personal information and showcase your achievements.
-
----
-
-## 🛠️ Tech Stack
-
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components**: [Material UI (MUI)](https://mui.com/) & [Lucide React](https://lucide.dev/)
-- **Database & Auth**: [Supabase](https://supabase.com/)
-- **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Notifications**: [React Hot Toast](https://react-hot-toast.com/)
->>>>>>> origin/main
 
 ---
 
 ## 📂 Project Structure
 
-<<<<<<< HEAD
 src/
 ├── actions/          # Server Actions (Server-side mutations)
 ├── app/              # Next.js App Router (Pages & API)
@@ -71,20 +47,6 @@ src/
 ├── store/            # Redux state management (Slices & Store)
 ├── types/            # TypeScript definitions & Interfaces
 └── utils/            # Helper functions & Logic
-=======
-```bash
-src/
-├── app/            # Next.js App Router (Pages & API)
-│   ├── (auth)      # Authentication flows
-│   ├── (student)   # Student-facing features (Dashboard, Roadmaps, etc.)
-│   └── api/        # Backend API routes
-├── components/     # Reusable UI components
-├── lib/            # Shared libraries and configurations (Supabase, etc.)
-├── store/          # Redux state management
-├── types/          # TypeScript definitions
-└── utils/          # Helper functions logic
-```
->>>>>>> origin/main
 
 ---
 
@@ -92,7 +54,6 @@ src/
 
 To get started with StudyMate locally, follow these steps:
 
-<<<<<<< HEAD
 1. Clone the repository:
       git clone <repository-url>
    cd final-project
@@ -127,32 +88,6 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
    
 
 5. Open the app:
-=======
-1. **Clone the repository**:
-   ```bash
-   git clone <repository-url>
-   cd final-project
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Set up Environment Variables**:
-   Create a `.env.local` file in the root directory and add your Supabase credentials:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-   ```
-
-4. **Run the development server**:
-   ```bash
-   npm run dev
-   ```
-
-5. **Open the app**:
->>>>>>> origin/main
    Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
@@ -161,22 +96,12 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 This project was developed with passion and dedication by:
 
-<<<<<<< HEAD
 - Reham Al-Magharee 
 - Basma Kuhail - 
 - Ashraf Al-Kahlout - 
-=======
-- **Reham Al-Magharee** 
-- **Basma Kuhail** - 
-- **Ashraf Al-Kahlout** - 
->>>>>>> origin/main
 
 ---
 
 ## 📄 License
 
-<<<<<<< HEAD
 This project is part of a final graduation project. All rights reserved © 2025.
-=======
-This project is part of a final graduation project. All rights reserved © 2025.
->>>>>>> origin/main

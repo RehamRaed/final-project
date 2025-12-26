@@ -62,7 +62,6 @@ interface HeaderProps {
   profile: boolean;
 }
 
-
 export default function Header({currentRoadmapId, profile}: HeaderProps) {
   const { notifications, removeNotifcation } = useNotifications();
   const searchRef = useRef<HTMLDivElement>(null);
@@ -129,6 +128,7 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
       }
     });
   }, []);
+
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -211,6 +211,7 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
       </div>
     </Menu>
   );
+
   const menuId = 'primary-search-account-menu';
   const renderProfile = (
     <Menu
@@ -262,104 +263,104 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
     </Menu>
   );
 
-  return (<>
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar 
-        position="static" 
-        sx={{
-          backgroundColor: 'var(--primary)',
-        }}
-      >
-        <Toolbar>
-          <Link href="/dashboard" passHref>
-            <Typography
-              variant="h6"
-              noWrap
-              sx={{ display: { xs: 'none', sm: 'block' }, color: 'white', cursor: 'pointer' }}
-            >
-              StudyMATE
-            </Typography>
-          </Link>
+  return (
+    <>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static" sx={{ backgroundColor: 'var(--primary)' }}>
+          <Toolbar>
+            <Link href="/dashboard" passHref>
+              <Typography
+                variant="h6"
+                noWrap
+                sx={{ display: { xs: 'none', sm: 'block' }, color: 'white', cursor: 'pointer' }}
+              >
+                StudyMATE
+              </Typography>
+            </Link>
 
-          {!profile && <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase placeholder={searchQuery} onChange={handleSearch} />
-          </Search>}
+            {!profile && (
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase placeholder={searchQuery} onChange={handleSearch} />
+              </Search>
+            )}
 
-          <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ flexGrow: 1 }} />
 
-          {!profile && <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton 
-              size="large" 
-              color="inherit"
-              aria-haspopup="true"
-              onClick={handleNotifcationMenuOpen}
-            >
-              <Badge badgeContent={notifications.length} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            <Box sx={{ display: { xs: 'flex', md: 'flex' } }}>
+              <IconButton 
+                size="large" 
+                color="inherit"
+                aria-haspopup="true"
+                onClick={handleNotifcationMenuOpen}
+              >
+                <Badge badgeContent={notifications.length} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
 
-            <IconButton
-              size="large"
-              edge="end"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>}
+              <IconButton
+                size="large"
+                edge="end"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+            </Box>
 
-          {!profile && <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton 
-              size="large" 
-              color="inherit"
-              aria-haspopup="true"
-              onClick={handleNotifcationMenuOpen}
-            >
-              <Badge badgeContent={notifications.length} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+              <IconButton 
+                size="large" 
+                color="inherit"
+                aria-haspopup="true"
+                onClick={handleNotifcationMenuOpen}
+              >
+                <Badge badgeContent={notifications.length} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
 
-            <IconButton
-              size="large"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>}
-        </Toolbar>
-      </AppBar>
+              <IconButton
+                size="large"
+                aria-controls={mobileMenuId}
+                aria-haspopup="true"
+                onClick={handleMobileMenuOpen}
+                color="inherit"
+              >
+                <MoreIcon />
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </AppBar>
 
-      {res.length > 0 && (
-        <div
-          ref={searchRef}
-          className="
-            absolute top-12 left-2 
-            sm:left-4 
-            md:left-37.5
-            w-75
-            bg-bg rounded-md shadow-xl 
-            max-h-96 overflow-auto 
-            z-50 p-4
-          "
-        >
-          <SearchResults res={res} />
-        </div>
-      )}
-      {renderProfile}
-      {renderNotification}
-      {renderMobileMenu}
-    </Box>
-    <LogoutConfirmModal
+        {res.length > 0 && !profile && (
+          <div
+            ref={searchRef}
+            className="
+              absolute top-12 left-2 
+              sm:left-4 
+              md:left-37.5
+              w-75
+              bg-bg rounded-md shadow-xl 
+              max-h-96 overflow-auto 
+              z-50 p-4
+            "
+          >
+            <SearchResults res={res} />
+          </div>
+        )}
+
+        {renderProfile}
+        {renderNotification}
+        {renderMobileMenu}
+      </Box>
+
+      <LogoutConfirmModal
         open={confirmLogoutOpen}
         loading={isLoggingOut}
         onClose={() => setConfirmLogoutOpen(false)}

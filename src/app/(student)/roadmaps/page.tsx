@@ -23,11 +23,6 @@ export default async function RoadmapsPage() {
   
   if (!user) redirect('/login'); 
 
-
-  if (user.current_roadmap_id) {
-    redirect('/dashboard');
-  }
-
   const result = await getRoadmapsListAction();
   
   if (!result.success) {
