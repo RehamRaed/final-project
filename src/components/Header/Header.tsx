@@ -129,7 +129,6 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
       }
     });
   }, []);
-
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -212,7 +211,6 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
       </div>
     </Menu>
   );
-
   const menuId = 'primary-search-account-menu';
   const renderProfile = (
     <Menu
