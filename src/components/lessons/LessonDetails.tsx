@@ -52,16 +52,16 @@ export default function LessonDetails({
         </h1>
 
         <button
-  className={` cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition ${
-    lessonStatus === "Completed"
-      ? "bg-gray-500 cursor-not-allowed"
-      : isMarkingDone
-      ? "bg-blue-400 cursor-wait"
-      : "bg-green-500 hover:opacity-90"
-  }`}
-  disabled={lessonStatus === "Completed" || isMarkingDone}
-  onClick={() => onMarkDone(lesson.id)}
->
+          className={` cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition ${
+            lessonStatus === "Completed"
+              ? "bg-gray-500 cursor-not-allowed"
+              : isMarkingDone
+              ? "bg-blue-400 cursor-wait"
+              : "bg-green-500 hover:opacity-90"
+          }`}
+          disabled={lessonStatus === "Completed" || isMarkingDone}
+          onClick={() => onMarkDone(lesson.id)}
+        >
 
           {lessonStatus !== "Completed" && !isMarkingDone && (
             <CheckCircle className="w-5 h-5" />

@@ -1,5 +1,6 @@
 'use client';
 import * as React from 'react';
+// MUI imports
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -14,16 +15,24 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+
+import { useEffect, useState,useRef } from "react";
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState,useRef } from "react";
+
 import { CourseSearchResult, fetchCourses } from '@/lib/search';
 import SearchResults from './SearchResults';
+
 import { supabase } from '@/lib/supabase/client';
+
 import { useNotifications } from '@/context/NotificationsContext';
+
 import { CheckSquare, LogOut, User } from 'lucide-react';
+
 import LogoutConfirmModal from './LogoutConfirmModal';
 
+// Creates reusable styled components using MUI’s theme
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -56,6 +65,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+// Props for Header component
 interface HeaderProps {
   currentRoadmapId?: string | null;
   profile: boolean;
@@ -63,25 +73,30 @@ interface HeaderProps {
 
 
 export default function Header({currentRoadmapId, profile}: HeaderProps) {
-  const { notifications, removeNotifcation } = useNotifications();
-  const searchRef = useRef<HTMLDivElement>(null);
+  // Notifications context
+  const { notifications, removeNotifcation } = useNotifications(); 
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [res, setRes] = useState<CourseSearchResult[]>([]);
+  // Search
+  const searchRef = useRef<HTMLDivElement>(null); // Detect click outside and close search results
+  const [searchQuery, setSearchQuery] = useState(''); // Search input state
+  const [res, setRes] = useState<CourseSearchResult[]>([]); // Search results state
+
   const router = useRouter();
-
+  // Menu state handlers
   const [profileAnchorEl, setProfileAnchorEl] = React.useState<null | HTMLElement>(null);
   const [notificationAnchorEl, setNotificationAnchorEl] = React.useState<null | HTMLElement>(null);
-
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
-  
+
+  // Menu open states
   const isProfileMenuOpen = Boolean(profileAnchorEl);
   const isNotificationMenuOpen = Boolean(notificationAnchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+  // Logout modal state
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  // User info state
   const [userInfo, setUserInfo] = useState<{
     avatarUrl: string | null;
     initials: string | null;
@@ -91,7 +106,8 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
     initials: null,
     currentRoadmapId: null
   });
-  // handle click outside
+
+  // handle click outside for search results
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -107,22 +123,26 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
   }, [searchRef]);
 
 
+  // Fetch user profile info on mount
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (user) {
+        // fetch profile info
         const { data } = await supabase
           .from("profiles")
           .select("avatar_url, full_name, current_roadmap_id")
           .eq("id", user.id)
           .single();
 
+        // extract avatar URL and initials
         const avatarUrl = data?.avatar_url || null;
         let initials = null;
         if (data?.full_name) {
-          const names = data.full_name.trim().split(" ");
+          const names = data.full_name.trim().split(" "); // split by spaces
+          // generate initials for avatar display for example "Basma Kuhail" -> "BK"
           if (names.length === 1) {
-            initials = names[0].charAt(0).toUpperCase();
-          } else if (names.length > 1) {
+            initials = names[0].charAt(0).toUpperCase(); // first letter of the only name
+          } else if (names.length > 1) { // more than one name
             initials =
               (names[0].charAt(0) +
                 names[names.length - 1].charAt(0)).toUpperCase();
@@ -136,7 +156,9 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
       }
     });
   }, []);
-    
+  
+
+  // Search input change handler
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -148,20 +170,24 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
     setRes(courses);
   };
 
+  // Profile menu handlers (open, close, redirect)
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setProfileAnchorEl(event.currentTarget);
   };
 
+  // Profile menu handlers (open, close, redirect)
   const handleNotifcationMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setNotificationAnchorEl(event.currentTarget);
   };
 
+  // menu close handler
   const handleMenuClose = () => {
     setProfileAnchorEl(null);
     setNotificationAnchorEl(null);
     setMobileMoreAnchorEl(null);
   };
 
+  
   const handleProfileRedirect = () => {
     handleMenuClose();
     router.push('/profile');

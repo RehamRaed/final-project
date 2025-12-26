@@ -8,6 +8,7 @@ export default function ThemeToggle() {
   const ctx = useContext(ThemeContext);
   if (!ctx) return null;
 
+  // destructure context values
   const { dark, toggleTheme } = ctx;
 
   return (

@@ -5,7 +5,7 @@ import { createContext, useContext, useState } from 'react';
 type NotificationsContextType = {
   notifications: string[];
   addNotification: (message: string) => void;
-  removeNotifcation: (index: number) =>void;
+  removeNotifcation: (index: number) => void;
 };
 
 const NotificationsContext = createContext<NotificationsContextType | null>(null);
@@ -27,8 +27,11 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   );
 }
 
+// Custom hook to use the Notifications context
 export function useNotifications() {
-  const context = useContext(NotificationsContext);
+  const context = useContext(NotificationsContext); // get context value instead of writing useContext(NotificationsContext) everywhere
+
+  // safety check: ensure the hook is used within a provider
   if (!context) {
     throw new Error('useNotifications must be used inside NotificationsProvider');
   }

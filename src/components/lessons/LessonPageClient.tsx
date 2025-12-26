@@ -12,31 +12,37 @@ import LoadingState from '@/components/ui/LoadingState';
 import { Tables } from '@/types/database.types';
 import { useNotifications } from '@/context/NotificationsContext';
 
+// Define Lesson type with user progress
 type Lesson = Tables<'lessons'> & {
     user_progress: { status: string | null; completed_at: string | null }[] | null;
     duration_minutes?: number;
     video_url?: string | null;
 };
 
+// Define CourseData type with lessons and progress percent
 type CourseData = Tables<'courses'> & {
     lessons: Lesson[] | null;
     lesson_progress_percent: number;
 };
 
+// Props for LessonPageClient component
 interface LessonPageClientProps {
     courseData: CourseData;
 }
 
 export default function LessonPageClient({ courseData }: LessonPageClientProps) {
-    const { addNotification } = useNotifications();
+    const { addNotification } = useNotifications(); // use notification context
+
     const router = useRouter();
 
-    const lessons = useMemo(() => courseData.lessons || [], [courseData.lessons]);
+    const lessons = useMemo(() => courseData.lessons || [], [courseData.lessons]); // Memoize lessons to avoid unnecessary re-renders
 
+    // Local state for lessons, selected lesson, and processing status
     const [localLessons, setLocalLessons] = useState<Lesson[]>(lessons);
     const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(localLessons[0] || null);
     const [isProcessing, setIsProcessing] = useState(false);
 
+    // Calculate local progress percent based on completed lessons
     const localProgressPercent = useMemo(() => {
         const total = localLessons.length || 0;
         if (total === 0) return 0;
@@ -50,53 +56,65 @@ export default function LessonPageClient({ courseData }: LessonPageClientProps) 
         if (lessons.length > 0 && !selectedLesson) {
             setSelectedLesson(lessons[0]);
         }
-        setLocalLessons(lessons);
+        setLocalLessons(lessons)
     }, [lessons, selectedLesson]);
 
+    // Mark lesson as done or in progress
     const handleMarkDone = async (lessonId: string) => {
         setIsProcessing(true);
-        const prevLessons = localLessons.map(l => ({ ...l, user_progress: l.user_progress ? [...l.user_progress] : l.user_progress }));
-        try {
-            const currentLesson = localLessons.find(l => l.id === lessonId);
-            const isCurrentlyCompleted = currentLesson?.user_progress?.[0]?.status === 'Completed' || currentLesson?.user_progress?.[0]?.status === 'completed';
-            const newStatus: 'InProgress' | 'Completed' = isCurrentlyCompleted ? 'InProgress' : 'Completed';
+        // save previous state for rollback in case of error
+        const prevLessons = localLessons.map(l => ({ ...l, user_progress: l.user_progress ? [...l.user_progress] : l.user_progress })); 
 
+        // Optimistically update UI
+        try {
+            const currentLesson = localLessons.find(l => l.id === lessonId); // find the lesson to update by ID
+            // check current status
+            const isCurrentlyCompleted = currentLesson?.user_progress?.[0]?.status === 'Completed' || currentLesson?.user_progress?.[0]?.status === 'completed'; 
+            // type assertion for status
+            const newStatus: 'InProgress' | 'Completed' = isCurrentlyCompleted ? 'InProgress' : 'Completed'; 
+
+            // Update local state
             const updated = localLessons.map(l => {
-                if (l.id !== lessonId) return l;
-                const newProgress = l.user_progress && l.user_progress.length > 0
+                if (l.id !== lessonId) return l; // no change for other lessons
+                // update the user_progress array
+                const newProgress = l.user_progress && l.user_progress.length > 0 // if progress exists, update it
                     ? [{ ...l.user_progress[0], status: newStatus, completed_at: newStatus === 'Completed' ? new Date().toISOString() : null }]
                     : [{ status: newStatus, completed_at: newStatus === 'Completed' ? new Date().toISOString() : null }];
                 return { ...l, user_progress: newProgress };
             });
 
+            // Update states
             setLocalLessons(updated);
+            // update selected lesson if it's the one being modified
             if (selectedLesson?.id === lessonId) {
-                setSelectedLesson(updated.find(l => l.id === lessonId) ?? null);
+                setSelectedLesson(updated.find(l => l.id === lessonId) ?? null); // update selected lesson
             }
 
-            const result = await toggleLessonCompletion(lessonId, courseData.id, newStatus);
+            // Call backend to persist change
+            const result = await toggleLessonCompletion(lessonId, courseData.id, newStatus); // call the action to update backend
 
+            // Handle result
             if (result?.success) {
-                toast.success(result.message ?? 'Lesson updated');
-                router.refresh();
-                addNotification(`Lesson "${currentLesson?.title}" marked as ${newStatus === 'Completed' ? 'completed' : 'in progress'}.`);
+                toast.success(result.message ?? 'Lesson updated'); // show success toast
+                router.refresh(); // refresh to sync any other data
+                addNotification(`Lesson "${currentLesson?.title}" marked as ${newStatus === 'Completed' ? 'completed' : 'in progress'}.`); // add notification
             } else {
-                setLocalLessons(prevLessons);
-                setSelectedLesson(prevLessons.find(l => l.id === lessonId) ?? null);
-                toast.error(result?.error ?? result?.message ?? 'Failed to update lesson progress');
+                setLocalLessons(prevLessons); // rollback on error
+                setSelectedLesson(prevLessons.find(l => l.id === lessonId) ?? null); // rollback selected lesson
+                toast.error(result?.error ?? result?.message ?? 'Failed to update lesson progress'); // show error toast
             }
-        } catch (error: unknown) {
-            setLocalLessons(prevLessons);
-            setSelectedLesson(prevLessons.find(l => l.id === lessonId) ?? null);
-            const message = error instanceof Error ? error.message : 'An unknown error occurred';
-            console.error('Error marking lesson done:', message);
-            toast.error('An unexpected error occurred');
+        } catch (error: unknown) { // catch unexpected errors
+            setLocalLessons(prevLessons); // rollback on error
+            setSelectedLesson(prevLessons.find(l => l.id === lessonId) ?? null); // rollback selected lesson
+            const message = error instanceof Error ? error.message : 'An unknown error occurred'; // extract error message
+            console.error('Error marking lesson done:', message); // log error for debugging
+            toast.error('An unexpected error occurred'); // show generic error toast
         } finally {
-            setIsProcessing(false);
+            setIsProcessing(false); // reset processing state
         }
     };
 
-    if (!courseData) return <LoadingState />;
+    if (!courseData) return <LoadingState />; // show loading if no course data
 
     return (
         <div className='max-w-7xl mx-auto pt-25 px-5 pb-10'>
