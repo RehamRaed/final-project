@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { updateCurrentRoadmapAction } from '@/actions/learning.actions'; 
+import React from "react";
+import { useRouter } from "next/navigation";
+import { updateCurrentRoadmapAction } from "@/actions/learning.actions";
 
 interface SelectedRoadmapCardProps {
-  title?: string; 
+  title?: string;
   description?: React.ReactNode;
   color?: string;
-  roadmapId?: string; 
+  roadmapId?: string;
   userId: string;
 }
 
@@ -25,9 +25,9 @@ export default function SelectedRoadmapCard({
     if (roadmapId) {
       const result = await updateCurrentRoadmapAction(roadmapId);
       if (result?.success) {
-        router.refresh(); 
+        router.refresh();
       } else {
-        alert(result?.error || 'Failed to select roadmap');
+        alert(result?.error || "Failed to select roadmap");
       }
     } else {
       router.push("/roadmaps");
@@ -47,10 +47,8 @@ export default function SelectedRoadmapCard({
         <h2 className="text-2xl font-bold text-text-primary">
           {title || "No Active Roadmap"}
         </h2>
-        
-        <div className="text-text-secondary text-sm">
-          {description}
-        </div>
+
+        <div className="text-text-secondary text-sm">{description}</div>
       </div>
 
       {hasNoActiveRoadmap && (

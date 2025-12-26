@@ -142,25 +142,3 @@ export async function resetPassword(formData: FormData): Promise<ActionResponse<
 
   return { success: true, message: 'Password has been reset successfully' }
 }
-
-export async function resendVerificationEmail(): Promise<ActionResponse<unknown>> {
-  const supabase = await createServerSupabase()
-
-  const { data, error: sessionError } = await supabase.auth.getUser()
-  const user = data.user
-
-  if (sessionError || !user || !user.email) {
-    return { success: false, error: 'You must be logged in' }
-  }
-
-  const { error } = await supabase.auth.signInWithOtp({
-    email: user.email,
-    options: {
-      emailRedirectTo: `${getBaseUrl()}/auth/callback?next=/verify-email`,
-    }
-  })
-
-  if (error) return { success: false, error: error.message }
-
-  return { success: true, message: 'Verification email sent' }
-}
