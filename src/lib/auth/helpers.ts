@@ -19,7 +19,6 @@ export async function getCurrentUser(): Promise<Profile | null> {
   return profileData as Profile;
 }
 
-
 export async function getUserFromRequest(
   req: Request
 ): Promise<Profile | null> {
