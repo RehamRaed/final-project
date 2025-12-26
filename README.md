@@ -65,7 +65,7 @@ To get started with StudyMate locally, follow these steps:
 
 3. Set up Environment Variables:
    Create a .env.local file in the root directory and add your Supabase credentials:
-      # ===== Supabase =====
+# ===== Supabase =====
 NEXT_PUBLIC_SUPABASE_URL=****************
 NEXT_PUBLIC_SUPABASE_ANON_KEY=****************
 
