@@ -1,11 +1,12 @@
 'use client';
 
 import type { Tables } from "@/types/database.types";
+import { ChangeEvent } from "react";
 
 interface ProfileFormProps {
   profile: Partial<Tables<'profiles'>>;
   isEditing: boolean;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 export default function ProfileForm({ profile, isEditing, handleChange }: ProfileFormProps) {

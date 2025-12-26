@@ -39,8 +39,8 @@ export default function SelectedRoadmapCard({
   return (
     <div className="relative p-6 bg-card-bg border border-border rounded-2xl shadow-lg mx-auto flex flex-col justify-between min-h-40">
       <div
-        className="absolute left-0 top-0 h-full w-2 rounded-l-2xl"
-        style={{ backgroundColor: color }}
+        className="absolute left-[-1] top-0 h-full w-3 rounded-l-2xl bf-card-bg"
+        
       />
 
       <div className="flex flex-col gap-2">
@@ -54,7 +54,7 @@ export default function SelectedRoadmapCard({
       {hasNoActiveRoadmap && (
         <button
           onClick={handleSelectRoadmap}
-          className="mt-6 px-5 py-2 bg-primary text-white rounded-xl text-sm font-bold hover:shadow-lg transition-all duration-200 cursor-pointer self-start uppercase tracking-wide"
+          className="mt-2 px-5 py-2 bg-primary text-white rounded-xl text-sm font-bold hover:shadow-lg transition-all duration-200 cursor-pointer self-start uppercase tracking-wide"
         >
           Select Your First Roadmap →
         </button>

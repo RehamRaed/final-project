@@ -82,9 +82,8 @@ export default function RoadmapSelectionClient({ initialRoadmaps }: RoadmapSelec
             return (
                 <button
                     onClick={handleButtonClick}
-                    className={`${baseClass} bg-primary hover:bg-primary-hover text-white shadow-lg`}
+                    className={`${baseClass} cursor-pointer bg-primary hover:bg-primary-hover text-white shadow-lg`}
                     role="button"
-                    aria-label={`Go to current roadmap: ${selectedRoadmap.title}`}
                 >
                     Go to {selectedRoadmap.title} Roadmap
                 </button>
@@ -93,11 +92,10 @@ export default function RoadmapSelectionClient({ initialRoadmaps }: RoadmapSelec
             return (
                 <button
                     onClick={handleButtonClick}
-                    className={`${baseClass} bg-primary text-white hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed shadow-lg`}
+                    className={`${baseClass} cursor pointer bg-primary text-white hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed shadow-lg`}
                     disabled={isPending}
                     aria-live="assertive"
                     aria-busy={isPending}
-                    aria-label={`Change to ${selectedRoadmap.title}`}
                 >
                     Change to {selectedRoadmap.title}
                 </button>

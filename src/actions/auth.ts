@@ -76,12 +76,12 @@ export async function login(formData: FormData): Promise<ActionResponse<unknown>
   if (error || !data.user) return { success: false, error: 'Invalid email or password' };
 
   const userMetadata = data.user.user_metadata || {};
-  const hasSelectedRoadmap = userMetadata.has_selected_roadmap as boolean ?? false;
+  const hasSelectedRoadmap = userMetadata.has_selected_roadmap === true;
 
   if (hasSelectedRoadmap) {
     redirect('/dashboard'); 
   } else {
-    redirect('/'); 
+    redirect('/roadmaps'); 
   }
 }
 
