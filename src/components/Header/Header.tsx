@@ -61,9 +61,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 interface HeaderProps {
   currentRoadmapId?: string | null;
+  profile: boolean;
 }
 
-export default function Header({ currentRoadmapId }: HeaderProps) {
+
+export default function Header({currentRoadmapId, profile}: HeaderProps) {
   const { notifications, removeNotifcation } = useNotifications();
   const searchRef = useRef<HTMLDivElement>(null);
 

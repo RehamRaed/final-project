@@ -10,7 +10,6 @@ const getBaseUrl = () => {
   return url.endsWith('/') ? url.slice(0, -1) : url;
 };
 
-// ================= REGISTER =================
 export async function register(formData: FormData): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
 
@@ -55,7 +54,6 @@ export async function register(formData: FormData): Promise<ActionResponse<unkno
   redirect('/');
 }
 
-// ================= LOGIN (Email/Password) =================
 export async function login(formData: FormData): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
 
@@ -87,7 +85,6 @@ export async function login(formData: FormData): Promise<ActionResponse<unknown>
   }
 }
 
-// ================= LOGIN WITH OAUTH (Google/Github) =================
 export async function loginWithOAuth(provider: 'google' | 'github'): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
 
@@ -102,14 +99,12 @@ export async function loginWithOAuth(provider: 'google' | 'github'): Promise<Act
   if (data.url) redirect(data.url);
 }
 
-// ================= LOGOUT =================
 export async function logout(): Promise<void> {
   const supabase = await createServerSupabase();
   await supabase.auth.signOut();
   redirect('/login');
 }
 
-// ================= FORGOT PASSWORD =================
 export async function forgotPassword(formData: FormData): Promise<ActionResponse<unknown>> {
   const supabase = await createServerSupabase();
 
@@ -117,7 +112,7 @@ export async function forgotPassword(formData: FormData): Promise<ActionResponse
   if (!email) return { success: false, error: 'Email is required' };
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${getBaseUrl()}/callback?next=/reset-password`,
+    redirectTo: `${getBaseUrl()}/auth/callback?next=/reset-password`,
   });
 
   if (error) return { success: false, error: 'Error sending password reset link' };
