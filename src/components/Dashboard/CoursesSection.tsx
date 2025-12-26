@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Tables } from "@/types/database.types";
 import { ArrowRight } from "lucide-react";
@@ -15,7 +15,7 @@ interface Course {
 
 interface CoursesSectionProps {
   courses: Course[];
-  currentRoadmap: Tables<'roadmaps'> | null;
+  currentRoadmap: Tables<"roadmaps"> | null;
 }
 
 export default function CoursesSection({
@@ -35,9 +35,7 @@ export default function CoursesSection({
         {hasMoreCourses && currentRoadmap && (
           <button
             className="flex items-center gap-2 text-primary font-semibold hover:underline cursor-pointer"
-            onClick={() =>
-              router.push(`/roadmaps/${currentRoadmap.id}`)
-            }
+            onClick={() => router.push(`/roadmaps/${currentRoadmap.id}`)}
           >
             Show More <ArrowRight size={18} />
           </button>
@@ -45,21 +43,19 @@ export default function CoursesSection({
       </div>
 
       {courses.length === 0 ? (
-        <p className="text-gray-500 text-center py-10">
-          No courses found.
-        </p>
+        <p className="text-gray-500 text-center py-10">No courses found.</p>
       ) : (
         <div className="overflow-x-auto p-2 scrollbar-hide">
           <div className="flex gap-4 w-max">
-            {courses.map(course => (
+            {courses.map((course) => (
               <div
                 key={course.course_id}
                 className="shrink-0 w-72 cursor-pointer"
                 onClick={() => {
-                  const fromDashboard = pathname.includes('/dashboard');
+                  const fromDashboard = pathname.includes("/dashboard");
                   router.push(
                     `/courses/${course.course_id}${
-                      fromDashboard ? '?fromDashboard=true' : ''
+                      fromDashboard ? "?fromDashboard=true" : ""
                     }`
                   );
                 }}

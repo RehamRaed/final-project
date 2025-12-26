@@ -16,13 +16,14 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState,useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { CourseSearchResult, fetchCourses } from '@/lib/search';
 import SearchResults from './SearchResults';
 import { supabase } from '@/lib/supabase/client';
 import { useNotifications } from '@/context/NotificationsContext';
 import { CheckSquare, LogOut, User } from 'lucide-react';
 import LogoutConfirmModal from './LogoutConfirmModal';
+import { logout } from '@/actions/auth';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -72,9 +73,8 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
 
   const [profileAnchorEl, setProfileAnchorEl] = React.useState<null | HTMLElement>(null);
   const [notificationAnchorEl, setNotificationAnchorEl] = React.useState<null | HTMLElement>(null);
-
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
-  
+
   const isProfileMenuOpen = Boolean(profileAnchorEl);
   const isNotificationMenuOpen = Boolean(notificationAnchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -91,21 +91,16 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
     initials: null,
     currentRoadmapId: null
   });
-  // handle click outside
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setRes([]); // close search results
+        setRes([]);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [searchRef]);
-
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -123,9 +118,7 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
           if (names.length === 1) {
             initials = names[0].charAt(0).toUpperCase();
           } else if (names.length > 1) {
-            initials =
-              (names[0].charAt(0) +
-                names[names.length - 1].charAt(0)).toUpperCase();
+            initials = (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
           }
         }
         setUserInfo({
@@ -136,7 +129,6 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
       }
     });
   }, []);
-    
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -167,7 +159,6 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
     router.push('/profile');
   };
 
-  
   const handleMyTasks = () => {
     handleMenuClose();
     router.push("/tasklist");
@@ -177,26 +168,17 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setConfirmLogoutOpen(true);
-    await supabase.auth.signOut();
     handleMenuClose();
   };
 
   const handleLogoutConfirm = async () => {
     setIsLoggingOut(true);
     try {
-      await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
-      await supabase.auth.signOut().catch(() => {});
-      setTimeout(() => {
-        try {
-          window.location.href = '/login';
-        } catch {
-          router.replace('/login');
-        }
-      }, 300);
+      await logout();
     } catch (e) {
-      console.error(e);
+      console.error("Logout failed:", e);
       setIsLoggingOut(false);
     }
   };
@@ -211,37 +193,19 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMobileMenuOpen}
       onClose={handleMenuClose}
-      MenuListProps={{
-        sx: {
-          paddingTop: 0,
-          paddingBottom: 0,
-        },
-      }}
+      MenuListProps={{ sx: { paddingTop: 0, paddingBottom: 0 } }}
     >
-      <div
-        className="h-full bg-bg text-text-primary"
-      >
-        <MenuItem 
-          onClick={handleProfileRedirect}
-          className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors"
-        >
+      <div className="h-full bg-bg text-text-primary">
+        <MenuItem onClick={handleProfileRedirect} className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors">
           <User size={18} className="text-text-primary" />
           Profile
         </MenuItem>
-
-        <MenuItem 
-        onClick={handleMyTasks}
-        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100"
-        >
+        <MenuItem onClick={handleMyTasks} className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100">
           <CheckSquare size={18} className="text-text-primary" />
           My Tasks
         </MenuItem>
-        <MenuItem 
-          onClick={handleLogout} 
-          sx={{ color: 'error.main' }}
-          className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100"
-        >
-          <LogOut size={18}/>
+        <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }} className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100">
+          <LogOut size={18} />
           Logout
         </MenuItem>
       </div>
@@ -257,40 +221,22 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isProfileMenuOpen}
       onClose={handleMenuClose}
-      style={{top:"35px"}}
-      MenuListProps={{
-        sx: {
-          paddingTop: 0,
-          paddingBottom: 0,
-        },
-      }}
+      style={{ top: "35px" }}
+      MenuListProps={{ sx: { paddingTop: 0, paddingBottom: 0 } }}
     >
-      <div
-        className="h-full bg-bg text-text-primary"
-      >
-      <MenuItem 
-        onClick={handleProfileRedirect}
-        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors"
-      >
-        <User size={18} className="text-text-primary" />
-        Profile
-      </MenuItem>
-
-      <MenuItem 
-       onClick={handleMyTasks}
-       className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100"
-      >
-        <CheckSquare size={18} className="text-text-primary" />
-        My Tasks
-      </MenuItem>
-      <MenuItem 
-        onClick={handleLogout} 
-        sx={{ color: 'error.main' }}
-        className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100"
-      >
-        <LogOut size={18}/>
-        Logout
-      </MenuItem>
+      <div className="h-full bg-bg text-text-primary">
+        <MenuItem onClick={handleProfileRedirect} className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors">
+          <User size={18} className="text-text-primary" />
+          Profile
+        </MenuItem>
+        <MenuItem onClick={handleMyTasks} className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100">
+          <CheckSquare size={18} className="text-text-primary" />
+          My Tasks
+        </MenuItem>
+        <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }} className="w-full text-left px-4 py-3 cursor-pointer hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-100">
+          <LogOut size={18} />
+          Logout
+        </MenuItem>
       </div>
     </Menu>
   );
@@ -304,25 +250,15 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isNotificationMenuOpen}
       onClose={handleMenuClose}
-      style={{top:"35px"}}
-      MenuListProps={{
-        sx: {
-          paddingTop: 0,
-          paddingBottom: 0,
-        },
-      }}
+      style={{ top: "35px" }}
+      MenuListProps={{ sx: { paddingTop: 0, paddingBottom: 0 } }}
     >
-      <div
-        className="h-full bg-bg text-text-primary"
-      >
-        {(notifications.length === 0) &&
-          <MenuItem>No new notifications</MenuItem>
-        }
+      <div className="h-full bg-bg text-text-primary">
+        {(notifications.length === 0) && <MenuItem>No new notifications</MenuItem>}
         {notifications.map((notification, index) => (
           <MenuItem onClick={() => removeNotifcation(index)} key={index}>{notification}</MenuItem>
         ))}
       </div>
-      
     </Menu>
   );
 
@@ -426,9 +362,9 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
     <LogoutConfirmModal
         open={confirmLogoutOpen}
         loading={isLoggingOut}
-        onClose={() => setConfirmLogoutOpen(false)} 
+        onClose={() => setConfirmLogoutOpen(false)}
         onConfirm={handleLogoutConfirm}
       />
-      </>
+    </>
   );
 }
