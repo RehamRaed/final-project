@@ -42,19 +42,19 @@
 
 ```text
 src/
-├── actions/      # Server Actions (mutations)
-├── app/          # Next.js App Router (Pages & API)
-│   ├── (auth)/     # Authentication flows (Login, Signup, etc.)
-│   ├── (student)/  # Student-facing features (Dashboard, Roadmaps)
-│   └── api/        # Backend API routes
-├── components/   # Reusable UI components
-├── context/      # React Context providers
-├── hooks/        # Custom React hooks
-├── lib/          # Shared libraries and configs (Supabase, etc.)
-├── services/     # External API services logic
-├── store/        # Redux state management (Slices & Store)
-├── types/        # TypeScript definitions & Interfaces
-└── utils/        # Helper functions & Logic
+├── actions/          # Server Actions (Server-side mutations)
+├── app/              # Next.js App Router (Pages & API)
+│   ├── (auth)/       # Authentication flows (Login, Signup, etc.)
+│   └── (student)/    # Student-facing features (Dashboard, Roadmaps, etc.)
+│   
+├── components/       # Reusable UI components
+├── context/          # React Context providers
+├── hooks/            # Custom React hooks
+├── lib/              # Shared libraries and configs (Supabase, etc.)
+├── services/         # External API services logic
+├── store/            # Redux state management (Slices & Store)
+├── types/            # TypeScript definitions & Interfaces
+└── utils/            # Helper functions & Logic
 
 ---
 
@@ -73,13 +73,17 @@ To get started with StudyMate locally, follow these steps:
 
 3. Set up Environment Variables:
    Create a .env.local file in the root directory and add your Supabase credentials:
-   
- # Supabase
+# ===== Supabase =====
 NEXT_PUBLIC_SUPABASE_URL=****************
 NEXT_PUBLIC_SUPABASE_ANON_KEY=****************
 
- # Server-side only
+# ONLY FOR SERVER-SIDE 
 SUPABASE_SERVICE_ROLE_KEY=****************
+
+
+# ===== Google OAuth =====
+AUTH_GOOGLE_ID=****************
+AUTH_GOOGLE_SECRET=****************
 
  # Google OAuth
 AUTH_GOOGLE_ID=****************

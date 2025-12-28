@@ -50,3 +50,17 @@ export const updateTaskSchema = createTaskSchema.partial().extend({
     is_completed: z.boolean().optional(),
     status: z.enum(['Pending', 'InProgress', 'Completed']).optional(),
 });
+
+export const ProfileSchema = z.object({
+  full_name: z.string().min(3).or(z.literal("")).optional(),
+  avatar_url: z.string().url().or(z.literal("")).optional().nullable(),
+  bio: z.string().max(50).or(z.literal("")).optional().nullable(),
+  university_id: z.string()
+    .refine((val) => val === "" || val.length >= 5, {
+      message: "University ID must be at least 5 characters"
+    }).optional().nullable(),
+  department: z.string()
+    .refine((val) => val === "" || val.length >= 2, {
+      message: "Department must be at least 2 characters"
+    }).optional().nullable(),
+});

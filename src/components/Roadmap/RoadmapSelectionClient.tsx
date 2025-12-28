@@ -9,133 +9,173 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { Tables } from "@/types/database.types";
 
 interface RoadmapWithStatus extends Tables<'roadmaps'> {
-    course_count: number;
-    is_current: boolean;
+  course_count: number;
+  is_current: boolean;
 }
 
 interface RoadmapSelectionClientProps {
-    initialRoadmaps: RoadmapWithStatus[];
+  initialRoadmaps: RoadmapWithStatus[];
 }
 
-export default function RoadmapSelectionClient({ initialRoadmaps }: RoadmapSelectionClientProps) {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const fromProfile = searchParams.get("from") === "profile";
+export default function RoadmapSelectionClient({
+  initialRoadmaps,
+}: RoadmapSelectionClientProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromProfile = searchParams.get("from") === "profile";
 
-    const [roadmaps, setRoadmaps] = useState<RoadmapWithStatus[]>(initialRoadmaps);
-    const [isPending, setIsPending] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [roadmaps, setRoadmaps] =
+    useState<RoadmapWithStatus[]>(initialRoadmaps);
+  const [isPending, setIsPending] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const currentActiveRoadmap = roadmaps.find(r => r.is_current);
-    const [selectedRoadmap, setSelectedRoadmap] = useState<RoadmapWithStatus | undefined>(currentActiveRoadmap);
+  const currentActiveRoadmap = roadmaps.find((r) => r.is_current);
+  const hasNoCurrentRoadmap = !currentActiveRoadmap;
 
-    const handleSelect = (roadmap: RoadmapWithStatus) => {
-        setSelectedRoadmap(roadmap);
-    };
+  const [selectedRoadmap, setSelectedRoadmap] = useState<
+    RoadmapWithStatus | undefined
+  >(currentActiveRoadmap);
 
-    const handleChangeRoadmap = async () => {
-        if (!selectedRoadmap || isPending) return;
+  const handleSelect = (roadmap: RoadmapWithStatus) => {
+    setSelectedRoadmap(roadmap);
+  };
 
-        setIsModalOpen(false);
-        setIsPending(true);
+  const handleChangeRoadmap = async () => {
+    if (!selectedRoadmap || isPending) return;
 
-        const result = await updateCurrentRoadmapAction(selectedRoadmap.id);
+    setIsModalOpen(false);
+    setIsPending(true);
 
-        if (result && result.success) {
-            setRoadmaps(prev => prev.map(r => ({
-                ...r,
-                is_current: r.id === selectedRoadmap.id
-            })));
+    const result = await updateCurrentRoadmapAction(selectedRoadmap.id);
 
-            router.refresh();
+    if (result && result.success) {
+      setRoadmaps((prev) =>
+        prev.map((r) => ({
+          ...r,
+          is_current: r.id === selectedRoadmap.id,
+        }))
+      );
 
-            if (fromProfile) {
-                router.push("/profile");
-            } else {
-                router.push(`/roadmaps/${selectedRoadmap.id}`); 
-            }
-        } else {
-            alert(`Failed to change roadmap: ${result?.error ?? result?.message ?? 'Failed to change roadmap'}`);
-            setIsPending(false);
-        }
-    };
+      router.refresh();
 
-    const handleButtonClick = () => {
-        if (!selectedRoadmap) return;
+      if (fromProfile) {
+        router.push("/profile");
+      } else {
+        router.push(`/roadmaps/${selectedRoadmap.id}`);
+      }
+    } else {
+      alert(
+        `Failed to update roadmap: ${
+          result?.error ?? result?.message ?? "Unknown error"
+        }`
+      );
+      setIsPending(false);
+    }
+  };
 
-        const isCurrent = currentActiveRoadmap?.id === selectedRoadmap.id;
+  const handleButtonClick = () => {
+    if (!selectedRoadmap) return;
 
-        if (isCurrent) {
-            router.push(`/roadmaps/${selectedRoadmap.id}`);
-        } else {
-            setIsModalOpen(true);
-        }
-    };
+    if (hasNoCurrentRoadmap) {
+      setIsModalOpen(true);
+      return;
+    }
 
-    const renderButton = () => {
-        if (!selectedRoadmap) return null;
+    const isCurrent = currentActiveRoadmap!.id === selectedRoadmap.id;
 
-        const isCurrent = currentActiveRoadmap?.id === selectedRoadmap.id;
-        const baseClass = "px-3 py-2 md:px-10 md:py-4 rounded-xl text-[14px] md:text-lg md:font-semibold shadow-md transition-all transform hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto";
+    if (isCurrent) {
+      router.push(`/roadmaps/${selectedRoadmap.id}`);
+    } else {
+      setIsModalOpen(true);
+    }
+  };
 
-        if (isCurrent) {
-            return (
-                <button
-                    onClick={handleButtonClick}
-                    className={`${baseClass} cursor-pointer bg-primary hover:bg-primary-hover text-white shadow-lg`}
-                    role="button"
-                >
-                    Go to {selectedRoadmap.title} Roadmap
-                </button>
-            );
-        } else {
-            return (
-                <button
-                    onClick={handleButtonClick}
-                    className={`${baseClass} cursor pointer bg-primary text-white hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed shadow-lg`}
-                    disabled={isPending}
-                    aria-live="assertive"
-                    aria-busy={isPending}
-                >
-                    Change to {selectedRoadmap.title}
-                </button>
-            );
-        }
+  const renderButton = () => {
+    if (!selectedRoadmap) return null;
+
+    const isCurrent = currentActiveRoadmap?.id === selectedRoadmap.id;
+
+    const baseClass =
+      "px-3 py-2 md:px-10 md:py-4 rounded-xl text-[14px] md:text-lg md:font-semibold shadow-md transition-all transform hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto";
+
+    if (hasNoCurrentRoadmap) {
+      return (
+        <button
+          onClick={handleButtonClick}
+          className={`${baseClass} bg-primary hover:bg-primary-hover text-white shadow-lg`}
+          disabled={isPending}
+        >
+          Choose {selectedRoadmap.title}
+        </button>
+      );
+    }
+
+    if (isCurrent) {
+      return (
+        <button
+          onClick={handleButtonClick}
+          className={`${baseClass} bg-primary hover:bg-primary-hover text-white shadow-lg`}
+        >
+          Go to {selectedRoadmap.title} Roadmap
+        </button>
+      );
     }
 
     return (
-        <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                {roadmaps.map((roadmap) => (
-                    <RoadmapCard
-                        key={roadmap.id}
-                        roadmap={roadmap}
-                        isSelected={selectedRoadmap?.id === roadmap.id}
-                        isCurrentActive={currentActiveRoadmap?.id === roadmap.id}
-                        onSelect={() => handleSelect(roadmap)}
-                    />
-                ))}
-            </div>
-
-            <div className="mt-12 text-center" role="group" aria-label="Roadmap Actions">
-                {renderButton()}
-            </div>
-
-            {selectedRoadmap && currentActiveRoadmap?.id !== selectedRoadmap.id && (
-                <RoadmapChangeConfirmationModal
-                    roadmap={selectedRoadmap}
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onConfirm={handleChangeRoadmap}
-                    isPending={isPending}
-                />
-            )}
-
-            {isPending && (
-                <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50" aria-modal="true" role="dialog">
-                    <LoadingSpinner />
-                </div>
-            )}
-        </>
+      <button
+        onClick={handleButtonClick}
+        className={`${baseClass} bg-primary hover:bg-primary-hover text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-lg`}
+        disabled={isPending}
+      >
+        Change to {selectedRoadmap.title}
+      </button>
     );
+  };
+
+  return (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {roadmaps.map((roadmap) => (
+          <RoadmapCard
+            key={roadmap.id}
+            roadmap={roadmap}
+            isSelected={selectedRoadmap?.id === roadmap.id}
+            isCurrentActive={currentActiveRoadmap?.id === roadmap.id}
+            onSelect={() => handleSelect(roadmap)}
+          />
+        ))}
+      </div>
+
+      <div
+        className="mt-12 text-center"
+        role="group"
+        aria-label="Roadmap Actions"
+      >
+        {renderButton()}
+      </div>
+
+      {selectedRoadmap &&
+        (!currentActiveRoadmap ||
+          currentActiveRoadmap.id !== selectedRoadmap.id) && (
+          <RoadmapChangeConfirmationModal
+  roadmap={selectedRoadmap}
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  onConfirm={handleChangeRoadmap}
+  isPending={isPending}
+  isFirstSelection={!currentActiveRoadmap}
+/>
+        )}
+
+      {isPending && (
+        <div
+          className="fixed inset-0 bg-black/30 flex items-center justify-center z-50"
+          aria-modal="true"
+          role="dialog"
+        >
+          <LoadingSpinner />
+        </div>
+      )}
+    </>
+  );
 }
