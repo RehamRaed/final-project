@@ -313,28 +313,7 @@ export default function Header({currentRoadmapId, profile}: HeaderProps) {
               </IconButton>
             </Box>
 
-            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-              <IconButton 
-                size="large" 
-                color="inherit"
-                aria-haspopup="true"
-                onClick={handleNotifcationMenuOpen}
-              >
-                <Badge badgeContent={notifications.length} color="error">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-
-              <IconButton
-                size="large"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon />
-              </IconButton>
-            </Box>
+           
           </Toolbar>
         </AppBar>
 

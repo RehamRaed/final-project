@@ -10,6 +10,7 @@ const getBaseUrl = () => {
   return url.endsWith('/') ? url.slice(0, -1) : url;
 };
 
+// ================= REGISTER =================
 export async function register(formData: FormData): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
 
@@ -36,24 +37,25 @@ export async function register(formData: FormData): Promise<ActionResponse<unkno
       data: {
         full_name: fullName,
         has_selected_roadmap: false,
-        isNewUser: true, 
+        isNewUser: true,
       },
-      emailRedirectTo: `${getBaseUrl()}/callback?next=/`,
     },
   });
 
-  if (error) {
+  if (error || !data.user) {
     return {
       success: false,
-      error: error.message === 'User already registered'
-        ? 'This email is already registered'
-        : 'Registration failed. Please try again.',
+      error:
+        error?.message === 'User already registered'
+          ? 'This email is already registered'
+          : 'Registration failed. Please try again.',
     };
   }
 
-  redirect('/');
+  redirect('/roadmaps');
 }
 
+// ================= LOGIN =================
 export async function login(formData: FormData): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
 
@@ -71,21 +73,29 @@ export async function login(formData: FormData): Promise<ActionResponse<unknown>
 
   const { email, password } = validation.data;
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  
-  if (error || !data.user) return { success: false, error: 'Invalid email or password' };
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error || !data.user) {
+    return { success: false, error: 'Invalid email or password' };
+  }
 
   const userMetadata = data.user.user_metadata || {};
   const hasSelectedRoadmap = userMetadata.has_selected_roadmap === true;
 
   if (hasSelectedRoadmap) {
-    redirect('/dashboard'); 
+    redirect('/dashboard');
   } else {
-    redirect('/roadmaps'); 
+    redirect('/roadmaps');
   }
 }
 
-export async function loginWithOAuth(provider: 'google' | 'github'): Promise<ActionResponse<unknown> | void> {
+// ================= LOGIN WITH OAUTH =================
+export async function loginWithOAuth(
+  provider: 'google' | 'github'
+): Promise<ActionResponse<unknown> | void> {
   const supabase = await createServerSupabase();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -99,12 +109,14 @@ export async function loginWithOAuth(provider: 'google' | 'github'): Promise<Act
   if (data.url) redirect(data.url);
 }
 
+// ================= LOGOUT =================
 export async function logout(): Promise<void> {
   const supabase = await createServerSupabase();
   await supabase.auth.signOut();
   redirect('/login');
 }
 
+// ================= FORGOT PASSWORD =================
 export async function forgotPassword(formData: FormData): Promise<ActionResponse<unknown>> {
   const supabase = await createServerSupabase();
 
@@ -112,28 +124,35 @@ export async function forgotPassword(formData: FormData): Promise<ActionResponse
   if (!email) return { success: false, error: 'Email is required' };
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${getBaseUrl()}/auth/callback?next=/reset-password`,
+    redirectTo: `${getBaseUrl()}/reset-password`,
   });
 
-  if (error) return { success: false, error: 'Error sending password reset link' };
+  if (error) {
+    return { success: false, error: 'Error sending password reset link' };
+  }
 
   return { success: true, message: 'Password reset link sent to your email' };
 }
 
 // ================= RESET PASSWORD =================
 export async function resetPassword(formData: FormData): Promise<ActionResponse<unknown>> {
-  const supabase = await createServerSupabase()
+  const supabase = await createServerSupabase();
 
-  const password = formData.get('password') as string
-  const confirmPassword = formData.get('confirmPassword') as string
+  const password = formData.get('password') as string;
+  const confirmPassword = formData.get('confirmPassword') as string;
 
-  if (!password || !confirmPassword) return { success: false, error: 'Both fields are required' }
-  if (password !== confirmPassword) return { success: false, error: 'Passwords do not match' }
+  if (!password || !confirmPassword) {
+    return { success: false, error: 'Both fields are required' };
+  }
 
-  const { data, error } = await supabase.auth.updateUser({ password })
+  if (password !== confirmPassword) {
+    return { success: false, error: 'Passwords do not match' };
+  }
 
-  if (error) return { success: false, error: error.message }
-  if (!data.user) return { success: false, error: 'Failed to reset password' }
+  const { data, error } = await supabase.auth.updateUser({ password });
 
-  return { success: true, message: 'Password has been reset successfully' }
+  if (error) return { success: false, error: error.message };
+  if (!data.user) return { success: false, error: 'Failed to reset password' };
+
+  return { success: true, message: 'Password has been reset successfully' };
 }

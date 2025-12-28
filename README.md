@@ -37,8 +37,8 @@ src/
 ├── actions/          # Server Actions (Server-side mutations)
 ├── app/              # Next.js App Router (Pages & API)
 │   ├── (auth)/       # Authentication flows (Login, Signup, etc.)
-│   ├── (student)/    # Student-facing features (Dashboard, Roadmaps, etc.)
-│   └── api/          # Backend API routes (Internal endpoints)
+│   └── (student)/    # Student-facing features (Dashboard, Roadmaps, etc.)
+│   
 ├── components/       # Reusable UI components
 ├── context/          # React Context providers
 ├── hooks/            # Custom React hooks
@@ -65,7 +65,7 @@ To get started with StudyMate locally, follow these steps:
 
 3. Set up Environment Variables:
    Create a .env.local file in the root directory and add your Supabase credentials:
-      # ===== Supabase =====
+# ===== Supabase =====
 NEXT_PUBLIC_SUPABASE_URL=****************
 NEXT_PUBLIC_SUPABASE_ANON_KEY=****************
 
