@@ -1,6 +1,6 @@
 import { getRoadmapsListAction } from "@/actions/learning.actions";
 import RoadmapSelectionClient from "@/components/Roadmap/RoadmapSelectionClient";
-import { getCurrentUser } from "@/lib/auth/helpers";
+import { getCurrentUser } from "@/services/auth";
 import { Tables } from "@/types/database.types";
 import { Metadata } from "next";
 import { redirect } from "next/navigation"; 
