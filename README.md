@@ -5,10 +5,8 @@
 
 ---
 
-## 🔗 Quick Links
-- [🚀 Live Demo](your-link-here)
-- [📂 Documentation](#-project-structure)
-- [⚙️ Installation](#️-installation)
+- [🚀 Live Demo](https://studymate-phi-ten.vercel.app/)
+
 
 ---
 
@@ -32,7 +30,7 @@
 | **Styling** | Tailwind CSS |
 | **UI Components** | Material UI (MUI) & Lucide React |
 | **Database & Auth**| Supabase |
-| **State Management**| Redux Toolkit |
+| **State Management**| Redux Toolkit , Context API |
 | **Animations** | Framer Motion |
 | **Notifications** | React Hot Toast |
 
@@ -108,11 +106,9 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 This project was developed with passion and dedication by:
 
 - Reham Al-Magharee 
-- Basma Kuhail - 
-- Ashraf Al-Kahlout - 
+- Basma Kuhail  
+- Ashraf Al-Kahlout 
 
----
 
-## 📄 License
 
 This project is part of a final graduation project. All rights reserved © 2025.
